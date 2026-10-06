@@ -92,6 +92,8 @@ thead th{border-top:0;font-weight:600;color:var(--muted);font-size:.8rem}
 th.tl,td.tl{text-align:left;position:sticky;left:0;background:var(--surface);padding-left:12px;z-index:1;max-width:180px}
 td.tl .tname{max-width:150px}
 td.heat{min-width:40px;font-size:.78rem;padding:8px 2px}
+td.odds{font-weight:600;min-width:64px}
+tr.cutline td{border-bottom:2px solid var(--accent)}
 td.avgp{font:700 1.15rem "Barlow Condensed","Arial Narrow",sans-serif}
 
 /* Ownership */
@@ -427,9 +429,18 @@ footer input{width:min(100%,260px)}
       pairs: w.pairs.map(([a, b]) => [idx.get(a), idx.get(b)]).filter(p => p[0] != null && p[1] != null)
     }));
     const dir = opts.tiebreak === 'pf-low' ? 1 : -1;
-    const sims = weeks.length ? SIMS : 1;
+    const sims = SIMS;
     const counts = ids.map(() => new Array(n).fill(0));
     const order = [...Array(n).keys()];
+    const seedOrd = [...Array(n).keys()];
+    const pTeams = Math.min(D.playoff.teams, n);
+    const seedCounts = ids.map(() => new Array(n).fill(0));
+    const champ = new Array(n).fill(0), finals = new Array(n).fill(0);
+    const bracketOK = !!projectedBracket([...Array(pTeams).keys()], pTeams);
+    const playGame = (a, b) => {
+      const sa = Math.max(0, means[a] + sd * gauss()), sb = Math.max(0, means[b] + sd * gauss());
+      return sa >= sb ? [a, b] : [b, a];
+    };
 
     for (let s = 0; s < sims; s++) {
       const W = baseW.slice(), P = baseP.slice();
@@ -446,11 +457,31 @@ footer input{width:min(100%,260px)}
       }
       order.sort((a, b) => (W[a] - W[b]) || dir * (P[a] - P[b]) || (a - b));
       order.forEach((ti, pos) => { counts[ti][pos]++; });
+
+      seedOrd.sort((a, b) => (W[b] - W[a]) || (P[b] - P[a]) || (a - b));
+      seedOrd.forEach((ti, pos) => { seedCounts[ti][pos]++; });
+      if (bracketOK) {
+        const games = projectedBracket(seedOrd.slice(0, pTeams), pTeams);
+        const res = new Map();
+        const pick = (t, from) => t != null ? t : from ? (from.w != null ? res.get(from.w)[0] : res.get(from.l)[1]) : null;
+        games.sort((a, b) => a.r - b.r || a.m - b.m).forEach(g => {
+          const r = playGame(pick(g.t1, g.t1_from), pick(g.t2, g.t2_from));
+          res.set(g.m, r);
+          if (g.p === 1) { champ[r[0]]++; finals[r[0]]++; finals[r[1]]++; }
+        });
+      }
     }
     D.sim = {
       sims,
       probs: counts.map(c => c.map(x => x / sims)),
-      avg: counts.map(c => c.reduce((s, x, p) => s + x * (p + 1), 0) / sims)
+      avg: counts.map(c => c.reduce((s, x, p) => s + x * (p + 1), 0) / sims),
+      seedProbs: seedCounts.map(c => c.map(x => x / sims)),
+      avgSeed: seedCounts.map(c => c.reduce((s, x, p) => s + x * (p + 1), 0) / sims),
+      make: seedCounts.map(c => c.slice(0, pTeams).reduce((s, x) => s + x, 0) / sims),
+      bye: seedCounts.map(c => c.slice(0, pTeams === 6 ? 2 : 0).reduce((s, x) => s + x, 0) / sims),
+      champ: champ.map(x => x / sims),
+      finals: finals.map(x => x / sims),
+      pTeams, bracketOK, means, sd
     };
   }
 
@@ -479,10 +510,10 @@ footer input{width:min(100%,260px)}
         ? `${season} season hasn’t started. ${D.ids.length} teams.`
         : `${season} season, ${playedWeeks} of ${totalWeeks} weeks played. ${D.ids.length} teams.`;
 
-    const tabs = [['order', 'Draft Order'], ['proj', 'Projections'], ['match', 'Matchups'], ['bracket', 'Playoff Bracket'], ['rec', 'League Records'], ['mgr', 'Manager Profiles'], ['own', 'Pick Ownership'], ['trades', 'Trade History']];
+    const tabs = [['order', 'Draft Order'], ['proj', 'Projections'], ['odds', 'Playoff Odds'], ['match', 'Matchups'], ['bracket', 'Playoff Bracket'], ['rec', 'League Records'], ['mgr', 'Manager Profiles'], ['own', 'Pick Ownership'], ['trades', 'Trade History']];
     let html = `<nav class="tabs" role="tablist">${tabs.map(([k, l]) =>
       `<button class="tab" role="tab" type="button" data-tab="${k}" aria-selected="${opts.tab === k}">${l}</button>`).join('')}</nav>`;
-    html += opts.tab === 'proj' ? renderProj() : opts.tab === 'match' ? renderMatchups() : opts.tab === 'bracket' ? renderBracket() : opts.tab === 'rec' ? renderRecords() : opts.tab === 'mgr' ? renderProfiles() : opts.tab === 'own' ? renderOwn() : opts.tab === 'trades' ? renderTrades() : renderOrder();
+    html += opts.tab === 'proj' ? renderProj() : opts.tab === 'odds' ? renderOdds() : opts.tab === 'match' ? renderMatchups() : opts.tab === 'bracket' ? renderBracket() : opts.tab === 'rec' ? renderRecords() : opts.tab === 'mgr' ? renderProfiles() : opts.tab === 'own' ? renderOwn() : opts.tab === 'trades' ? renderTrades() : renderOrder();
     $('#app').innerHTML = html;
   }
 
@@ -721,6 +752,43 @@ footer input{width:min(100%,260px)}
         ${rest.length ? `<ol class="rlist">${rest.map(r => `<li><span title="${esc(r.who + ', ' + r.when)}">${esc(r.who)}, ${esc(r.when)}</span><b>${esc(r.val)}</b></li>`).join('')}</ol>` : ''}</article>`;
     });
     return html + '</div>';
+  }
+
+  // ---------- Playoff odds ----------
+  function renderOdds(){
+    const S = D.sim, n = D.ids.length, k = S.pTeams;
+    const idx = new Map(D.ids.map((r, i) => [r, i]));
+    const fmt = p => p >= 0.9995 ? '100%' : p >= 0.995 ? '>99%' : p === 0 ? '0%' : p < 0.005 ? '<1%' : Math.round(p * 100) + '%';
+    const heat = p => `background:rgba(var(--heat),${Math.min(1, p * 1.15).toFixed(3)});${p * 1.15 > .55 ? 'color:var(--accent-ink);font-weight:600' : ''}`;
+    const hasBye = k === 6;
+    const playoffsStarted = seasonDone() && (D.firstOpen > D.lastReg);
+    let html = '';
+    if (!seasonDone()) {
+      html += `<p class="note">Odds from ${S.sims.toLocaleString()} simulations of the remaining ${D.remaining.length} weeks and a ${k}-team playoff. Each team’s weekly score is modeled from its scoring so far, pulled slightly toward the league average. Seeds go by record, then points for${D.median ? ', and the median-win game is included' : ''}. Division winners aren’t accounted for.${D.schedUnknown ? ' Some remaining matchups aren’t published yet, so those weeks use random pairings.' : ''}</p>`;
+    } else {
+      html += `<p class="note">The regular season is over, so the seeds are set. Title odds come from ${S.sims.toLocaleString()} simulations of the bracket${playoffsStarted ? ' and don’t account for playoff games already played; see Playoff Bracket for results' : ''}.</p>`;
+    }
+    if (!S.bracketOK) html += `<p class="note">Title odds aren’t available for a ${k}-team playoff yet, so only playoff and seed odds are shown.</p>`;
+    const rows = D.ids.slice().sort((a, b) => {
+      const i = idx.get(a), j = idx.get(b);
+      return (S.make[j] - S.make[i]) || (S.champ[j] - S.champ[i]) || (S.avgSeed[i] - S.avgSeed[j]);
+    });
+    html += `<div class="tablewrap"><table><thead><tr><th class="tl" scope="col">Team</th><th scope="col">Record</th><th scope="col">PF</th>
+      <th scope="col">Make playoffs</th>${hasBye ? '<th scope="col">First-round bye</th>' : ''}${S.bracketOK ? '<th scope="col">Reach final</th><th scope="col">Win title</th>' : ''}
+      <th scope="col">Avg seed</th>${[...Array(k).keys()].map(p => `<th scope="col">Seed ${p + 1}</th>`).join('')}</tr></thead><tbody>`;
+    rows.forEach((rid, pos) => {
+      const t = team(rid), i = idx.get(rid);
+      const cut = pos === k - 1 ? ' class="cutline"' : '';
+      html += `<tr${cut}><td class="tl">${teamBlock(t, '')}</td><td>${record(t)}</td><td>${pfTxt(t)}</td>
+        <td class="odds" style="${heat(S.make[i])}">${fmt(S.make[i])}</td>
+        ${hasBye ? `<td class="odds" style="${heat(S.bye[i])}">${fmt(S.bye[i])}</td>` : ''}
+        ${S.bracketOK ? `<td class="odds" style="${heat(S.finals[i])}">${fmt(S.finals[i])}</td><td class="odds" style="${heat(S.champ[i])}">${fmt(S.champ[i])}</td>` : ''}
+        <td class="avgp">${S.avgSeed[i].toFixed(1)}</td>
+        ${S.seedProbs[i].slice(0, k).map(p => `<td class="heat" style="${heat(p)}">${p > 0 ? fmt(p) : ''}</td>`).join('')}</tr>`;
+    });
+    html += '</tbody></table></div>';
+    html += `<p class="note">Teams above the line are in the top ${k} by playoff odds. Percentages are simulation estimates, so 100% means every simulated season, not a mathematical clinch.</p>`;
+    return html;
   }
 
   // ---------- Week data and player names ----------
