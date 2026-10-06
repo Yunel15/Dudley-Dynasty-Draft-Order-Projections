@@ -105,7 +105,9 @@ td.avgp{font:700 1.15rem "Barlow Condensed","Arial Narrow",sans-serif}
 .chip{display:flex;flex-direction:column;padding:4px 9px;border:1px solid var(--line);border-radius:6px;font-size:.78rem;color:var(--muted);line-height:1.25}
 .chip b{font:700 1.05rem "Barlow Condensed","Arial Narrow",sans-serif;color:var(--ink)}
 .chip.acq{border-color:var(--pylon);background:var(--pylon-soft);color:var(--pylon-ink)}
-.gave{margin:12px 0 0;font-size:.82rem;color:var(--muted)}
+.gave-h{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+.chip.gone{border-style:dashed;background:none}
+.chip.gone b{color:var(--muted);text-decoration:line-through;text-decoration-thickness:1px}
 
 /* Records */
 .rgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-top:14px}
@@ -617,7 +619,9 @@ footer input{width:min(100%,260px)}
       });
       const g = gave.get(rid) || [];
       if (g.length) {
-        html += `<p class="gave">Traded away: ${g.map(it => `${it.y} ${ordinal(it.r)} to ${esc(team(it.owner).name)}`).join('; ')}</p>`;
+        const gs = g.slice().sort((a, b) => a.y - b.y || a.r - b.r);
+        html += `<div class="yr gave-h">Traded away</div><div class="chips">${gs.map(it =>
+          `<span class="chip gone"><b>${it.y} ${ordinal(it.r)}</b>to ${esc(team(it.owner).name)}</span>`).join('')}</div>`;
       }
       html += '</article>';
     });
