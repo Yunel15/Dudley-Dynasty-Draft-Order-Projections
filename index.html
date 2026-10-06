@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta name="theme-color" content="#141B2B">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Dynasty Draft Order</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>">
@@ -10,28 +11,15 @@
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#EEF1EC; --surface:#FFFFFF; --ink:#17212B; --muted:#5B6770; --line:#D3DAD1;
-  --field:#2F6B4F; --field-soft:#DCEAE2;
-  --pylon:#E8601C; --pylon-soft:#FCE5D8; --pylon-ink:#9E3D0A;
-  --heat:47,107,79;
+  --bg:#141B2B; --surface:#1E2638; --ink:#FFFFFF; --muted:#8C97AD; --line:#2C364B;
+  --accent:#00CEB8; --accent-ink:#0B1F1D;
+  --field:#00CEB8; --field-soft:#183A3F;
+  --pylon:#FF6F7E; --pylon-soft:#3A2333; --pylon-ink:#FF9EA8;
+  --heat:0,206,184;
   box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px);
   padding-bottom:env(safe-area-inset-bottom,0px);
-  color-scheme:light dark;
-}
-@media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]){
-    --bg:#141B20; --surface:#1C252C; --ink:#E7ECE8; --muted:#9AA6AD; --line:#2E3A42;
-    --field:#68B892; --field-soft:#1F352A;
-    --pylon:#FF8A4C; --pylon-soft:#3B251A; --pylon-ink:#FFB68C;
-    --heat:104,184,146;
-  }
-}
-:root[data-theme="dark"]{
-  --bg:#141B20; --surface:#1C252C; --ink:#E7ECE8; --muted:#9AA6AD; --line:#2E3A42;
-  --field:#68B892; --field-soft:#1F352A;
-  --pylon:#FF8A4C; --pylon-soft:#3B251A; --pylon-ink:#FFB68C;
-  --heat:104,184,146;
+  color-scheme:dark;
 }
 *,*::before,*::after{box-sizing:inherit}
 html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
@@ -43,18 +31,18 @@ img{max-width:100%}
 
 /* Header */
 .top{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;
-  padding-bottom:14px;border-bottom:4px solid var(--ink)}
+  padding-bottom:14px;border-bottom:4px solid var(--accent)}
 h1{margin:0;font:700 clamp(2.3rem,8vw,3.8rem)/.92 "Barlow Condensed","Arial Narrow",sans-serif;letter-spacing:-.01em}
 .sub{margin:8px 0 0;color:var(--muted)}
-.btn{background:var(--ink);color:var(--bg);border:0;border-radius:6px;padding:9px 16px;font-weight:600;cursor:pointer}
+.btn{background:var(--accent);color:var(--accent-ink);border:0;border-radius:6px;padding:9px 16px;font-weight:600;cursor:pointer}
 .btn:disabled{opacity:.6;cursor:progress}
-:is(.btn,.tab,select,input,summary,.seg button):focus-visible{outline:3px solid var(--pylon);outline-offset:2px}
+:is(.btn,.tab,select,input,summary,.seg button):focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 
 /* Tabs */
 .tabs{display:flex;gap:2px;margin:18px 0 18px;overflow-x:auto}
 .tab{background:none;border:0;border-bottom:3px solid transparent;padding:6px 12px 6px 0;margin-right:14px;
   font:600 1.25rem "Barlow Condensed","Arial Narrow",sans-serif;color:var(--muted);cursor:pointer;white-space:nowrap}
-.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--pylon)}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
 
 /* Controls */
 .controls{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;margin-bottom:6px}
@@ -62,7 +50,7 @@ h1{margin:0;font:700 clamp(2.3rem,8vw,3.8rem)/.92 "Barlow Condensed","Arial Narr
 select,input[type="text"]{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:7px 10px;min-height:40px}
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:var(--surface)}
 .seg button{border:0;background:none;padding:8px 13px;cursor:pointer;color:var(--muted);font-weight:500;min-height:38px}
-.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
 details.more{margin:10px 0 4px}
 details.more summary{cursor:pointer;color:var(--muted);font-size:.9rem;width:max-content}
 details.more .controls{margin-top:10px}
@@ -485,7 +473,7 @@ footer input{width:min(100%,260px)}
         const pct = p * 100;
         const label = pct >= 99.5 ? '100' : pct >= 1 ? Math.round(pct) : pct > 0 ? '<1' : '';
         const alpha = Math.min(1, p * 1.15);
-        html += `<td class="heat" style="background:rgba(var(--heat),${alpha.toFixed(3)});${alpha > .55 ? 'color:var(--surface);font-weight:600' : ''}">${label ? label + (label === '<1' ? '' : '%') : ''}</td>`;
+        html += `<td class="heat" style="background:rgba(var(--heat),${alpha.toFixed(3)});${alpha > .55 ? 'color:var(--accent-ink);font-weight:600' : ''}">${label ? label + (label === '<1' ? '' : '%') : ''}</td>`;
       });
       html += '</tr>';
     });
