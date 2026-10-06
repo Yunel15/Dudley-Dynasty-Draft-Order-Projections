@@ -162,6 +162,26 @@ td.avgp{font:700 1.15rem "Barlow Condensed","Arial Narrow",sans-serif}
 .seedlist{margin:14px 0 0;padding-left:1.4rem}
 .seedlist li{padding:4px 0}
 
+/* Payouts */
+.pot{display:flex;align-items:center;gap:18px;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-left:5px solid var(--accent);border-radius:8px;padding:16px 18px}
+.potnum{font:700 clamp(3rem,12vw,4.4rem)/.9 "Barlow Condensed","Arial Narrow",sans-serif;color:var(--accent);font-variant-numeric:tabular-nums}
+.pottxt{display:flex;flex-direction:column;gap:2px;max-width:52ch}
+.pottxt b{font-size:1.05rem}
+.pottxt span{color:var(--muted);font-size:.9rem}
+.paygrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-top:12px}
+.paycard{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px;min-width:0}
+.paycard.decided{border-color:var(--accent)}
+.payhead{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.payamt{font:700 2.2rem/1 "Barlow Condensed","Arial Narrow",sans-serif;font-variant-numeric:tabular-nums}
+.paypct{font-size:.8rem;color:var(--muted)}
+.paycard h3{margin:4px 0 12px;font-size:.95rem;font-weight:600;color:var(--muted)}
+.paywho{padding-top:10px;border-top:1px solid var(--line)}
+.payodds{font-size:.82rem;color:var(--muted);margin-top:8px}
+.sech{margin:30px 0 0;font:700 1.55rem/1 "Barlow Condensed","Arial Narrow",sans-serif}
+td.pos{color:var(--accent);font-weight:600}
+td.neg{color:var(--pylon-ink);font-weight:600}
+td.tags{white-space:normal;min-width:160px;text-align:left;color:var(--muted);font-size:.8rem}
+
 /* Manager profiles */
 .pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:12px;margin-top:14px}
 .pcard{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:16px;min-width:0}
@@ -223,6 +243,14 @@ footer input{width:min(100%,260px)}
   const DEFAULT_LEAGUE = '1389350335302078464';
   const API = 'https://api.sleeper.app/v1';
   const SIMS = 5000;
+  // League constitution, Article II: Financials
+  const BUY_IN = 35;
+  const PAYOUTS = [
+    { key: 'champ', label: '1st place', amount: 252, pct: 60 },
+    { key: 'runner', label: '2nd place', amount: 100, pct: 24 },
+    { key: 'third', label: '3rd place', amount: 34, pct: 8 },
+    { key: 'pts', label: 'Regular-season points leader', amount: 34, pct: 8 }
+  ];
 
   const store = {
     get(k){ try { return localStorage.getItem(k); } catch (e) { return null; } },
@@ -358,7 +386,7 @@ footer input{width:min(100%,260px)}
       let players = {};
       try { players = JSON.parse(store.get('playerNames') || '{}'); } catch (e) {}
 
-      D = { league, season, teams, ids, tradedMap, seasons, draftSeason: seasons[0], median, startWeek, lastReg, firstOpen, hist, remaining, schedUnknown, completedWeeks, records: null, recordsLoading: false, trades: null, tradesLoading: false, profiles: null, profilesLoading: false, historyPromise: null, rosters, users,
+      D = { league, season, teams, ids, tradedMap, seasons, draftSeason: seasons[0], median, startWeek, lastReg, firstOpen, hist, remaining, schedUnknown, completedWeeks, records: null, recordsLoading: false, trades: null, tradesLoading: false, profiles: null, profilesLoading: false, money: null, moneyLoading: false, historyPromise: null, rosters, users,
         playoff: { teams: pTeams, rounds: pRounds, type: pType, start: pws, lastWeek }, defWeek, weekData, weekLoading: new Set(), bracket: null, bracketLoading: false, players, namesLoading: false };
       if (!seasons.includes(opts.season)) opts.season = D.draftSeason;
       runSim();
@@ -435,7 +463,7 @@ footer input{width:min(100%,260px)}
     const seedOrd = [...Array(n).keys()];
     const pTeams = Math.min(D.playoff.teams, n);
     const seedCounts = ids.map(() => new Array(n).fill(0));
-    const champ = new Array(n).fill(0), finals = new Array(n).fill(0);
+    const champ = new Array(n).fill(0), finals = new Array(n).fill(0), runner = new Array(n).fill(0), third = new Array(n).fill(0), ptsLead = new Array(n).fill(0);
     const bracketOK = !!projectedBracket([...Array(pTeams).keys()], pTeams);
     const playGame = (a, b) => {
       const sa = Math.max(0, means[a] + sd * gauss()), sb = Math.max(0, means[b] + sd * gauss());
@@ -458,6 +486,9 @@ footer input{width:min(100%,260px)}
       order.sort((a, b) => (W[a] - W[b]) || dir * (P[a] - P[b]) || (a - b));
       order.forEach((ti, pos) => { counts[ti][pos]++; });
 
+      let lead = 0;
+      for (let i = 1; i < n; i++) if (P[i] > P[lead]) lead = i;
+      ptsLead[lead]++;
       seedOrd.sort((a, b) => (W[b] - W[a]) || (P[b] - P[a]) || (a - b));
       seedOrd.forEach((ti, pos) => { seedCounts[ti][pos]++; });
       if (bracketOK) {
@@ -467,7 +498,8 @@ footer input{width:min(100%,260px)}
         games.sort((a, b) => a.r - b.r || a.m - b.m).forEach(g => {
           const r = playGame(pick(g.t1, g.t1_from), pick(g.t2, g.t2_from));
           res.set(g.m, r);
-          if (g.p === 1) { champ[r[0]]++; finals[r[0]]++; finals[r[1]]++; }
+          if (g.p === 1) { champ[r[0]]++; runner[r[1]]++; finals[r[0]]++; finals[r[1]]++; }
+          if (g.p === 3) third[r[0]]++;
         });
       }
     }
@@ -481,6 +513,7 @@ footer input{width:min(100%,260px)}
       bye: seedCounts.map(c => c.slice(0, pTeams === 6 ? 2 : 0).reduce((s, x) => s + x, 0) / sims),
       champ: champ.map(x => x / sims),
       finals: finals.map(x => x / sims),
+      runner: runner.map(x => x / sims), third: third.map(x => x / sims), ptsLead: ptsLead.map(x => x / sims),
       pTeams, bracketOK, means, sd
     };
   }
@@ -510,10 +543,10 @@ footer input{width:min(100%,260px)}
         ? `${season} season hasn’t started. ${D.ids.length} teams.`
         : `${season} season, ${playedWeeks} of ${totalWeeks} weeks played. ${D.ids.length} teams.`;
 
-    const tabs = [['order', 'Draft Order'], ['proj', 'Projections'], ['match', 'Matchups'], ['odds', 'Playoff Odds'], ['bracket', 'Playoff Bracket'], ['rec', 'League Records'], ['mgr', 'Manager Profiles'], ['own', 'Pick Ownership'], ['trades', 'Trade History']];
+    const tabs = [['order', 'Draft Order'], ['proj', 'Projections'], ['match', 'Matchups'], ['odds', 'Playoff Odds'], ['bracket', 'Playoff Bracket'], ['pay', 'Payouts'], ['rec', 'League Records'], ['mgr', 'Manager Profiles'], ['own', 'Pick Ownership'], ['trades', 'Trade History']];
     let html = `<nav class="tabs" role="tablist">${tabs.map(([k, l]) =>
       `<button class="tab" role="tab" type="button" data-tab="${k}" aria-selected="${opts.tab === k}">${l}</button>`).join('')}</nav>`;
-    html += opts.tab === 'proj' ? renderProj() : opts.tab === 'odds' ? renderOdds() : opts.tab === 'match' ? renderMatchups() : opts.tab === 'bracket' ? renderBracket() : opts.tab === 'rec' ? renderRecords() : opts.tab === 'mgr' ? renderProfiles() : opts.tab === 'own' ? renderOwn() : opts.tab === 'trades' ? renderTrades() : renderOrder();
+    html += opts.tab === 'proj' ? renderProj() : opts.tab === 'odds' ? renderOdds() : opts.tab === 'match' ? renderMatchups() : opts.tab === 'bracket' ? renderBracket() : opts.tab === 'pay' ? renderPayouts() : opts.tab === 'rec' ? renderRecords() : opts.tab === 'mgr' ? renderProfiles() : opts.tab === 'own' ? renderOwn() : opts.tab === 'trades' ? renderTrades() : renderOrder();
     $('#app').innerHTML = html;
   }
 
@@ -980,6 +1013,138 @@ footer input{width:min(100%,260px)}
       html += '</div></section>';
     }
     return html + '</div>';
+  }
+
+  // ---------- Payouts ----------
+  const usd = (x, cents) => (x < 0 ? '−$' : '$') + Math.abs(x).toFixed(cents ? 2 : 0).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+  async function loadMoney(){
+    if (!D || D.money || D.moneyLoading) return;
+    const myD = D;
+    myD.moneyLoading = true;
+    try {
+      const hist = await loadHistory();
+      const M = new Map();
+      const current = {};
+      hist.forEach(L => {
+        const keyOf = new Map();
+        const ub = new Map(L.users.map(u => [u.user_id, u]));
+        L.rosters.forEach(r => {
+          const k = r.owner_id || `${L.id}-${r.roster_id}`;
+          keyOf.set(r.roster_id, k);
+          if (!M.has(k)) M.set(k, { seasons: new Set(), won: 0, wins: {}, latest: null, current: false });
+          const m = M.get(k);
+          m.seasons.add(L.season);
+          if (L.current) m.current = true;
+          if (!m.latest || L.season >= m.latest.season) {
+            const t = L.teamOf(r.roster_id), u = ub.get(r.owner_id) || {};
+            m.latest = { season: L.season, name: t.name, avatar: t.avatar, manager: u.display_name || t.manager || '' };
+          }
+        });
+        const pay = (rid, key) => {
+          const k = keyOf.get(rid), p = PAYOUTS.find(x => x.key === key);
+          if (!k || !p) return;
+          const m = M.get(k);
+          m.won += p.amount;
+          m.wins[key] = (m.wins[key] || 0) + 1;
+          if (L.current) current[key] = rid;
+        };
+        (L.bracket || []).forEach(b => {
+          if (b.w == null || b.l == null) return;
+          if (b.p === 1) { pay(b.w, 'champ'); pay(b.l, 'runner'); }
+          if (b.p === 3) pay(b.w, 'third');
+        });
+        const regDone = L.current ? seasonDone() : true;
+        if (regDone && L.rosters.length) {
+          const pf = r => { const st = r.settings || {}; return (st.fpts || 0) + (st.fpts_decimal || 0) / 100; };
+          const top = L.rosters.slice().sort((a, b) => pf(b) - pf(a))[0];
+          if (top && pf(top) > 0) pay(top.roster_id, 'pts');
+        }
+      });
+      const list = [...M.values()].filter(m => m.latest).map(m => ({ ...m, paid: m.seasons.size * BUY_IN }))
+        .sort((a, b) => (b.won - b.paid) - (a.won - a.paid) || (b.current - a.current));
+      myD.money = { list, current, seasons: hist.length };
+    } catch (e) {
+      myD.money = { error: e.message || 'Couldn’t load league history from Sleeper.' };
+    } finally {
+      myD.moneyLoading = false;
+      if (D === myD && opts.tab === 'pay') render();
+    }
+  }
+
+  function renderPayouts(){
+    const n = D.ids.length;
+    const pot = BUY_IN * n;
+    const S = D.sim;
+    const idx = new Map(D.ids.map((r, i) => [r, i]));
+    if (!D.money) loadMoney();
+    const money = D.money && !D.money.error ? D.money : null;
+    const cur = money ? money.current : {};
+    const pct = p => p >= 0.995 ? '>99%' : p < 0.005 ? '<1%' : Math.round(p * 100) + '%';
+    const oddsKey = { champ: 'champ', runner: 'runner', third: 'third', pts: 'ptsLead' };
+
+    let html = `<section class="pot"><div class="potnum">${usd(pot)}</div><div class="pottxt">
+      <b>${D.season} prize pool</b><span>${usd(BUY_IN)} buy-in per team × ${n} teams, due by the start of each season. All funds are collected and held by the Commissioner.</span></div></section>`;
+
+    html += '<div class="paygrid">';
+    PAYOUTS.forEach(p => {
+      let status;
+      if (cur[p.key] != null) {
+        status = `<div class="paywho won">${teamBlock(team(cur[p.key]), `${D.season} winner`)}</div>`;
+      } else if (p.key === 'pts' && !seasonDone()) {
+        const leader = D.ids.slice().sort((a, b) => team(b).pf - team(a).pf)[0];
+        const fav = D.ids.slice().sort((a, b) => S.ptsLead[idx.get(b)] - S.ptsLead[idx.get(a)])[0];
+        status = `<div class="paywho">${teamBlock(team(leader), `Leading now with ${pfTxt(team(leader))} PF`)}</div>
+          ${fav !== leader ? `<div class="payodds">Most likely to finish first: ${esc(team(fav).name)} (${pct(S.ptsLead[idx.get(fav)])})</div>` : `<div class="payodds">${pct(S.ptsLead[idx.get(leader)])} chance to hold on</div>`}`;
+      } else if (S.bracketOK || p.key === 'pts') {
+        const arr = S[oddsKey[p.key]];
+        const fav = D.ids.slice().sort((a, b) => arr[idx.get(b)] - arr[idx.get(a)])[0];
+        status = `<div class="paywho">${teamBlock(team(fav), `Favorite, ${pct(arr[idx.get(fav)])}`)}</div>`;
+      } else {
+        status = '<div class="payodds">To be decided</div>';
+      }
+      html += `<article class="paycard${cur[p.key] != null ? ' decided' : ''}"><div class="payhead"><span class="payamt">${usd(p.amount)}</span><span class="paypct">${p.pct}% of pot</span></div>
+        <h3>${p.label}</h3>${status}</article>`;
+    });
+    html += '</div>';
+
+    // Projected winnings for the current season
+    if (S.bracketOK) {
+      const decided = k => cur[k] != null;
+      const ev = D.ids.map(rid => {
+        const i = idx.get(rid);
+        let e = 0, cash = 0;
+        PAYOUTS.forEach(p => {
+          const prob = decided(p.key) ? (cur[p.key] === rid ? 1 : 0) : S[oddsKey[p.key]][i];
+          e += prob * p.amount;
+        });
+        const champish = decided('champ') ? (cur.champ === rid || cur.runner === rid ? 1 : 0) : S.finals[i];
+        const thirdP = decided('third') ? (cur.third === rid ? 1 : 0) : S.third[i];
+        const ptsP = decided('pts') ? (cur.pts === rid ? 1 : 0) : S.ptsLead[i];
+        cash = 1 - (1 - champish) * (1 - thirdP) * (1 - ptsP);
+        return { rid, e, cash: Math.min(1, cash) };
+      }).sort((a, b) => b.e - a.e);
+      html += `<h2 class="sech">Projected ${D.season} winnings</h2>
+        <p class="note">Each team’s expected payout, based on the Playoff Odds simulations. Net subtracts the ${usd(BUY_IN)} buy-in.</p>
+        <div class="tablewrap"><table><thead><tr><th class="tl" scope="col">Team</th><th scope="col">Record</th><th scope="col">Chance to cash</th><th scope="col">Expected payout</th><th scope="col">Expected net</th></tr></thead><tbody>
+        ${ev.map(x => `<tr><td class="tl">${teamBlock(team(x.rid), '')}</td><td>${record(team(x.rid))}</td><td>${pct(x.cash)}</td>
+          <td class="avgp">${usd(x.e, true)}</td><td class="${x.e - BUY_IN >= 0 ? 'pos' : 'neg'}">${usd(x.e - BUY_IN, true)}</td></tr>`).join('')}
+        </tbody></table></div>`;
+    }
+
+    // All-time money list
+    html += `<h2 class="sech">All-time money list</h2>`;
+    if (!D.money) return html + '<p class="status">Loading league history…</p>';
+    if (D.money.error) return html + `<div class="error"><strong>${esc(D.money.error)}</strong><br>Try Refresh.</div>`;
+    html += `<p class="note">Winnings from payouts that have been decided, across ${money.seasons} season${money.seasons === 1 ? '' : 's'}. Buy-ins paid counts ${usd(BUY_IN)} for every season a manager has played, including this one. Uses the current payout structure for every season.</p>
+      <div class="tablewrap"><table><thead><tr><th class="tl" scope="col">Manager</th><th scope="col">Seasons</th><th scope="col">Won</th><th scope="col">Buy-ins paid</th><th scope="col">Net</th><th scope="col">Payouts</th></tr></thead><tbody>`;
+    money.list.forEach(m => {
+      const net = m.won - m.paid;
+      const tags = PAYOUTS.filter(p => m.wins[p.key]).map(p => `${p.label}${m.wins[p.key] > 1 ? ' ×' + m.wins[p.key] : ''}`).join(', ') || '–';
+      html += `<tr><td class="tl">${teamBlock(m.latest, esc(m.latest.manager) + (m.current ? '' : ', former'))}</td><td>${m.seasons.size}</td><td>${usd(m.won)}</td><td>${usd(m.paid)}</td>
+        <td class="avgp ${net >= 0 ? 'pos' : 'neg'}">${usd(net)}</td><td class="tags">${esc(tags)}</td></tr>`;
+    });
+    return html + '</tbody></table></div>';
   }
 
   // ---------- League history (shared) ----------
