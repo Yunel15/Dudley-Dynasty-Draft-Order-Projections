@@ -105,6 +105,17 @@ td.avgp{font:700 1.15rem "Barlow Condensed","Arial Narrow",sans-serif}
 .chip.acq{border-color:var(--pylon);background:var(--pylon-soft);color:var(--pylon-ink)}
 .gave{margin:12px 0 0;font-size:.82rem;color:var(--muted)}
 
+/* Records */
+.rgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-top:14px}
+.rcard{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px;min-width:0}
+.rcard h3{margin:0 0 8px;font:600 1.1rem "Barlow Condensed","Arial Narrow",sans-serif;color:var(--muted)}
+.rval{font:700 2.5rem/1 "Barlow Condensed","Arial Narrow",sans-serif;color:var(--accent);font-variant-numeric:tabular-nums}
+.rwho{font-weight:600;margin-top:6px;overflow-wrap:anywhere}
+.rwhen{font-size:.85rem;color:var(--muted)}
+.rlist{list-style:none;margin:12px 0 0;padding:10px 0 0;border-top:1px solid var(--line);font-size:.85rem;color:var(--muted)}
+.rlist li{display:flex;justify-content:space-between;gap:10px;padding:2px 0}
+.rlist li span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rlist b{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums;flex:none}
 .status{padding:40px 0;color:var(--muted)}
 .error{background:var(--pylon-soft);color:var(--pylon-ink);border-radius:8px;padding:14px 16px;margin-top:18px}
 footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--line);font-size:.85rem;color:var(--muted)}
@@ -231,11 +242,13 @@ footer input{width:min(100%,260px)}
       const matchups = await Promise.all(weekNums.map(w => getJSON(`/league/${leagueId}/matchups/${w}`).catch(() => [])));
 
       const hist = new Map(ids.map(r => [r, []]));
+      const completedWeeks = [];
       const remaining = [];
       let schedUnknown = false;
       weekNums.forEach((w, i) => {
         const list = matchups[i] || [];
         if (w < firstOpen) {
+          completedWeeks.push({ week: w, list });
           list.forEach(m => { if (hist.has(m.roster_id) && typeof m.points === 'number' && m.points > 0) hist.get(m.roster_id).push(m.points); });
         } else {
           const groups = new Map();
@@ -255,7 +268,7 @@ footer input{width:min(100%,260px)}
         opts.rounds = Math.max(dr && dr <= 7 ? dr : 4, maxRound);
       }
 
-      D = { league, season, teams, ids, tradedMap, seasons, draftSeason: seasons[0], median, startWeek, lastReg, firstOpen, hist, remaining, schedUnknown };
+      D = { league, season, teams, ids, tradedMap, seasons, draftSeason: seasons[0], median, startWeek, lastReg, firstOpen, hist, remaining, schedUnknown, completedWeeks, records: null, recordsLoading: false };
       if (!seasons.includes(opts.season)) opts.season = D.draftSeason;
       runSim();
       render();
@@ -377,10 +390,10 @@ footer input{width:min(100%,260px)}
         ? `${season} season hasn’t started. ${D.ids.length} teams.`
         : `${season} season, ${playedWeeks} of ${totalWeeks} weeks played. ${D.ids.length} teams.`;
 
-    const tabs = [['order', 'Draft order'], ['proj', 'Projections'], ['own', 'Pick ownership']];
+    const tabs = [['order', 'Draft order'], ['proj', 'Projections'], ['rec', 'League records'], ['own', 'Pick ownership']];
     let html = `<nav class="tabs" role="tablist">${tabs.map(([k, l]) =>
       `<button class="tab" role="tab" type="button" data-tab="${k}" aria-selected="${opts.tab === k}">${l}</button>`).join('')}</nav>`;
-    html += opts.tab === 'proj' ? renderProj() : opts.tab === 'own' ? renderOwn() : renderOrder();
+    html += opts.tab === 'proj' ? renderProj() : opts.tab === 'rec' ? renderRecords() : opts.tab === 'own' ? renderOwn() : renderOrder();
     $('#app').innerHTML = html;
   }
 
@@ -526,6 +539,113 @@ footer input{width:min(100%,260px)}
       html += `<p class="note">A full set is ${per} picks (${opts.rounds} rounds × ${D.seasons.length} years).</p>`;
     }
     return html;
+  }
+
+  // ---------- League records ----------
+  async function loadRecords(){
+    if (!D || D.records || D.recordsLoading) return;
+    const myD = D;
+    myD.recordsLoading = true;
+    try {
+      const seasons = [{ season: myD.season, current: true, name: rid => team(rid).name, weeks: myD.completedWeeks }];
+      let prev = myD.league.previous_league_id, guard = 0;
+      while (prev && prev !== '0' && guard++ < 15) {
+        const [lg, ros, us] = await Promise.all([getJSON(`/league/${prev}`), getJSON(`/league/${prev}/rosters`), getJSON(`/league/${prev}/users`)]);
+        if (!lg) break;
+        const ub = new Map((us || []).map(u => [u.user_id, u]));
+        const nm = new Map((ros || []).map(r => {
+          const u = ub.get(r.owner_id) || {};
+          return [r.roster_id, (u.metadata && u.metadata.team_name) || u.display_name || `Team ${r.roster_id}`];
+        }));
+        const st = lg.settings || {};
+        const sw = st.start_week || 1, last = (st.playoff_week_start || 15) - 1;
+        const ws = [];
+        for (let w = sw; w <= last; w++) ws.push(w);
+        const lists = await Promise.all(ws.map(w => getJSON(`/league/${prev}/matchups/${w}`).catch(() => [])));
+        seasons.push({ season: Number(lg.season), current: false, name: rid => nm.get(rid) || `Team ${rid}`, weeks: ws.map((w, i) => ({ week: w, list: lists[i] || [] })) });
+        prev = lg.previous_league_id;
+      }
+      myD.records = computeRecords(seasons);
+    } catch (e) {
+      myD.records = { error: e.message || 'Couldn’t load league history from Sleeper.' };
+    } finally {
+      myD.recordsLoading = false;
+      if (D === myD && opts.tab === 'rec') render();
+    }
+  }
+
+  function computeRecords(seasons){
+    const scores = [], games = [], seasonPF = [], streaks = [];
+    const usedSeasons = [];
+    seasons.forEach(s => {
+      const pf = new Map(), gp = new Map(), cur = new Map(), best = new Map();
+      let any = false;
+      s.weeks.slice().sort((a, b) => a.week - b.week).forEach(({ week, list }) => {
+        const valid = (list || []).filter(m => typeof m.points === 'number');
+        if (!valid.some(m => m.points > 0)) return;
+        any = true;
+        valid.forEach(m => {
+          if (m.points > 0) scores.push({ season: s.season, week, name: s.name(m.roster_id), pts: m.points });
+          pf.set(m.roster_id, (pf.get(m.roster_id) || 0) + m.points);
+          gp.set(m.roster_id, (gp.get(m.roster_id) || 0) + 1);
+        });
+        const groups = new Map();
+        valid.forEach(m => { if (m.matchup_id == null) return; if (!groups.has(m.matchup_id)) groups.set(m.matchup_id, []); groups.get(m.matchup_id).push(m); });
+        groups.forEach(g => {
+          if (g.length !== 2) return;
+          const [a, b] = g[0].points >= g[1].points ? g : [g[1], g[0]];
+          const tie = a.points === b.points;
+          games.push({ season: s.season, week, tie, margin: a.points - b.points,
+            w: { name: s.name(a.roster_id), pts: a.points }, l: { name: s.name(b.roster_id), pts: b.points } });
+          if (tie) { cur.set(a.roster_id, 0); cur.set(b.roster_id, 0); return; }
+          const c = (cur.get(a.roster_id) || 0) + 1;
+          cur.set(a.roster_id, c);
+          if (c > (best.get(a.roster_id) || 0)) best.set(a.roster_id, c);
+          cur.set(b.roster_id, 0);
+        });
+      });
+      if (!any) return;
+      usedSeasons.push(s.season);
+      pf.forEach((v, rid) => seasonPF.push({ season: s.season, current: s.current, name: s.name(rid), pts: v, gp: gp.get(rid) }));
+      best.forEach((v, rid) => streaks.push({ season: s.season, name: s.name(rid), len: v }));
+    });
+    const top = (arr, f) => arr.slice().sort(f).slice(0, 5);
+    const pts = x => x.toFixed(2);
+    const when = x => `${x.season}, week ${x.week}`;
+    const real = games.filter(g => !g.tie);
+    return {
+      seasons: usedSeasons.sort((a, b) => a - b),
+      cards: [
+        { title: 'Highest single-week score', rows: top(scores, (a, b) => b.pts - a.pts).map(x => ({ val: pts(x.pts), who: x.name, when: when(x) })) },
+        { title: 'Lowest single-week score', rows: top(scores, (a, b) => a.pts - b.pts).map(x => ({ val: pts(x.pts), who: x.name, when: when(x) })) },
+        { title: 'Biggest blowout', rows: top(real, (a, b) => b.margin - a.margin).map(g => ({ val: '+' + pts(g.margin), who: `${g.w.name} over ${g.l.name}`, when: `${when(g)}, ${pts(g.w.pts)} to ${pts(g.l.pts)}` })) },
+        { title: 'Closest game', rows: top(real, (a, b) => a.margin - b.margin).map(g => ({ val: '+' + pts(g.margin), who: `${g.w.name} over ${g.l.name}`, when: `${when(g)}, ${pts(g.w.pts)} to ${pts(g.l.pts)}` })) },
+        { title: 'Highest score in a loss', rows: top(real, (a, b) => b.l.pts - a.l.pts).map(g => ({ val: pts(g.l.pts), who: g.l.name, when: `${when(g)}, lost to ${g.w.name}` })) },
+        { title: 'Lowest score in a win', rows: top(real, (a, b) => a.w.pts - b.w.pts).map(g => ({ val: pts(g.w.pts), who: g.w.name, when: `${when(g)}, beat ${g.l.name}` })) },
+        { title: 'Most points in a season', rows: top(seasonPF, (a, b) => b.pts - a.pts).map(x => ({ val: pts(x.pts), who: x.name, when: `${x.season}${x.current && !seasonDone() ? `, in progress (${x.gp} games)` : ''}` })) },
+        { title: 'Longest win streak', rows: top(streaks, (a, b) => b.len - a.len).map(x => ({ val: `${x.len} W`, who: x.name, when: `${x.season} season` })) }
+      ]
+    };
+  }
+
+  function renderRecords(){
+    if (!D.records) {
+      loadRecords();
+      return '<p class="status">Loading league history from Sleeper…</p>';
+    }
+    if (D.records.error) return `<div class="error"><strong>${esc(D.records.error)}</strong><br>Try Refresh.</div>`;
+    const { seasons, cards } = D.records;
+    if (!seasons.length) return '<p class="note">No games have been played yet. Records fill in after week 1 is final.</p>';
+    const span = seasons.length > 1 ? `${seasons.length} seasons (${seasons[0]} to ${seasons[seasons.length - 1]})` : `the ${seasons[0]} season`;
+    let html = `<p class="note">All-time records from completed regular-season games across ${span}. Each card shows the record holder and the next four.</p><div class="rgrid">`;
+    cards.forEach(c => {
+      if (!c.rows.length) return;
+      const [first, ...rest] = c.rows;
+      html += `<article class="rcard"><h3>${esc(c.title)}</h3><div class="rval">${esc(first.val)}</div>
+        <div class="rwho">${esc(first.who)}</div><div class="rwhen">${esc(first.when)}</div>
+        ${rest.length ? `<ol class="rlist">${rest.map(r => `<li><span title="${esc(r.who + ', ' + r.when)}">${esc(r.who)}, ${esc(r.when)}</span><b>${esc(r.val)}</b></li>`).join('')}</ol>` : ''}</article>`;
+    });
+    return html + '</div>';
   }
 
   // ---------- Events ----------
