@@ -150,6 +150,15 @@ td.avgp{font:700 1.15rem "Barlow Condensed","Arial Narrow",sans-serif}
 .dot{display:inline-block;width:20px;height:20px;line-height:20px;border-radius:50%;font:700 .65rem/20px inherit;font-style:normal;margin:0 1px;text-align:center}
 .dot.w{background:var(--accent);color:var(--accent-ink)}.dot.l{background:var(--pylon-soft);color:var(--pylon-ink)}.dot.t{background:var(--line);color:var(--ink)}
 .msingle{max-width:860px;margin:0 auto}
+.mhead{display:grid;grid-template-columns:1fr auto 1fr;align-items:start;gap:8px;padding:12px 0 8px}
+.mside{display:flex;flex-direction:column;gap:4px;min-width:0}
+.mside.l{align-items:flex-start;text-align:left}
+.mside.r{align-items:flex-end;text-align:right}
+.mside .av,.mside .avatar{width:56px;height:56px}
+.mname{font-weight:700;font-size:1.15rem;line-height:1.15;overflow-wrap:anywhere}
+.mside .mscore{font-size:3.4rem;margin-top:4px}
+.mside.win .mscore{color:var(--accent)}
+.mvs{color:var(--muted);font-weight:600;padding-top:20px}
 .mlist.single{display:block;margin-top:0}
 .mlist.single .mcard{padding:12px 24px 18px}
 .mlist.single .mscore{font-size:3.2rem}
@@ -1490,8 +1499,11 @@ footer input{width:min(100%,260px)}
       const ta = team(a.roster_id), tb = team(b.roster_id);
       const thead = `<thead><tr><th class="lh" colspan="2">${esc(ta.name)}<small>${anyPts ? pa.toFixed(2) : '–'}</small></th><th class="lh slot">vs</th><th class="lh r" colspan="2">${esc(tb.name)}<small>${anyPts ? pb.toFixed(2) : '–'}</small></th></tr></thead>`;
       const table = `<div class="lwrap"><table class="ltable">${thead}<tbody>${lineup}</tbody></table></div>`;
-      html += `<article class="mcard">${row(a, pa, winA)}${row(b, pb, winB)}
-        ${open ? table : `<details class="lineups"><summary>Lineups</summary>${table}</details>`}</article>`;
+      const side = (t, pts, win, cls) => `<div class="mside ${cls}${win ? ' win' : ''}">${avatar(t)}<div class="mname">${esc(t.name)}</div><div class="tmeta">${record(t)}</div><div class="mscore">${anyPts ? pts.toFixed(2) : '–'}</div></div>`;
+      const bigHead = `<div class="mhead">${side(ta, pa, winA, 'l')}<div class="mvs">vs</div>${side(tb, pb, winB, 'r')}</div>`;
+      const tableOpen = `<div class="lwrap"><table class="ltable"><tbody>${lineup}</tbody></table></div>`;
+      html += `<article class="mcard">${open ? bigHead : row(a, pa, winA) + row(b, pb, winB)}
+        ${open ? tableOpen : `<details class="lineups"><summary>Lineups</summary>${table}</details>`}</article>`;
     });
     html += open ? '</div></div>' : '</div>';
     ensureNames(ids);
