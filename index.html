@@ -143,6 +143,24 @@ td.avgp{font:700 1.15rem "Barlow Condensed","Arial Narrow",sans-serif}
 .mteam[data-open-match]{cursor:pointer}
 .mteam[data-open-match]:hover .tname{text-decoration:underline}
 .mback{margin-bottom:10px}
+.tfneeds{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 16px}
+.tfn{padding:5px 10px;border-radius:999px;font-size:.8rem;background:var(--surface);border:1px solid var(--line);color:var(--muted)}
+.tfn b{color:var(--ink);margin-right:4px}
+.tfn.need{border-color:var(--pylon);color:var(--pylon-ink)}
+.tfn.surplus{border-color:var(--accent);color:var(--accent)}
+.tflist{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}
+.tfcard{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+.tfhead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}
+.tflab{font-size:.75rem;font-weight:700;padding:4px 8px;border-radius:6px;background:var(--line);white-space:nowrap}
+.tflab.win{background:var(--accent);color:var(--accent-ink)}.tflab.lose{background:var(--pylon-soft);color:var(--pylon-ink)}
+.tfcols{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tfcap{font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:4px}
+.tfcols ul{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.tfcols li{display:grid;grid-template-columns:1fr auto;gap:0 8px;font-size:.88rem}
+.tfcols li .asset-sub{grid-column:1}
+.tfv{grid-row:1/3;grid-column:2;align-self:center;color:var(--accent);font-variant-numeric:tabular-nums}
+.tfsum{margin-top:8px;padding-top:6px;border-top:1px solid var(--line);font-size:.8rem;color:var(--muted)}
+.tfsum b{color:var(--ink)}
 .hs{position:relative;display:inline-flex;align-items:center;justify-content:center;flex:none;width:34px;height:34px;border-radius:50%;background:var(--line);color:var(--muted);font:700 .65rem/1 inherit;overflow:hidden}
 .hs img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;background:var(--line)}
 .plbtn{display:inline-flex;align-items:center;gap:8px;max-width:100%}
@@ -389,6 +407,9 @@ footer input{width:min(100%,260px)}
 (() => {
   const DEFAULT_LEAGUE = '1389350335302078464';
   const API = 'https://api.sleeper.app/v1';
+  // Trade Finder values come from FantasyCalc. If browsers block the direct call, set VALUES_PROXY to your Worker URL.
+  const VALUES_API = 'https://api.fantasycalc.com';
+  const VALUES_PROXY = '';
   // Highlight clips (Highlightly). Set CLIP_API to your Cloudflare Worker URL (recommended, keeps the key private).
   // Leave blank to hide clips entirely.
   const CLIP_API = '';
@@ -421,8 +442,8 @@ footer input{width:min(100%,260px)}
     opts = Object.assign({ tab:'stand', basis:'standings', type:'linear', tiebreak:'pf-low', rounds:null, season:null }, saved);
   }
   function saveOpts(){
-    const { tab, basis, type, tiebreak, rounds, week, buildTeam, tradeTeam } = opts;
-    store.set('opts:' + leagueId, JSON.stringify({ tab, basis, type, tiebreak, rounds, week, buildTeam, tradeTeam }));
+    const { tab, basis, type, tiebreak, rounds, week, buildTeam, tradeTeam, tfTeam, tfTol } = opts;
+    store.set('opts:' + leagueId, JSON.stringify({ tab, basis, type, tiebreak, rounds, week, buildTeam, tradeTeam, tfTeam, tfTol }));
   }
 
   let D = null;
@@ -701,10 +722,10 @@ footer input{width:min(100%,260px)}
         ? `${season} season hasn’t started. ${D.ids.length} teams.`
         : `${season} season, ${playedWeeks} of ${totalWeeks} weeks played. ${D.ids.length} teams.`;
 
-    const tabs = [['stand', 'Standings'], ['order', 'Draft Order'], ['proj', 'Projections'], ['match', 'Matchups'], ['news', 'News Feed'], ['odds', 'Playoff Odds'], ['bracket', 'Playoff Bracket'], ['pay', 'Payouts'], ['rec', 'League Records'], ['mgr', 'Manager Profiles'], ['build', 'Team Construction'], ['own', 'Pick Ownership'], ['trades', 'Trade History'], ['laws', 'League Bylaws']];
+    const tabs = [['stand', 'Standings'], ['order', 'Draft Order'], ['proj', 'Projections'], ['match', 'Matchups'], ['news', 'News Feed'], ['odds', 'Playoff Odds'], ['bracket', 'Playoff Bracket'], ['pay', 'Payouts'], ['rec', 'League Records'], ['mgr', 'Manager Profiles'], ['build', 'Team Construction'], ['own', 'Pick Ownership'], ['trades', 'Trade History'], ['finder', 'Trade Finder'], ['laws', 'League Bylaws']];
     let html = `<nav class="tabs" role="tablist">${tabs.map(([k, l]) =>
       `<button class="tab" role="tab" type="button" data-tab="${k}" aria-selected="${opts.tab === k}">${l}</button>`).join('')}</nav>`;
-    html += opts.tab === 'stand' ? renderStandings() : opts.tab === 'proj' ? renderProj() : opts.tab === 'odds' ? renderOdds() : opts.tab === 'match' ? renderMatchups() : opts.tab === 'news' ? renderNews() : opts.tab === 'bracket' ? renderBracket() : opts.tab === 'pay' ? renderPayouts() : opts.tab === 'rec' ? renderRecords() : opts.tab === 'mgr' ? renderProfiles() : opts.tab === 'build' ? renderBuild() : opts.tab === 'own' ? renderOwn() : opts.tab === 'trades' ? renderTrades() : opts.tab === 'laws' ? renderBylaws() : renderOrder();
+    html += opts.tab === 'stand' ? renderStandings() : opts.tab === 'proj' ? renderProj() : opts.tab === 'odds' ? renderOdds() : opts.tab === 'match' ? renderMatchups() : opts.tab === 'news' ? renderNews() : opts.tab === 'bracket' ? renderBracket() : opts.tab === 'pay' ? renderPayouts() : opts.tab === 'rec' ? renderRecords() : opts.tab === 'mgr' ? renderProfiles() : opts.tab === 'build' ? renderBuild() : opts.tab === 'own' ? renderOwn() : opts.tab === 'trades' ? renderTrades() : opts.tab === 'laws' ? renderBylaws() : opts.tab === 'finder' ? renderFinder() : renderOrder();
     $('#app').innerHTML = html;
   }
 
@@ -843,6 +864,118 @@ footer input{width:min(100%,260px)}
       <h3 class="lawh">The full rules</h3>`;
     html += BYLAWS.map(a => `<details class="law"><summary><span class="lawn">Article ${a.n}</span> ${esc(a.t)}</summary><ol>${a.r.map(([k, v]) => `<li><b>${esc(k)}:</b> ${esc(v)}</li>`).join('')}</ol></details>`).join('');
     html += '<p class="note">By joining or remaining in Dudley Dynasty each owner agrees to abide by these bylaws.</p>';
+    return html;
+  }
+
+  // ---------- Trade Finder (FantasyCalc dynasty values) ----------
+  function fcSettings(){
+    const rp = D.league.roster_positions || [], sc = D.league.scoring_settings || {};
+    const sf = rp.includes('SUPER_FLEX');
+    const rec = typeof sc.rec === 'number' ? sc.rec : 1;
+    return { numQbs: sf ? 2 : 1, numTeams: D.ids.length, ppr: [0, 0.5, 1].reduce((a, b) => Math.abs(b - rec) < Math.abs(a - rec) ? b : a), sf };
+  }
+  async function loadFinder(){
+    if (!D || D.tf || D.tfLoading) return;
+    const myD = D; myD.tfLoading = true;
+    const f = fcSettings();
+    const qs = `isDynasty=true&numQbs=${f.numQbs}&numTeams=${f.numTeams}&ppr=${f.ppr}`;
+    const urls = [VALUES_PROXY ? `${VALUES_PROXY}/values?${qs}` : null, `${VALUES_API}/values/current?${qs}`].filter(Boolean);
+    let raw = null;
+    for (const u of urls) { try { const r = await fetch(u); if (r.ok) { raw = await r.json(); if (Array.isArray(raw) && raw.length) break; } } catch (e) {} }
+    if (!Array.isArray(raw) || !raw.length) { myD.tf = { error: 'Couldn’t load player values from FantasyCalc. Try Refresh in a minute.' }; }
+    else {
+      const players = new Map(), picks = new Map(), pickAgg = new Map();
+      raw.forEach(x => {
+        const pl = x.player || {}, v = Number(x.value) || 0;
+        const pm = /^(\d{4}) (\d+)(?:st|nd|rd|th)(?: \((?:Early|Mid|Late)\))?$/i.exec(pl.name || '');
+        if (pm) { const k = `${pm[1]}-${pm[2]}`; const a = pickAgg.get(k) || [0, 0]; a[0] += v; a[1]++; pickAgg.set(k, a); return; }
+        if (pl.sleeperId != null && v > 0) players.set(String(pl.sleeperId), { id: String(pl.sleeperId), name: pl.name, pos: pl.position, tm: pl.maybeTeam || 'FA', age: pl.maybeAge, v, rank: x.overallRank, trend: x.trend30Day });
+      });
+      pickAgg.forEach((a, k) => picks.set(k, a[0] / a[1]));
+      myD.tf = { players, picks, f };
+    }
+    myD.tfLoading = false;
+    if (D === myD && opts.tab === 'finder') render();
+  }
+
+  function finderModel(){
+    const { players, picks } = D.tf;
+    const rp = D.league.roster_positions || [], cnt = k => rp.filter(x => x === k).length;
+    const need = { QB: cnt('QB') + cnt('SUPER_FLEX'), RB: Math.ceil(cnt('RB') + 0.4 * cnt('FLEX')), WR: Math.ceil(cnt('WR') + 0.4 * cnt('FLEX')), TE: Math.ceil(cnt('TE') + 0.2 * cnt('FLEX')) };
+    const POS = ['QB', 'RB', 'WR', 'TE'];
+    const teams = new Map();
+    (D.rosters || []).forEach(r => {
+      if (r.roster_id == null) return;
+      const assets = [];
+      (r.players || []).forEach(id => { const p = players.get(String(id)); if (p) assets.push({ kind: 'p', key: 'p' + p.id, label: p.name, sub: `${p.pos}, ${p.tm}${p.age ? ', ' + Number(p.age).toFixed(0) : ''}`, pos: p.pos, v: p.v, id: p.id, p }); });
+      D.seasons.forEach(se => { for (let rd = 1; rd <= (opts.rounds || 4); rd++) {
+        const v = picks.get(`${se}-${rd}`); if (!v) continue;
+        D.ids.forEach(orig => { if (ownerOf(se, rd, orig) !== r.roster_id) return;
+          const own = orig === r.roster_id;
+          assets.push({ kind: 'k', key: `k${se}-${rd}-${orig}`, label: `${se} Round ${rd} pick`, sub: own ? 'Own pick' : `From ${team(orig).name}`, pos: null, v }); });
+      } });
+      const strength = {}, depth = {};
+      POS.forEach(pos => { const vs = assets.filter(a => a.pos === pos).map(a => a.v).sort((a, b) => b - a); strength[pos] = vs.slice(0, need[pos]).reduce((t, x) => t + x, 0); depth[pos] = vs.slice(need[pos]).reduce((t, x) => t + x, 0); });
+      const total = assets.reduce((t, a) => t + a.v, 0);
+      teams.set(r.roster_id, { rid: r.roster_id, assets: assets.sort((a, b) => b.v - a.v), strength, depth, total });
+    });
+    const mean = {}; POS.forEach(pos => { mean[pos] = [...teams.values()].reduce((t, x) => t + x.strength[pos], 0) / (teams.size || 1) || 1; });
+    teams.forEach(t => { t.need = {}; POS.forEach(pos => { t.need[pos] = Math.max(-0.5, Math.min(0.5, (mean[pos] - t.strength[pos]) / mean[pos])); }); });
+    return { teams, POS, need };
+  }
+
+  function findTrades(model, me, tol){
+    const mine = model.teams.get(me); if (!mine) return [];
+    const W = [1, 0.7];
+    const pack = arr => arr.slice().sort((a, b) => b.v - a.v).reduce((t, a, i) => t + a.v * W[i], 0);
+    const fit = (t, get, give) => { const tot = get.concat(give).reduce((x, a) => x + a.v, 0) || 1; const f = a => a.pos ? t.need[a.pos] * a.v : 0; return (get.reduce((x, a) => x + f(a), 0) - give.reduce((x, a) => x + f(a), 0)) / tot; };
+    const top = t => t.assets.filter(a => a.v >= 700).slice(0, 14);
+    const combos = list => { const o = list.map(a => [a]); for (let i = 0; i < list.length; i++) for (let j = i + 1; j < list.length; j++) o.push([list[i], list[j]]); return o; };
+    const myTop = top(mine), out = [];
+    const mySingles = myTop.map(a => [a]), myPairs = combos(myTop).filter(c => c.length === 2);
+    model.teams.forEach((them, rid) => {
+      if (rid === me) return;
+      const th = top(them), thSingles = th.map(a => [a]), thPairs = combos(th).filter(c => c.length === 2);
+      const sets = [[mySingles, thSingles], [myPairs, thSingles], [mySingles, thPairs]];
+      const found = [];
+      sets.forEach(([giveSet, getSet]) => giveSet.forEach(give => getSet.forEach(get => {
+        const a = pack(give), b = pack(get), gap = (b - a) / Math.max(a, b);
+        if (Math.abs(gap) > tol) return;
+        const fm = fit(mine, get, give), ft = fit(them, give, get);
+        if (fm <= 0.01 || ft <= 0.01) return;
+        found.push({ rid, give, get, a, b, gap, fm, ft, score: fm + ft - Math.abs(gap) * 1.5 });
+      })));
+      found.sort((x, y) => y.score - x.score);
+      const used = new Set();
+      found.filter(f => { const ks = f.give.concat(f.get).map(x => x.key); if (ks.some(k => used.has(k))) return false; ks.forEach(k => used.add(k)); return true; }).slice(0, 2).forEach(f => out.push(f));
+    });
+    return out.sort((x, y) => y.score - x.score).slice(0, 12);
+  }
+
+  function renderFinder(){
+    if (!D.tf) { loadFinder(); return '<h2 class="sech">Trade Finder</h2><p class="status">Loading dynasty values from FantasyCalc…</p>'; }
+    if (D.tf.error) return `<h2 class="sech">Trade Finder</h2><div class="error"><strong>${esc(D.tf.error)}</strong></div>`;
+    const model = finderModel();
+    const ids = [...model.teams.keys()];
+    if (!ids.length) return '<h2 class="sech">Trade Finder</h2><p class="note">Rosters are empty so far.</p>';
+    const me = ids.includes(opts.tfTeam) ? opts.tfTeam : ids[0];
+    const tolPct = opts.tfTol || 10, tol = tolPct / 100;
+    const f = D.tf.f;
+    const teamOpts = ids.map(r => `<option value="${r}" ${r === me ? 'selected' : ''}>${esc(team(r).name)}</option>`).join('');
+    const tolOpts = [[5, 'Very even (5%)'], [10, 'Close (10%)'], [20, 'Loose (20%)']].map(([v, l]) => `<option value="${v}" ${v === tolPct ? 'selected' : ''}>${l}</option>`).join('');
+    let html = `<h2 class="sech">Trade Finder</h2>
+      <div class="controls"><label class="field">Your team<select data-opt="tfTeam">${teamOpts}</select></label><label class="field">Fairness<select data-opt="tfTol">${tolOpts}</select></label></div>
+      <p class="note">Values from <a href="https://www.fantasycalc.com" target="_blank" rel="noopener noreferrer">FantasyCalc</a>, tuned to this league: ${f.sf ? 'superflex' : '1 QB'}, ${f.numTeams} teams, ${f.ppr === 1 ? 'full' : f.ppr === 0.5 ? 'half' : 'no'} PPR, dynasty. Suggestions pair teams that each fill a position of need and stay within the fairness range. They are estimates, not verdicts.</p>`;
+    const mt = model.teams.get(me);
+    html += `<div class="tfneeds">${model.POS.map(pos => { const n = mt.need[pos]; const lab = n > 0.12 ? 'Need' : n < -0.12 ? 'Surplus' : 'Balanced'; return `<span class="tfn ${lab.toLowerCase()}"><b>${pos}</b> ${lab}</span>`; }).join('')}</div>`;
+    const trades = findTrades(model, me, tol);
+    if (!trades.length) return html + '<p class="note">No trades fit those settings. Try a looser fairness range.</p>';
+    const side = (arr, total) => `<ul>${arr.map(a => `<li><span class="asset-main">${esc(a.label)}</span><span class="asset-sub">${esc(a.sub)}</span><b class="tfv">${Math.round(a.v).toLocaleString()}</b></li>`).join('')}</ul><div class="tfsum">Package value <b>${Math.round(total).toLocaleString()}</b></div>`;
+    html += '<div class="tflist">' + trades.map(t => {
+      const g = t.gap, lab = Math.abs(g) <= 0.03 ? 'Even swap' : g > 0 ? `You gain ~${Math.round(g * 100)}% in value` : `You give ~${Math.round(-g * 100)}% extra value`;
+      return `<article class="tfcard"><div class="tfhead">${teamBlock(team(t.rid), 'Trade partner')}<span class="tflab ${Math.abs(g) <= 0.03 ? 'even' : g > 0 ? 'win' : 'lose'}">${lab}</span></div>
+        <div class="tfcols"><div><div class="tfcap">You send</div>${side(t.give, t.a)}</div><div><div class="tfcap">You get</div>${side(t.get, t.b)}</div></div></article>`;
+    }).join('') + '</div>';
     return html;
   }
 
@@ -2353,7 +2486,7 @@ footer input{width:min(100%,260px)}
     if (!el) return;
     const k = el.dataset.opt;
     const openDetails = !!e.target.closest('details[open]');
-    opts[k] = (k === 'rounds' || k === 'season' || k === 'tradeTeam' || k === 'week' || k === 'buildTeam') ? Number(el.value) : el.value;
+    opts[k] = (k === 'rounds' || k === 'season' || k === 'tradeTeam' || k === 'week' || k === 'buildTeam' || k === 'tfTeam' || k === 'tfTol') ? Number(el.value) : el.value;
     saveOpts();
     if (k === 'tiebreak') runSim();
     if (k === 'buildTeam') opts.nflFilter = null;
