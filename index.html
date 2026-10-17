@@ -153,7 +153,14 @@ td.avgp{font:700 1.15rem "Barlow Condensed","Arial Narrow",sans-serif}
 @media (max-width:700px){.ccols{grid-template-columns:1fr}}
 .ccol{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px;min-width:0}
 .ctitle{margin-bottom:8px}
-.cadd{width:100%;margin:6px 0 10px;padding:9px 10px;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:6px;font:inherit}
+.csearch{position:relative;margin:6px 0 10px}
+.cadd{width:100%;padding:9px 10px;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:6px;font:inherit}
+.cadd:focus{outline:2px solid var(--accent);outline-offset:1px}
+.csug{position:absolute;z-index:20;left:0;right:0;top:100%;margin:4px 0 0;padding:4px;list-style:none;background:var(--surface);border:1px solid var(--muted);border-radius:8px;box-shadow:0 8px 22px rgba(0,0,0,.4);max-height:340px;overflow:auto}
+.csug[hidden]{display:none}
+.csug button{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:8px;width:100%;padding:6px 8px;background:none;border:0;border-radius:6px;color:inherit;font:inherit;font-size:.88rem;text-align:left;cursor:pointer}
+.csug button:hover,.csug button:focus-visible{background:var(--line)}
+.csnone{padding:8px}
 .clist{list-style:none;margin:0;padding:0;display:grid;gap:8px}
 .clist li{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;align-items:center;gap:8px;font-size:.88rem}
 .cx{background:none;border:1px solid var(--line);color:var(--muted);border-radius:6px;width:28px;height:28px;cursor:pointer}
@@ -1044,18 +1051,17 @@ footer input{width:min(100%,260px)}
     const stOpts = cur => [['balanced', 'Balanced'], ['contend', 'Contend now'], ['rebuild', 'Rebuild']].map(([v, l]) => `<option value="${v}" ${cur === v ? 'selected' : ''}>${l}</option>`).join('');
     const sideHtml = (k, list, other) => {
       const t = model.teams.get(C[k].rid);
-      const avail = t.assets.filter(a => !C[k].items.includes(a.key));
-      const teamOpts = ids.map(r => `<option value="${r}" ${r === C[k].rid ? 'selected' : ''}>${esc(team(r).name)}</option>`).join('');
-      const addOpts = '<option value="">Add a player or pick…</option>' + avail.map(a => `<option value="${esc(a.key)}">${esc(a.label)} (${esc(a.sub)}) · ${Math.round(a.v).toLocaleString()}</option>`).join('');
+            const teamOpts = ids.map(r => `<option value="${r}" ${r === C[k].rid ? 'selected' : ''}>${esc(team(r).name)}</option>`).join('');
       const items = list.length ? list.map(a => `<li>${a.kind === 'p' ? shot(a.id, a.pos, a.p.tm, a.label) : '<span class="hs pick" aria-hidden="true">PK</span>'}<span class="tfn2"><span class="asset-main">${esc(a.label)}</span><span class="asset-sub">${esc(a.sub)}</span></span><b class="tfv">${Math.round(a.v).toLocaleString()}</b><button type="button" class="cx" data-calc-rm="${k}" data-key="${esc(a.key)}" aria-label="Remove ${esc(a.label)}">✕</button></li>`).join('') : '<li class="asset-sub">Nothing added yet</li>';
       return `<div class="ccol"><div class="ctitle">${teamBlock(team(C[k].rid), k === 'a' ? 'Team A sends' : 'Team B sends')}</div>
         <div class="controls"><label class="field">Team<select data-calc-team="${k}">${teamOpts}</select></label><label class="field">Strategy<select data-calc-st="${k}">${stOpts(C[k].st)}</select></label></div>
-        <select class="cadd" data-calc-add="${k}" aria-label="Add asset">${addOpts}</select>
+        <div class="csearch"><input type="search" class="cadd" data-calc-search="${k}" placeholder="Search ${esc(team(C[k].rid).name)}’s players or picks…" aria-label="Search players or picks" autocomplete="off"><ul class="csug" data-sug="${k}" hidden></ul></div>
         <ul class="clist">${items}</ul><div class="tfsum">Raw value <b>${Math.round(list.reduce((x, a) => x + a.v, 0)).toLocaleString()}</b></div></div>`;
     };
     let html = `<h2 class="sech">Trade Calculator</h2>
       <p class="note">Pick two teams, add what each side sends, and see who wins. Values from <a href="https://www.fantasycalc.com" target="_blank" rel="noopener noreferrer">FantasyCalc</a>, tuned to this league (${f.sf ? 'superflex' : '1 QB'}, ${f.numTeams} teams, ${f.ppr === 1 ? 'full' : f.ppr === 0.5 ? 'half' : 'no'} PPR, dynasty). Extra players in a package count for less than their full value, since they cost a roster spot.</p>
       <div class="ccols">${sideHtml('a', A)}${sideHtml('b', B)}</div>`;
+    if (D.calcFocus) { const k = D.calcFocus; D.calcFocus = null; setTimeout(() => { const i = document.querySelector(`[data-calc-search="${k}"]`); if (i) i.focus(); }, 0); }
     if (!A.length && !B.length) return html + '<p class="note">Add players or picks to either side to see the verdict.</p>';
     const send = pkgVal(A), recv = pkgVal(B);
     const gap = (recv - send) / (Math.max(send, recv) || 1);
@@ -2554,6 +2560,9 @@ footer input{width:min(100%,260px)}
   $('#app').addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('[data-open-match]')) { e.preventDefault(); e.target.click(); } });
   $('#app').addEventListener('click', e => {
     document.querySelectorAll('.tabgroup.open').forEach(g => { if (!g.contains(e.target)) g.classList.remove('open'); });
+    const cpick = e.target.closest('[data-calc-pick]');
+    if (cpick) { const k = cpick.dataset.calcPick; D.calc[k].items.push(cpick.dataset.key); D.calcFocus = k; render(); return; }
+    if (!e.target.closest('.csearch')) document.querySelectorAll('.csug').forEach(u => { u.hidden = true; });
     const crm = e.target.closest('[data-calc-rm]');
     if (crm) { const it = D.calc[crm.dataset.calcRm].items; it.splice(it.indexOf(crm.dataset.key), 1); render(); return; }
     const grp = e.target.closest('[data-group]');
@@ -2578,9 +2587,8 @@ footer input{width:min(100%,260px)}
     }
   });
   $('#app').addEventListener('change', e => {
-    const cadd = e.target.closest('[data-calc-add]'), cteam = e.target.closest('[data-calc-team]'), cst = e.target.closest('[data-calc-st]');
+    const cadd = null, cteam = e.target.closest('[data-calc-team]'), cst = e.target.closest('[data-calc-st]');
     if (cadd || cteam || cst) {
-      if (cadd && cadd.value) D.calc[cadd.dataset.calcAdd].items.push(cadd.value);
       if (cteam) D.calc[cteam.dataset.calcTeam] = { rid: Number(cteam.value), items: [], st: D.calc[cteam.dataset.calcTeam].st };
       if (cst) D.calc[cst.dataset.calcSt].st = cst.value;
       render(); return;
@@ -2595,6 +2603,26 @@ footer input{width:min(100%,260px)}
     if (k === 'buildTeam') opts.nflFilter = null;
     render();
     if (openDetails) { const d = document.querySelector('details.more'); if (d) d.open = true; }
+  });
+
+  // Trade Calculator search box: type to find a player or pick on the chosen team.
+  function calcSuggest(input){
+    const k = input.dataset.calcSearch, ul = document.querySelector(`[data-sug="${k}"]`);
+    if (!ul || !D || !D.calc || !D.tf || D.tf.error) return;
+    const t = finderModel().teams.get(D.calc[k].rid); if (!t) return;
+    const q = input.value.trim().toLowerCase();
+    const words = q.split(/\s+/).filter(Boolean);
+    const list = t.assets.filter(a => !D.calc[k].items.includes(a.key))
+      .filter(a => !words.length || words.every(w => `${a.label} ${a.sub}`.toLowerCase().includes(w))).slice(0, 8);
+    ul.innerHTML = list.length ? list.map(a => `<li><button type="button" data-calc-pick="${k}" data-key="${esc(a.key)}">${a.kind === 'p' ? shot(a.id, a.pos, a.p.tm, a.label) : '<span class="hs pick" aria-hidden="true">PK</span>'}<span class="tfn2"><span class="asset-main">${esc(a.label)}</span><span class="asset-sub">${esc(a.sub)}</span></span><b class="tfv">${Math.round(a.v).toLocaleString()}</b></button></li>`).join('') : '<li class="asset-sub csnone">No match on this roster</li>';
+    ul.hidden = false;
+  }
+  $('#app').addEventListener('input', e => { if (e.target.matches('[data-calc-search]')) calcSuggest(e.target); });
+  $('#app').addEventListener('focusin', e => { if (e.target.matches('[data-calc-search]')) calcSuggest(e.target); });
+  $('#app').addEventListener('keydown', e => {
+    if (!e.target.matches('[data-calc-search]')) return;
+    if (e.key === 'Enter') { e.preventDefault(); const b = document.querySelector(`[data-sug="${e.target.dataset.calcSearch}"] [data-calc-pick]`); if (b) b.click(); }
+    if (e.key === 'Escape') { document.querySelectorAll('.csug').forEach(u => { u.hidden = true; }); }
   });
   $('#refresh').addEventListener('click', load);
   $('#leagueForm').addEventListener('submit', e => {
