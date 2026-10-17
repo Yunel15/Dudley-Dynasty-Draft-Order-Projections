@@ -1137,12 +1137,10 @@ footer input{width:min(100%,260px)}
     if (!D.news) { loadNews(); return '<p class="status">Checking with league sources…</p>'; }
     if (D.news.error) return `<div class="error"><strong>${esc(D.news.error)}</strong><br>Try Refresh.</div>`;
     const { posts: allPosts } = D.news;
-    const nf = opts.newsFilter || 'all';
-    const posts = allPosts.filter(p => nf === 'all' || p.author === nf);
+    const posts = allPosts;
     if (!posts.length) return '<p class="note">No news yet. Posts show up once Week 1 is final.</p>';
     let html = `<p class="note">Parody league coverage, generated automatically from Sleeper results. Every account is fictional and not affiliated with any real person, and all quotes and “sources” are made up. ${esc(ROAST.handle)} roasts managers using each week’s stat lines for players on league rosters (recent weeks only), so it covers weekly turnover totals, not individual plays.</p>
-      <div class="controls"><div class="seg wrap" role="group">${[['all', 'All posts'], ['adam', REPORTER.handle], ['roast', ROAST.handle], ['coach', COACH.handle], ['analyst', ANALYST.handle]].map(([k, l]) =>
-        `<button type="button" data-newsf="${k}" aria-pressed="${nf === k}">${esc(l)}</button>`).join('')}</div></div><div class="feed">`;
+      <div class="feed">`;
     let lastWeek = null;
     posts.forEach(p => {
       if (p.week !== lastWeek) { html += `<h3 class="feedwk">Week ${p.week}</h3>`; lastWeek = p.week; }
@@ -1781,8 +1779,6 @@ footer input{width:min(100%,260px)}
     if (b) { opts.basis = b.dataset.basis; saveOpts(); render(); return; }
     const br = e.target.closest('[data-side]');
     if (br) { opts.bracketSide = br.dataset.side; render(); return; }
-    const nfb = e.target.closest('[data-newsf]');
-    if (nfb) { opts.newsFilter = nfb.dataset.newsf; render(); return; }
     const wk = e.target.closest('[data-week-step]');
     if (wk) {
       const w = (opts.week || D.defWeek) + Number(wk.dataset.weekStep);
