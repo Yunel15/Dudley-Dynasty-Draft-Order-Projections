@@ -182,6 +182,19 @@ td.pos{color:var(--accent);font-weight:600}
 td.neg{color:var(--pylon-ink);font-weight:600}
 td.tags{white-space:normal;min-width:160px;text-align:left;color:var(--muted);font-size:.8rem}
 
+/* News feed */
+.feed{max-width:620px;margin-top:10px}
+.feedwk{margin:22px 0 8px;font:700 1.3rem/1 "Barlow Condensed","Arial Narrow",sans-serif;color:var(--muted)}
+.post{display:flex;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:10px}
+.pav{width:42px;height:42px;flex:none;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:var(--accent-ink);font:700 1rem "Barlow Condensed","Arial Narrow",sans-serif}
+.pbody{min-width:0;flex:1}
+.phead{display:flex;align-items:center;gap:5px;flex-wrap:wrap;font-size:.92rem}
+.pcheck{display:inline-grid;place-items:center;width:15px;height:15px;border-radius:50%;background:#1D9BF0;color:#fff;font-size:.6rem;font-weight:700}
+.phandle{color:var(--muted)}
+.ptext{margin:4px 0 10px;line-height:1.45;overflow-wrap:anywhere}
+.ptext b{color:var(--ink)}
+.pacts{display:flex;gap:26px;font-size:.82rem;color:var(--muted)}
+
 /* Manager profiles */
 .pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:12px;margin-top:14px}
 .pcard{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:16px;min-width:0}
@@ -386,7 +399,7 @@ footer input{width:min(100%,260px)}
       let players = {};
       try { players = JSON.parse(store.get('playerNames') || '{}'); } catch (e) {}
 
-      D = { league, season, teams, ids, tradedMap, seasons, draftSeason: seasons[0], median, startWeek, lastReg, firstOpen, hist, remaining, schedUnknown, completedWeeks, records: null, recordsLoading: false, trades: null, tradesLoading: false, profiles: null, profilesLoading: false, money: null, moneyLoading: false, historyPromise: null, rosters, users,
+      D = { league, season, teams, ids, tradedMap, seasons, draftSeason: seasons[0], median, startWeek, lastReg, firstOpen, hist, remaining, schedUnknown, completedWeeks, records: null, recordsLoading: false, trades: null, tradesLoading: false, profiles: null, profilesLoading: false, money: null, moneyLoading: false, news: null, newsLoading: false, historyPromise: null, rosters, users,
         playoff: { teams: pTeams, rounds: pRounds, type: pType, start: pws, lastWeek }, defWeek, weekData, weekLoading: new Set(), bracket: null, bracketLoading: false, players, namesLoading: false };
       if (!seasons.includes(opts.season)) opts.season = D.draftSeason;
       runSim();
@@ -543,10 +556,10 @@ footer input{width:min(100%,260px)}
         ? `${season} season hasn’t started. ${D.ids.length} teams.`
         : `${season} season, ${playedWeeks} of ${totalWeeks} weeks played. ${D.ids.length} teams.`;
 
-    const tabs = [['order', 'Draft Order'], ['proj', 'Projections'], ['match', 'Matchups'], ['odds', 'Playoff Odds'], ['bracket', 'Playoff Bracket'], ['pay', 'Payouts'], ['rec', 'League Records'], ['mgr', 'Manager Profiles'], ['own', 'Pick Ownership'], ['trades', 'Trade History']];
+    const tabs = [['order', 'Draft Order'], ['proj', 'Projections'], ['match', 'Matchups'], ['news', 'News Feed'], ['odds', 'Playoff Odds'], ['bracket', 'Playoff Bracket'], ['pay', 'Payouts'], ['rec', 'League Records'], ['mgr', 'Manager Profiles'], ['own', 'Pick Ownership'], ['trades', 'Trade History']];
     let html = `<nav class="tabs" role="tablist">${tabs.map(([k, l]) =>
       `<button class="tab" role="tab" type="button" data-tab="${k}" aria-selected="${opts.tab === k}">${l}</button>`).join('')}</nav>`;
-    html += opts.tab === 'proj' ? renderProj() : opts.tab === 'odds' ? renderOdds() : opts.tab === 'match' ? renderMatchups() : opts.tab === 'bracket' ? renderBracket() : opts.tab === 'pay' ? renderPayouts() : opts.tab === 'rec' ? renderRecords() : opts.tab === 'mgr' ? renderProfiles() : opts.tab === 'own' ? renderOwn() : opts.tab === 'trades' ? renderTrades() : renderOrder();
+    html += opts.tab === 'proj' ? renderProj() : opts.tab === 'odds' ? renderOdds() : opts.tab === 'match' ? renderMatchups() : opts.tab === 'news' ? renderNews() : opts.tab === 'bracket' ? renderBracket() : opts.tab === 'pay' ? renderPayouts() : opts.tab === 'rec' ? renderRecords() : opts.tab === 'mgr' ? renderProfiles() : opts.tab === 'own' ? renderOwn() : opts.tab === 'trades' ? renderTrades() : renderOrder();
     $('#app').innerHTML = html;
   }
 
@@ -822,6 +835,209 @@ footer input{width:min(100%,260px)}
     html += '</tbody></table></div>';
     html += `<p class="note">Teams above the line are in the top ${k} by playoff odds. Percentages are simulation estimates, so 100% means every simulated season, not a mathematical clinch.</p>`;
     return html;
+  }
+
+  // ---------- News feed ----------
+  const REPORTER = { name: 'Dudley Insider', handle: '@DudleyInsider', initials: 'DI' };
+  function hashStr(str){ let h = 2166136261; for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+  const choose = (arr, key) => arr[hashStr(key) % arr.length];
+  const B = t => `<b>${esc(t)}</b>`;
+  const p2 = x => x.toFixed(2);
+
+  async function loadNews(){
+    if (!D || D.news || D.newsLoading) return;
+    const myD = D;
+    myD.newsLoading = true;
+    try {
+      if (!myD.trades) await loadTrades();
+      for (let i = 0; i < 100 && myD.tradesLoading; i++) await new Promise(r => setTimeout(r, 150));
+      const posts = [];
+      const add = (week, kind, html, key) => posts.push({ week, kind, html, key: key || `${week}-${kind}-${posts.length}` });
+      const rec = new Map(myD.ids.map(r => [r, { w: 0, l: 0, t: 0, streak: 0 }]));
+      const recTxt = r => `${r.w}-${r.l}${r.t ? '-' + r.t : ''}`;
+      const pct = r => { const g = r.w + r.l + r.t; return g ? (r.w + 0.5 * r.t) / g : 0.5; };
+      let seasonHigh = 0;
+
+      // Player names for lineup stories
+      const ids = new Set();
+      myD.completedWeeks.forEach(({ list }) => list.forEach(m => (m.players || []).forEach(id => ids.add(id))));
+      if (ids.size) myD.players = await playerNames([...ids]);
+      const info = id => pname(id) || { nm: 'a player', pos: '', tm: '' };
+
+      myD.completedWeeks.slice().sort((a, b) => a.week - b.week).forEach(({ week: w, list }) => {
+        const valid = list.filter(m => typeof m.points === 'number' && rec.has(m.roster_id));
+        if (!valid.some(m => m.points > 0)) return;
+        const name = rid => team(rid).name;
+        const sorted = valid.slice().sort((a, b) => b.points - a.points);
+        const top = sorted[0], low = sorted[sorted.length - 1];
+
+        if (top.points > seasonHigh && seasonHigh > 0) {
+          add(w, 'high', choose([
+            `🚨 BREAKING: ${B(name(top.roster_id))} just dropped <b>${p2(top.points)}</b> in Week ${w}, the highest score of the ${myD.season} season. The commissioner is reportedly reviewing the tape.`,
+            `🚨 Season high: ${B(name(top.roster_id))} puts up <b>${p2(top.points)}</b>. Per league sources, the rest of the league has been notified and is “processing.”`
+          ], `${w}high`));
+        } else {
+          add(w, 'top', choose([
+            `🚨 ${B(name(top.roster_id))} posted <b>${p2(top.points)}</b> in Week ${w}, the top score in the league. Sources say opposing managers have stopped answering their phones.`,
+            `${B(name(top.roster_id))} drops <b>${p2(top.points)}</b> this week. League sources describe the performance as “disrespectful.”`,
+            `Team of the Week: ${B(name(top.roster_id))} with <b>${p2(top.points)}</b>. Per sources, a parade route is already being discussed.`,
+            `${B(name(top.roster_id))} was the league’s highest scorer in Week ${w} at <b>${p2(top.points)}</b>. Sources say the manager has started referring to themselves in the third person.`
+          ], `${w}top`));
+        }
+        seasonHigh = Math.max(seasonHigh, top.points);
+        add(w, 'low', choose([
+          `${B(name(low.roster_id))} managed just <b>${p2(low.points)}</b> in Week ${w}, the lowest in the league. Sources say the lineup may have been set by a raccoon.`,
+          `Rough week for ${B(name(low.roster_id))}: <b>${p2(low.points)}</b> points. Per sources, the front office is “evaluating all options,” including a full rebuild.`,
+          `${B(name(low.roster_id))} scored <b>${p2(low.points)}</b> in Week ${w}. Team officials declined to comment, and the group chat has gone quiet.`,
+          `Per sources, ${B(name(low.roster_id))}’s <b>${p2(low.points)}</b> this week has been flagged for review by the league’s integrity committee.`
+        ], `${w}low`));
+
+        const groups = new Map();
+        valid.forEach(m => { if (m.matchup_id == null) return; if (!groups.has(m.matchup_id)) groups.set(m.matchup_id, []); groups.get(m.matchup_id).push(m); });
+        const games = [...groups.values()].filter(g => g.length === 2).map(g => {
+          const [a, b] = g[0].points >= g[1].points ? g : [g[1], g[0]];
+          return { W: a, L: b, margin: a.points - b.points, tie: a.points === b.points,
+            preW: { ...rec.get(a.roster_id) }, preL: { ...rec.get(b.roster_id) } };
+        });
+        const real = games.filter(g => !g.tie);
+        if (real.length) {
+          const blow = real.slice().sort((a, b) => b.margin - a.margin)[0];
+          if (blow.margin >= 30) add(w, 'blowout', choose([
+            `${B(name(blow.W.roster_id))} beat ${B(name(blow.L.roster_id))} by <b>${p2(blow.margin)}</b> (${p2(blow.W.points)} to ${p2(blow.L.points)}). Sources describe the ${esc(name(blow.L.roster_id))} locker room as “a ghost town.”`,
+            `Not close: ${B(name(blow.W.roster_id))} over ${B(name(blow.L.roster_id))}, ${p2(blow.W.points)} to ${p2(blow.L.points)}. Per sources, the mercy rule was discussed but ultimately rejected.`,
+            `${B(name(blow.W.roster_id))} wins by <b>${p2(blow.margin)}</b> over ${B(name(blow.L.roster_id))}. League sources say the matchup was “over by Sunday at 1pm.”`
+          ], `${w}blow`));
+          const close = real.slice().sort((a, b) => a.margin - b.margin)[0];
+          if (close.margin < 5) add(w, 'close', choose([
+            `Instant classic: ${B(name(close.W.roster_id))} edges ${B(name(close.L.roster_id))}, ${p2(close.W.points)} to ${p2(close.L.points)}. A <b>${p2(close.margin)}</b>-point margin. Sources say at least one manager has not slept since Monday night.`,
+            `${B(name(close.W.roster_id))} survives ${B(name(close.L.roster_id))} by <b>${p2(close.margin)}</b>. Per sources, ${esc(name(close.L.roster_id))} is “replaying every lineup decision in their head.”`
+          ], `${w}close`));
+          const upsets = real.filter(g => (g.preW.w + g.preW.l + g.preW.t) > 0 && pct(g.preL) - pct(g.preW) >= 0.25)
+            .sort((a, b) => (pct(b.preL) - pct(b.preW)) - (pct(a.preL) - pct(a.preW)));
+          if (upsets[0]) {
+            const u = upsets[0];
+            add(w, 'upset', choose([
+              `UPSET ALERT: ${B(name(u.W.roster_id))} (${recTxt(u.preW)}) knocks off ${B(name(u.L.roster_id))} (${recTxt(u.preL)}), ${p2(u.W.points)} to ${p2(u.L.points)}. Vegas is reportedly furious.`,
+              `Stunner: ${B(name(u.W.roster_id))} (${recTxt(u.preW)}) takes down ${B(name(u.L.roster_id))} (${recTxt(u.preL)}). Per sources, nobody saw this coming, including ${esc(name(u.W.roster_id))}.`
+            ], `${w}upset`));
+          }
+
+          // Lineup blunders: a bench player at the same position would have flipped the result
+          let worst = null;
+          real.forEach(g => {
+            const m = g.L, pp = m.players_points || {}, starters = (m.starters || []);
+            const bench = (m.players || []).filter(id => !starters.includes(id));
+            starters.forEach(sid => {
+              const sPts = sid === '0' ? 0 : (pp[sid] || 0);
+              const sPos = sid === '0' ? null : info(sid).pos;
+              bench.forEach(bid => {
+                const bi = info(bid);
+                if (sid !== '0' && bi.pos !== sPos) return;
+                if (sid === '0' && !bi.pos) return;
+                const gain = (pp[bid] || 0) - sPts;
+                if (gain > g.margin && (!worst || gain > worst.gain)) worst = { g, sid, bid, gain, sPts, bPts: pp[bid] || 0 };
+              });
+            });
+          });
+          if (worst) {
+            const t = B(name(worst.g.L.roster_id)), bp = info(worst.bid);
+            add(w, 'blunder', worst.sid === '0'
+              ? `Ouch. ${t} left a lineup spot <b>empty</b> and lost by ${p2(worst.g.margin)}. ${esc(bp.nm)} scored ${p2(worst.bPts)} on their bench. Sources say the manager is “aware.”`
+              : choose([
+                `Ouch. ${t} benched ${esc(bp.nm)} (<b>${p2(worst.bPts)}</b>) and started ${esc(info(worst.sid).nm)} (${p2(worst.sPts)}). They lost by ${p2(worst.g.margin)}. Sources say the manager is “aware.”`,
+                `Per sources, ${t} is still thinking about ${esc(bp.nm)}’s <b>${p2(worst.bPts)}</b> points on the bench in a ${p2(worst.g.margin)}-point loss. Start/sit decisions are under internal review.`
+              ], `${w}blunder`));
+          }
+        }
+
+        games.forEach(g => {
+          [[g.W, g.tie ? 't' : 'w'], [g.L, g.tie ? 't' : 'l']].forEach(([m, r]) => {
+            const R = rec.get(m.roster_id);
+            if (r === 'w') { R.w++; R.streak = R.streak > 0 ? R.streak + 1 : 1; }
+            else if (r === 'l') { R.l++; R.streak = R.streak < 0 ? R.streak - 1 : -1; }
+            else { R.t++; R.streak = 0; }
+          });
+        });
+        games.forEach(g => [g.W, g.L].forEach(m => {
+          const R = rec.get(m.roster_id), n = Math.abs(R.streak), t = B(name(m.roster_id));
+          if (R.streak >= 3) add(w, 'streak', choose([
+            `${t} has won <b>${n} straight</b> and sits at ${recTxt(R)}. League sources believe they are the team to beat, and nobody is arguing right now.`,
+            `${n} in a row for ${t}. Per sources, the manager has begun “casually” bringing up the trophy in the group chat.`
+          ], `${w}ws${m.roster_id}`));
+          if (R.streak <= -3) add(w, 'skid', choose([
+            `${t} has now lost <b>${n} in a row</b> and falls to ${recTxt(R)}. Per sources, scouting for the ${D.draftSeason} rookie draft has begun in earnest.`,
+            `Losing streak hits ${n} for ${t}. Sources say the team is “fully committed to the process,” whatever that means.`
+          ], `${w}ls${m.roster_id}`));
+        }));
+      });
+
+      // Trades
+      (myD.trades && myD.trades.list || []).filter(x => x.L.current).forEach(({ t }) => {
+        const pl = myD.trades.players || {};
+        const sides = (t.roster_ids || []).map(rid => {
+          const got = [];
+          Object.entries(t.adds || {}).forEach(([pid, to]) => { if (to === rid) got.push(esc((pl[pid] || pid).split('|')[0])); });
+          (t.draft_picks || []).forEach(dp => { if (dp.owner_id === rid) got.push(`a ${esc(dp.season)} ${ordinal(dp.round)}`); });
+          (t.waiver_budget || []).forEach(x => { if (x.receiver === rid) got.push(`$${esc(x.amount)} FAAB`); });
+          return { rid, got };
+        });
+        const list = a => a.length <= 1 ? (a[0] || 'nothing') : a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1];
+        let html;
+        if (sides.length === 2) {
+          const [a, b] = sides;
+          html = choose([
+            `🚨 Trade: ${B(team(a.rid).name)} acquires ${list(a.got)} from ${B(team(b.rid).name)} for ${list(b.got)}, per league sources.`,
+            `🚨 Blockbuster: ${B(team(b.rid).name)} is sending ${list(a.got)} to ${B(team(a.rid).name)} in exchange for ${list(b.got)}. Sources call it a “franchise-altering move” for at least one of them.`
+          ], t.transaction_id);
+        } else {
+          html = `🚨 ${sides.length}-team trade, per league sources: ${sides.map(x => `${B(team(x.rid).name)} gets ${list(x.got)}`).join('; ')}.`;
+        }
+        add(t.leg || D.startWeek, 'trade', html, t.transaction_id);
+      });
+
+      // Preview of the next week
+      const next = myD.remaining[0];
+      if (next && next.pairs.length && myD.sim && myD.sim.means) {
+        const idx = new Map(myD.ids.map((r, i) => [r, i]));
+        const gotw = next.pairs.slice().sort((x, y) => (pct(rec.get(y[0])) + pct(rec.get(y[1]))) - (pct(rec.get(x[0])) + pct(rec.get(x[1]))))[0];
+        const [a, b] = gotw;
+        const diff = myD.sim.means[idx.get(a)] - myD.sim.means[idx.get(b)];
+        const z = diff / (myD.sim.sd * Math.SQRT2);
+        const erf = x => { const t = 1 / (1 + 0.3275911 * Math.abs(x)); const y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x); return x >= 0 ? y : -y; };
+        const pa = 0.5 * (1 + erf(z));
+        const [fav, dog, pf] = pa >= 0.5 ? [a, b, pa] : [b, a, 1 - pa];
+        add(next.week, 'preview', `📺 Game of the Week ${next.week}: ${B(team(a).name)} (${recTxt(rec.get(a))}) vs ${B(team(b).name)} (${recTxt(rec.get(b))}). Sources expect playoff intensity. The model gives ${esc(team(fav).name)} a <b>${Math.round(pf * 100)}%</b> chance; ${esc(team(dog).name)} has reportedly printed that number and taped it to the fridge.`, `prev${next.week}`);
+      }
+
+      const kindOrder = ['preview', 'trade', 'high', 'top', 'upset', 'blowout', 'close', 'blunder', 'streak', 'skid', 'low'];
+      posts.sort((x, y) => (y.week - x.week) || (kindOrder.indexOf(x.kind) - kindOrder.indexOf(y.kind)));
+      myD.news = { posts };
+    } catch (e) {
+      myD.news = { error: e.message || 'Couldn’t build the news feed.' };
+    } finally {
+      myD.newsLoading = false;
+      if (D === myD && opts.tab === 'news') render();
+    }
+  }
+
+  function renderNews(){
+    if (!D.news) { loadNews(); return '<p class="status">Checking with league sources…</p>'; }
+    if (D.news.error) return `<div class="error"><strong>${esc(D.news.error)}</strong><br>Try Refresh.</div>`;
+    const { posts } = D.news;
+    if (!posts.length) return '<p class="note">No news yet. Posts show up once Week 1 is final.</p>';
+    let html = `<p class="note">Satirical league coverage from ${esc(REPORTER.name)}, generated automatically from Sleeper results. All quotes and “sources” are made up.</p><div class="feed">`;
+    let lastWeek = null;
+    posts.forEach(p => {
+      if (p.week !== lastWeek) { html += `<h3 class="feedwk">Week ${p.week}</h3>`; lastWeek = p.week; }
+      const h = hashStr(p.key);
+      const likes = 20 + h % 480, reposts = 3 + (h >> 9) % 90, replies = 1 + (h >> 17) % 60;
+      html += `<article class="post"><span class="pav" aria-hidden="true">${REPORTER.initials}</span><div class="pbody">
+        <div class="phead"><b>${esc(REPORTER.name)}</b><span class="pcheck" aria-label="verified">✓</span><span class="phandle">${esc(REPORTER.handle)} · Wk ${p.week}</span></div>
+        <p class="ptext">${p.html}</p>
+        <div class="pacts" aria-hidden="true"><span>💬 ${replies}</span><span>🔁 ${reposts}</span><span>♡ ${likes}</span></div>
+      </div></article>`;
+    });
+    return html + '</div>';
   }
 
   // ---------- Week data and player names ----------
