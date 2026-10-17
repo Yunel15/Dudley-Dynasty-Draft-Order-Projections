@@ -1596,6 +1596,86 @@ footer input{width:min(100%,260px)}
         }
       });
 
+      // Waiver wire, free agents and drops (current league only)
+      try {
+        const lastLeg = Math.max(myD.defWeek || 1, myD.firstOpen || 1);
+        const txWeeks = await Promise.all([...Array(Math.min(19, lastLeg + 1)).keys()].map(w => w < 1 ? Promise.resolve([]) : getJSON(`/league/${leagueId}/transactions/${w}`).catch(() => [])));
+        const txs = txWeeks.flat().filter(t => t && (t.type === 'waiver' || t.type === 'free_agent') && t.status === 'complete');
+        const txIds = new Set();
+        txs.forEach(t => { Object.keys(t.adds || {}).forEach(id => txIds.add(id)); Object.keys(t.drops || {}).forEach(id => txIds.add(id)); });
+        if (txIds.size) myD.players = await playerNames([...txIds]);
+        const budget = Number((myD.league.settings || {}).waiver_budget) || 0;
+        const tname = rid => B(team(rid).name);
+        const pfull = pid => { const i = pname(pid); return i ? `${B(i.nm)}${i.pos ? ` (${esc([i.pos, i.tm].filter(Boolean).join(', '))})` : ''}` : B('a player'); };
+        const spent = new Map(myD.ids.map(r => [r, 0]));
+        const byWeek = new Map();
+        txs.forEach(t => {
+          const w = t.leg || 0; if (w < 1) return;
+          const adds = Object.entries(t.adds || {}), drops = Object.entries(t.drops || {});
+          const bid = t.type === 'waiver' ? Number((t.settings || {}).waiver_bid) || 0 : 0;
+          const rid = (adds[0] || drops[0] || [])[1]; if (rid == null) return;
+          if (t.type === 'waiver' && adds[0]) spent.set(rid, (spent.get(rid) || 0) + bid);
+          if (!byWeek.has(w)) byWeek.set(w, []);
+          byWeek.get(w).push({ t, rid, bid, add: adds[0] && adds[0][0], drop: drops[0] && drops[0][0], type: t.type, ts: t.status_updated || t.created || 0 });
+        });
+        const pctB = b => budget ? Math.round(100 * b / budget) : 0;
+        byWeek.forEach((list, w) => {
+          const claims = list.filter(x => x.type === 'waiver' && x.add).sort((a, b) => b.bid - a.bid);
+          const top = claims[0];
+          if (top) {
+            const k = `${w}wv${top.t.transaction_id}`;
+            add(w, 'waiver', top.bid > 0 ? choose([
+              `🚨 WAIVER WIRE: ${tname(top.rid)} wins the bidding for ${pfull(top.add)} with a <b>$${top.bid}</b> FAAB bid${budget ? ` (${pctB(top.bid)}% of the budget)` : ''}, per league sources.`,
+              `🚨 ${tname(top.rid)} has claimed ${pfull(top.add)} off waivers for <b>$${top.bid}</b>. Sources say the rest of the league was “not even close.”`,
+              `Breaking from the waiver wire: ${pfull(top.add)} is headed to ${tname(top.rid)} at a price of <b>$${top.bid}</b> in FAAB.`
+            ], k) : choose([
+              `🚨 ${tname(top.rid)} claims ${pfull(top.add)} off waivers for a <b>$0</b> bid. Sources call it “the quietest move of the week.”`,
+              `${tname(top.rid)} picks up ${pfull(top.add)} from waivers, no FAAB spent. Per sources, nobody else was watching.`
+            ], k), k);
+            if (budget && top.bid >= budget * 0.25) add(w, 'waiver_roast', choose([
+              `🤡 ${tname(top.rid)} spent <b>$${top.bid}</b> on ${pfull(top.add)}. That’s ${pctB(top.bid)}% of the season’s FAAB on one waiver claim. Bold. Very bold.`,
+              `$${top.bid} for ${pfull(top.add)}?? ${tname(top.rid)} just lit a quarter of their budget on fire and called it a strategy.`
+            ], k + 'r'), k + 'r', 'roast');
+            else if (top.bid === 0 && claims.length >= 3) add(w, 'waiver_roast', `${tname(top.rid)} is treating FAAB like a coupon: $0 on ${pfull(top.add)} while everyone else paid real money. Respect, or just a mistake?`, k + 'r', 'roast');
+          }
+          if (claims.length >= 2) {
+            add(w, 'waiver_recap', choose([
+              `Nazzir Lam’s waiver wire report, Week ${w}: ${claims.length} claims went through. Top bids: ${claims.slice(0, 3).map(c => `${tname(c.rid)} for ${pfull(c.add)} ($${c.bid})`).join('; ')}. Take notes.`,
+              `Waiver recap, Week ${w}: ${claims.slice(0, 3).map(c => `${pfull(c.add)} to ${tname(c.rid)} ($${c.bid})`).join(', ')}. Nazzir Lam’s verdict: “some of these are smart. Not all.”`
+            ], `${w}wr`), `${w}wr`, 'analyst');
+          }
+          const fa = list.filter(x => x.type === 'free_agent' && x.add);
+          if (fa[0]) {
+            const f = fa[0], k = `${w}fa${f.t.transaction_id}`;
+            add(w, 'fa', choose([
+              `Coach JB likes what he sees: ${tname(f.rid)} picked up ${pfull(f.add)} as a free agent. “Always be looking for the next guy. That’s how you build depth.”`,
+              `${tname(f.rid)} grabbed ${pfull(f.add)} off the free agent list. Coach JB: “Hustle on the wire is how rosters get built.”`
+            ], k), k, 'coach');
+          }
+          const swaps = list.filter(x => x.add && x.drop);
+          const cuts = list.filter(x => x.drop);
+          if (swaps[0]) {
+            const x = swaps[0], k = `${w}sw${x.t.transaction_id}`;
+            add(w, 'drop', choose([
+              `🚨 ${tname(x.rid)} cuts ${pfull(x.drop)} and adds ${pfull(x.add)}, per league sources. Roster churn continues.`,
+              `${tname(x.rid)} swaps ${pfull(x.drop)} for ${pfull(x.add)}. Sources say the cut “came as a surprise to no one.”`
+            ], k), k);
+          } else if (cuts[0]) {
+            const x = cuts[0], k = `${w}dr${x.t.transaction_id}`;
+            add(w, 'drop', `${tname(x.rid)} has released ${pfull(x.drop)}. Per sources, the player “wished the team well.”`, k);
+          }
+        });
+        if (budget && [...spent.values()].some(v => v > 0)) {
+          const lw = Math.max(...byWeek.keys());
+          const ranked = [...spent.entries()].sort((a, b) => b[1] - a[1]);
+          const [r1, v1] = ranked[0], left = budget - v1;
+          add(lw, 'waiver_recap', choose([
+            `Nazzir Lam’s FAAB watch: ${tname(r1)} has spent the most this season at <b>$${v1}</b> (${pctB(v1)}% of the budget), leaving <b>$${left}</b>. Sources say they are “not done.”`,
+            `FAAB report: ${tname(r1)} leads the league in spending with <b>$${v1}</b>. Nazzir Lam: “Eventually the money runs out, folks.”`
+          ], 'faabwatch'), 'faabwatch', 'analyst');
+        }
+      } catch (e) { /* waiver stories are optional */ }
+
       // Preview of the next week
       const next = myD.remaining[0];
       if (next && next.pairs.length && myD.sim && myD.sim.means) {
@@ -1610,7 +1690,7 @@ footer input{width:min(100%,260px)}
         add(next.week, 'preview', `📺 Game of the Week ${next.week}: ${B(team(a).name)} (${recTxt(rec.get(a))}) vs ${B(team(b).name)} (${recTxt(rec.get(b))}). Sources expect playoff intensity. The model gives ${esc(team(fav).name)} a <b>${Math.round(pf * 100)}%</b> chance; ${esc(team(dog).name)} has reportedly printed that number and taped it to the fridge.`, `prev${next.week}`);
       }
 
-      const kindOrder = ['preview', 'trade', 'grade', 'high', 'top', 'coach_top', 'upset', 'blowout', 'close', 'blunder', 'int', 'fum', 'kick', 'coach_low', 'coach_streak', 'streak', 'skid', 'power', 'tank', 'low'];
+      const kindOrder = ['preview', 'trade', 'grade', 'waiver', 'waiver_roast', 'waiver_recap', 'drop', 'fa', 'high', 'top', 'coach_top', 'upset', 'blowout', 'close', 'blunder', 'int', 'fum', 'kick', 'coach_low', 'coach_streak', 'streak', 'skid', 'power', 'tank', 'low'];
       posts.sort((x, y) => (y.week - x.week) || (kindOrder.indexOf(x.kind) - kindOrder.indexOf(y.kind)));
       myD.news = { posts };
     } catch (e) {
