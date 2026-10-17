@@ -143,6 +143,13 @@ td.avgp{font:700 1.15rem "Barlow Condensed","Arial Narrow",sans-serif}
 .mteam[data-open-match]{cursor:pointer}
 .mteam[data-open-match]:hover .tname{text-decoration:underline}
 .mback{margin-bottom:10px}
+.hs{position:relative;display:inline-flex;align-items:center;justify-content:center;flex:none;width:34px;height:34px;border-radius:50%;background:var(--line);color:var(--muted);font:700 .65rem/1 inherit;overflow:hidden}
+.hs img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;background:var(--line)}
+.plbtn{display:inline-flex;align-items:center;gap:8px;max-width:100%}
+.plbtn.plr{flex-direction:row-reverse;text-align:right}
+.plt{display:block;min-width:0}
+.bkwho{display:inline-flex;align-items:center;gap:8px}
+.mlist.single .hs{width:42px;height:42px}
 .lawbar{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;margin:10px 0 18px}
 .lawdl{text-decoration:none;display:inline-block}
 .lawmeta{display:flex;flex-wrap:wrap;gap:6px 16px;color:var(--muted);font-size:.8rem}
@@ -301,7 +308,7 @@ td.tags{white-space:normal;min-width:160px;text-align:left;color:var(--muted);fo
 .rhead{margin:16px 0 4px;font:600 1.1rem "Barlow Condensed","Arial Narrow",sans-serif;color:var(--muted)}
 .rhead small{margin-left:6px;font:500 .8rem "Barlow",sans-serif}
 .rlist2{list-style:none;margin:0;padding:0}
-.rrow{display:grid;grid-template-columns:3rem minmax(0,1fr) auto;gap:10px;align-items:center;padding:7px 0;border-top:1px solid var(--line)}
+.rrow{display:grid;grid-template-columns:3rem 34px minmax(0,1fr) auto;gap:10px;align-items:center;padding:7px 0;border-top:1px solid var(--line)}
 .rrow:first-child{border-top:0}
 .rname{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .rname.empty{color:var(--muted);font-weight:400}
@@ -668,6 +675,14 @@ footer input{width:min(100%,260px)}
     const ini = esc((t.name || '?').trim().slice(0, 2).toUpperCase());
     const img = t.avatar ? `<img src="${esc(t.avatar)}" alt="" loading="lazy" onerror="this.remove()">` : '';
     return `<span class="av" aria-hidden="true">${ini}${img}</span>`;
+  }
+  // Player photos are linked from Sleeper's public image servers (non-commercial fan project).
+  function shot(id, pos, tm, nm){
+    const ini = esc(String(nm || '?').split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase());
+    const src = pos === 'DEF'
+      ? `https://sleepercdn.com/images/team_logos/nfl/${encodeURIComponent(String(id).toLowerCase())}.png`
+      : `https://sleepercdn.com/content/nfl/players/thumb/${encodeURIComponent(id)}.jpg`;
+    return `<span class="hs" aria-hidden="true">${ini}<img src="${src}" alt="" loading="lazy" onerror="this.remove()"></span>`;
   }
   function teamBlock(t, meta){
     return `<div class="team">${avatar(t)}<div class="tx"><div class="tname">${esc(t.name)}</div>${meta ? `<div class="tmeta">${meta}</div>` : ''}</div></div>`;
@@ -1453,7 +1468,7 @@ footer input{width:min(100%,260px)}
   function breakdownHtml(pid, w, reported, stats){
     const info = pname(pid) || { nm: 'Player', pos: '', tm: '' };
     const link = '<div class="bkclips" data-clips></div>';
-    const head = `<div class="bkhead"><b>${esc(info.nm)}</b><span>${reported.toFixed(2)} pts</span></div>`;
+    const head = `<div class="bkhead"><span class="bkwho">${shot(pid, info.pos, info.tm, info.nm)}<b>${esc(info.nm)}</b></span><span>${reported.toFixed(2)} pts</span></div>`;
     const st = stats && stats[pid];
     const sc = D.league.scoring_settings || {};
     if (!st) return head + '<p class="bknote">Scoring details aren’t available for this week yet.</p>' + link;
@@ -1571,8 +1586,8 @@ footer input{width:min(100%,260px)}
           const pts = ((m.starters_points || [])[i]) || 0;
           if (!id || id === '0') return side === 'l' ? '<td class="pl empty">Empty</td><td class="pp">0.00</td>' : '<td class="pp">0.00</td><td class="pl empty">Empty</td>';
           const info = pname(id);
-          const inner = info ? `${esc(info.nm)}<small>${esc([info.pos, info.tm].filter(Boolean).join(', '))}</small>` : '<span class="asset-sub">Loading…</span>';
-          const label = `<button type="button" class="plbtn" data-pid="${esc(id)}" data-pts="${pts}" data-w="${w}">${inner}</button>`;
+          const inner = info ? `${shot(id, info.pos, info.tm, info.nm)}<span class="plt">${esc(info.nm)}<small>${esc([info.pos, info.tm].filter(Boolean).join(', '))}</small></span>` : '<span class="asset-sub">Loading…</span>';
+          const label = `<button type="button" class="plbtn${side === 'r' ? ' plr' : ''}" data-pid="${esc(id)}" data-pts="${pts}" data-w="${w}">${inner}</button>`;
           return side === 'l' ? `<td class="pl">${label}</td><td class="pp">${pts.toFixed(2)}</td>` : `<td class="pp">${pts.toFixed(2)}</td><td class="pl">${label}</td>`;
         };
         lineup += `<tr>${cell(a, 'l')}<td class="slot">${esc(SLOT[slots[i]] || slots[i] || '')}</td>${cell(b, 'r')}</tr><tr class="bk" hidden><td colspan="5"></td></tr>`;
@@ -1962,7 +1977,7 @@ footer input{width:min(100%,260px)}
     const posIdx = p => { const i = POS_ORDER.indexOf(p.pos); return i < 0 ? 99 : i; };
     const row = (p, label) => {
       const ts = since(p.id), a = ageOf(p);
-      return `<li class="rrow"><span class="pbadge pb-${esc(p.pos || 'X')}">${esc(label)}</span>
+      return `<li class="rrow"><span class="pbadge pb-${esc(p.pos || 'X')}">${esc(label)}</span>${shot(p.id, p.pos, p.t, p.n)}
         <div class="rtx"><div class="rname">${esc(p.n)}</div><div class="rsub">${esc([p.pos, p.t || 'FA'].filter(Boolean).join(' · '))} · Age ${a == null ? '–' : a.toFixed(1)}</div></div>
         <span class="rten">${ts ? durTxt(Date.now() - ts) : ''}</span></li>`;
     };
@@ -1973,7 +1988,7 @@ footer input{width:min(100%,260px)}
     const startItems = starters.map((id, i) => ({ id, label: SLOT[slots[i]] || slots[i] || '', p: pmap.get(id) }))
       .filter(x => nflF ? (x.p && matches(x.p)) : true);
     const startRows = startItems.map(x => (!x.id || x.id === '0')
-      ? `<li class="rrow"><span class="pbadge">${esc(x.label)}</span><div class="rtx"><div class="rname empty">Empty slot</div></div><span></span></li>`
+      ? `<li class="rrow"><span class="pbadge">${esc(x.label)}</span><span></span><div class="rtx"><div class="rname empty">Empty slot</div></div><span></span></li>`
       : (x.p ? row(x.p, x.label) : '')).join('');
     const bench = t.players.filter(p => !inStart.has(p.id) && !inIR.has(p.id) && !inTaxi.has(p.id) && matches(p))
       .sort((x, y) => posIdx(x) - posIdx(y) || (ageOf(y) ?? 0) - (ageOf(x) ?? 0));
