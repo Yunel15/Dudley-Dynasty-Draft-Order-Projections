@@ -1755,7 +1755,7 @@ footer input{width:min(100%,260px)}
       if (!M.has(k)) M.set(k, { key: k, seasons: new Set(), w: 0, l: 0, t: 0, pf: 0, pa: 0, pw: 0, pl: 0, weeklyTop: 0, trophies: [], latest: null });
       return M.get(k);
     };
-    const highs = [], seasonPts = [], blowouts = [], streaks = [];
+    const highs = [], lows = [], seasonPts = [], blowouts = [], closes = [], hiLosses = [], loWins = [], streaks = [];
 
     hist.forEach(L => {
       const keyOf = new Map();
@@ -1804,7 +1804,7 @@ footer input{width:min(100%,260px)}
         const top = Math.max(...valid.map(m => m.points));
         valid.forEach(m => {
           if (m.points === top) get(K(m.roster_id)).weeklyTop++;
-          if (m.points > 0) highs.push({ k: K(m.roster_id), val: m.points, season: L.season, week });
+          if (m.points > 0) { const rcd = { k: K(m.roster_id), val: m.points, season: L.season, week }; highs.push(rcd); lows.push(rcd); }
           pf.set(m.roster_id, (pf.get(m.roster_id) || 0) + m.points);
         });
         const groups = new Map();
@@ -1814,6 +1814,9 @@ footer input{width:min(100%,260px)}
           const [a, b] = g[0].points >= g[1].points ? g : [g[1], g[0]];
           if (a.points === b.points) { cur.set(a.roster_id, 0); cur.set(b.roster_id, 0); return; }
           blowouts.push({ k: K(a.roster_id), val: a.points - b.points, season: L.season, week });
+          closes.push({ k: K(a.roster_id), val: a.points - b.points, season: L.season, week });
+          hiLosses.push({ k: K(b.roster_id), val: b.points, season: L.season, week });
+          loWins.push({ k: K(a.roster_id), val: a.points, season: L.season, week });
           const c = (cur.get(a.roster_id) || 0) + 1;
           cur.set(a.roster_id, c);
           if (c > (bestStreak.get(a.roster_id) || 0)) bestStreak.set(a.roster_id, c);
@@ -1824,15 +1827,19 @@ footer input{width:min(100%,260px)}
       bestStreak.forEach((v, rid) => streaks.push({ k: K(rid), val: v, season: L.season }));
     });
 
-    const holder = (arr, title, fmt) => {
+    const holder = (arr, title, fmt, lowest) => {
       if (!arr.length) return;
-      const top = arr.slice().sort((a, b) => b.val - a.val)[0];
+      const top = arr.slice().sort((a, b) => lowest ? a.val - b.val : b.val - a.val)[0];
       get(top.k).trophies.push({ type: 'record', title, detail: fmt(top) });
     };
     holder(highs, 'Highest single-week score', x => `${x.val.toFixed(2)}, ${x.season} week ${x.week}`);
     holder(seasonPts, 'Most points in a season', x => `${x.val.toFixed(2)}, ${x.season}`);
     holder(blowouts, 'Biggest blowout', x => `+${x.val.toFixed(2)}, ${x.season} week ${x.week}`);
     holder(streaks, 'Longest win streak', x => `${x.val} straight wins, ${x.season}`);
+    holder(lows, 'Lowest single-week score', x => `${x.val.toFixed(2)}, ${x.season} week ${x.week}`, true);
+    holder(closes, 'Closest game', x => `Won by ${x.val.toFixed(2)}, ${x.season} week ${x.week}`, true);
+    holder(hiLosses, 'Highest score in a loss', x => `${x.val.toFixed(2)}, ${x.season} week ${x.week}`);
+    holder(loWins, 'Lowest score in a win', x => `${x.val.toFixed(2)}, ${x.season} week ${x.week}`, true);
 
     const list = [...M.values()].filter(m => m.latest).map(m => ({ ...m, current: currentKeys.has(m.key),
       champs: m.trophies.filter(t => t.type === 'champ').length,
@@ -1841,6 +1848,16 @@ footer input{width:min(100%,260px)}
     return { list, seasons: hist.length };
   }
 
+  const RECORD_ICONS = {
+    'Highest single-week score': '🚀',
+    'Most points in a season': '📈',
+    'Biggest blowout': '💥',
+    'Longest win streak': '⚡',
+    'Closest game': '⏱️',
+    'Highest score in a loss': '💔',
+    'Lowest score in a win': '🍀',
+    'Lowest single-week score': '🥶'
+  };
   const TROPHIES = [
     ['champ', '🏆', 'League champion'],
     ['runner', '🥈', 'Runner-up'],
@@ -1855,7 +1872,7 @@ footer input{width:min(100%,260px)}
       return '<p class="status">Loading league history from Sleeper…</p>';
     }
     if (D.profiles.error) return `<div class="error"><strong>${esc(D.profiles.error)}</strong><br>Try Refresh.</div>`;
-    let html = `<p class="note">All-time records are regular-season games${seasonDone() ? '' : ', including this season so far'}. Playoff records count winners-bracket games. Season awards are given once a regular season ends, and playoff trophies once the bracket is decided.</p><div class="pgrid">`;
+    let html = `<p class="note">All-time records are regular-season games${seasonDone() ? '' : ', including this season so far'}. Playoff records count winners-bracket games. Season awards are given once a regular season ends, and playoff trophies once the bracket is decided. League record trophies belong to whoever holds that record right now, and they move when a record is broken.</p><div class="pgrid">`;
     D.profiles.list.forEach(m => {
       const n = m.seasons.size;
       const g = m.w + m.l + m.t;
@@ -1869,7 +1886,7 @@ footer input{width:min(100%,260px)}
         trophies += `<li><span class="ticon" aria-hidden="true">${icon}</span><span><b>${label}${got.length > 1 ? ` ×${got.length}` : ''}</b><small>${esc(years)}</small></span></li>`;
       });
       m.trophies.filter(t => t.type === 'record').forEach(t => {
-        trophies += `<li><span class="ticon" aria-hidden="true">🎖️</span><span><b>League record: ${esc(t.title)}</b><small>${esc(t.detail)}</small></span></li>`;
+        trophies += `<li><span class="ticon" aria-hidden="true">${RECORD_ICONS[t.title] || '🎖️'}</span><span><b>League record: ${esc(t.title)}</b><small>${esc(t.detail)}</small></span></li>`;
       });
       html += `<article class="pcard">${teamBlock(m.latest, meta)}
         <div class="prec"><span class="pbig">${m.w}-${m.l}${m.t ? '-' + m.t : ''}</span><span class="psub">All-time record<br>${pct} win pct</span></div>
