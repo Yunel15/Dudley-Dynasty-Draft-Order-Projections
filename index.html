@@ -844,7 +844,7 @@ footer input{width:min(100%,260px)}
   // ---------- News feed ----------
   const REPORTER = { name: 'NOT Adam Schefter', handle: '@NOTAdamSchefter', initials: 'NA', tag: 'Parody', cls: '' };
   const ROAST = { name: 'Turnover Tony', handle: '@TurnoverTony', initials: 'TT', tag: 'Roasts', cls: 'alt' };
-  const COACH = { name: 'Coach JB', handle: '@CoachJB', initials: 'JB', tag: 'Coach', cls: 'c2' };
+  const COACH = { name: 'Coach JB', handle: '@CoachJB', initials: 'JB', tag: 'Retired coach', cls: 'c2' };
   const ANALYST = { name: 'Nazzir Lam', handle: '@NazzirLam', initials: 'NL', tag: 'Analyst', cls: 'c3' };
   const AUTHORS = { adam: REPORTER, roast: ROAST, coach: COACH, analyst: ANALYST };
   function hashStr(str){ let h = 2166136261; for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
@@ -885,16 +885,16 @@ footer input{width:min(100%,260px)}
         const sorted = valid.slice().sort((a, b) => b.points - a.points);
         const top = sorted[0], low = sorted[sorted.length - 1];
 
-        // CoachJB: postgame press conference
+        // CoachJB: retired high school and college coach commenting on the league
         add(w, 'coach_top', choose([
-          `Coach JB on ${B(name(top.roster_id))}’s <b>${p2(top.points)}</b>: “I’m proud of the guys. We’re not gonna get too high. We’re 1-0 this week.”`,
-          `“${p2(top.points)} is just a number,” says Coach JB of ${B(name(top.roster_id))}. “Doesn’t mean anything unless we do it again next week.”`,
-          `Coach JB after ${B(name(top.roster_id))}’s big week: “We just focus on the process. Honestly, I give all the credit to the guys in the locker room.”`
+          `Coach JB on ${B(name(top.roster_id))}’s <b>${p2(top.points)}</b>: “Thirty years of coaching, and I can count on one hand the teams that play with that kind of fire. Hat’s off.”`,
+          `“${p2(top.points)}? That’s a team that shows up Monday through Saturday, not just Sunday,” says Coach JB of ${B(name(top.roster_id))}.`,
+          `Coach JB watched the film on ${B(name(top.roster_id))}’s big week: “Balanced, disciplined, nobody trying to be a hero. That’s how you win ballgames.”`
         ], `${w}ct`), `${w}ct`, 'coach');
         add(w, 'coach_low', choose([
-          `Coach JB on ${B(name(low.roster_id))}’s <b>${p2(low.points)}</b>: “That’s on me. We gotta get back to fundamentals. Tackling, blocking, you name it.”`,
-          `“We’re gonna watch the tape,” says Coach JB after ${B(name(low.roster_id))} put up ${p2(low.points)}. “And then we’re gonna watch it again.”`,
-          `Coach JB asked about ${B(name(low.roster_id))}’s ${p2(low.points)}: “Look, I’m not gonna sit here and make excuses. Okay, one excuse: the refs.”`
+          `Coach JB on ${B(name(low.roster_id))}’s <b>${p2(low.points)}</b>: “I’ve seen JV teams with more fight than that. Somebody get that group back to the practice field.”`,
+          `“Fundamentals,” says Coach JB after ${B(name(low.roster_id))} managed ${p2(low.points)}. “Blocking, tackling, setting a lineup. It all starts there.”`,
+          `Retired, but Coach JB still has notes for ${B(name(low.roster_id))}’s ${p2(low.points)}: “That’s a team that didn’t come to play. I’d have had them running gassers.”`
         ], `${w}cl`), `${w}cl`, 'coach');
 
         // Turnover Tony: roast managers for bad plays by their players
@@ -1050,11 +1050,11 @@ footer input{width:min(100%,260px)}
         if (bestS) {
           const tb = B(name(bestS.rid));
           add(w, 'coach_streak', bestS.up ? choose([
-            `Coach JB on ${tb}’s ${bestS.n}-game win streak: “Streaks are for people who like talking about streaks. We’re 1-0 this week.”`,
-            `Asked about ${bestS.n} straight wins for ${tb}, Coach JB said: “Don’t ask me about streaks. Ask me about Sunday.”`
+            `Coach JB on ${tb}’s ${bestS.n}-game win streak: “Winning is a habit. I told my players that for 30 years, and ${tb} is proving me right.”`,
+            `Asked about ${bestS.n} straight wins for ${tb}, Coach JB said: “That’s a program. You don’t luck into ${bestS.n} in a row.”`
           ], `${w}cs`) : choose([
-            `Coach JB on ${tb}’s ${bestS.n}-game skid: “Nobody’s panicking. We’re building something here. Something. Not sure what.”`,
-            `“I believe in this team,” says Coach JB after ${tb} dropped ${bestS.n} straight. “I believe in the process. I believe in a lot of things, honestly.”`
+            `Coach JB on ${tb}’s ${bestS.n}-game skid: “Losing is a habit too. Somebody in that locker room has to stand up and say enough.”`,
+            `“Tough to watch,” says Coach JB after ${tb} dropped ${bestS.n} straight. “Go back to the basics, and I mean the basics.”`
           ], `${w}cs`), `${w}cs`, 'coach');
         }
 
