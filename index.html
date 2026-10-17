@@ -209,6 +209,24 @@ td.tags{white-space:normal;min-width:160px;text-align:left;color:var(--muted);fo
 .chip.stack{border-color:var(--accent)}
 .chip.stack b{color:var(--accent)}
 .tenure{line-height:1.35}
+.bsplit{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(340px,100%),1fr));gap:12px;margin-top:14px;align-items:start}
+.rtitle{margin:0 0 2px;font:700 1.5rem/1 "Barlow Condensed","Arial Narrow",sans-serif}
+.rhead{margin:16px 0 4px;font:600 1.1rem "Barlow Condensed","Arial Narrow",sans-serif;color:var(--muted)}
+.rhead small{margin-left:6px;font:500 .8rem "Barlow",sans-serif}
+.rlist2{list-style:none;margin:0;padding:0}
+.rrow{display:grid;grid-template-columns:3rem minmax(0,1fr) auto;gap:10px;align-items:center;padding:7px 0;border-top:1px solid var(--line)}
+.rrow:first-child{border-top:0}
+.rname{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rname.empty{color:var(--muted);font-weight:400}
+.rsub{font-size:.8rem;color:var(--muted)}
+.rten{font-size:.78rem;color:var(--muted);white-space:nowrap}
+.pbadge{display:grid;place-items:center;padding:3px 0;border-radius:6px;font:700 .9rem/1.1 "Barlow Condensed","Arial Narrow",sans-serif;background:var(--line);color:var(--ink)}
+.pb-QB{background:#FF2A6D;color:#fff}
+.pb-RB{background:#00CEB8;color:#06211E}
+.pb-WR{background:#FFAE58;color:#2B1A00}
+.pb-TE{background:#58A7FF;color:#04182E}
+.pb-K{background:#BD66FF;color:#fff}
+.pb-DEF{background:#7988A1;color:#fff}
 .tenure b{font-size:.95rem}
 
 /* Manager profiles */
@@ -1599,7 +1617,7 @@ footer input{width:min(100%,260px)}
         if (!h || h.owner !== key) return;
         if (!tenured || h.ts < tenured.ts || (h.ts === tenured.ts && h.ord < tenured.ord)) tenured = { p, ts: h.ts, ord: h.ord };
       });
-      return { rid: r.roster_id, players, byPos, avg: ageN ? ageSum / ageN : null, nfl, tenured };
+      return { rid: r.roster_id, r, players, byPos, avg: ageN ? ageSum / ageN : null, nfl, tenured };
     }).sort((a, b) => team(a.rid).name.localeCompare(team(b.rid).name));
 
     const posList = POS_ORDER.filter(pos => teams.some(t => t.byPos[pos] && t.byPos[pos].ages.length));
@@ -1614,10 +1632,39 @@ footer input{width:min(100%,260px)}
       return `<td>${val.toFixed(1)}</td><td${cls}>#${r} of ${n}</td>`;
     };
 
-    let html = `<p class="note">Ages come from Sleeper’s player database. Age rank compares each team’s average age at that position to the rest of the league: #1 is the youngest, and the three youngest and oldest teams are colored. Longest tenured is the player who has been on the roster the longest, based on draft and transaction history; players acquired at the same time are ordered by draft pick.</p><div class="bgrid">`;
-    teams.forEach(t => {
-      const tm = team(t.rid);
-      html += `<article class="bcard"><header>${teamBlock(tm, esc(tm.manager))}<span class="count">${t.players.length}<small>players</small></span></header>
+    const sel = teams.some(x => x.rid === opts.buildTeam) ? opts.buildTeam : teams[0].rid;
+    const t = teams.find(x => x.rid === sel);
+    const tm = team(sel);
+    const pmap = new Map(t.players.map(p => [p.id, p]));
+    const slots = (D.league.roster_positions || []).filter(x => !['BN', 'IR', 'TAXI'].includes(x));
+    const starters = t.r.starters || [];
+    const inStart = new Set(starters), inIR = new Set(t.r.reserve || []), inTaxi = new Set(t.r.taxi || []);
+    const ownerKey = t.r.owner_id || `${leagueId}-${t.r.roster_id}`;
+    const since = id => { const h = holder.get(id); return h && h.owner === ownerKey ? h.ts : null; };
+    const posIdx = p => { const i = POS_ORDER.indexOf(p.pos); return i < 0 ? 99 : i; };
+    const row = (p, label) => {
+      const ts = since(p.id), a = ageOf(p);
+      return `<li class="rrow"><span class="pbadge pb-${esc(p.pos || 'X')}">${esc(label)}</span>
+        <div class="rtx"><div class="rname">${esc(p.n)}</div><div class="rsub">${esc([p.pos, p.t || 'FA'].filter(Boolean).join(' · '))} · Age ${a == null ? '–' : a.toFixed(1)}</div></div>
+        <span class="rten">${ts ? durTxt(Date.now() - ts) : ''}</span></li>`;
+    };
+    const group = (title, rowsHtml, n) => n ? `<h3 class="rhead">${title}<small>${n}</small></h3><ul class="rlist2">${rowsHtml}</ul>` : '';
+
+    const startRows = starters.map((id, i) => {
+      const label = SLOT[slots[i]] || slots[i] || '';
+      const p = pmap.get(id);
+      if (!id || id === '0') return `<li class="rrow"><span class="pbadge">${esc(label)}</span><div class="rtx"><div class="rname empty">Empty slot</div></div><span></span></li>`;
+      return p ? row(p, label) : '';
+    }).join('');
+    const bench = t.players.filter(p => !inStart.has(p.id) && !inIR.has(p.id) && !inTaxi.has(p.id))
+      .sort((x, y) => posIdx(x) - posIdx(y) || (ageOf(y) ?? 0) - (ageOf(x) ?? 0));
+    const irList = t.players.filter(p => inIR.has(p.id)), taxiList = t.players.filter(p => inTaxi.has(p.id));
+
+    const teamOpts = teams.map(x => `<option value="${x.rid}" ${x.rid === sel ? 'selected' : ''}>${esc(team(x.rid).name)}</option>`).join('');
+    let html = `<div class="controls"><label class="field">Team<select data-opt="buildTeam">${teamOpts}</select></label></div>
+      <p class="note">Ages come from Sleeper’s player database. Age rank compares this team’s average age at a position to the rest of the league: #1 is the youngest, and the three youngest and oldest teams are colored. The time on the right of each player is how long they’ve been on this roster, from draft and transaction history.</p>
+      <div class="bsplit">
+      <article class="bcard"><header>${teamBlock(tm, `${esc(tm.manager)}${tm.manager ? ', ' : ''}${record(tm)}`)}<span class="count">${t.players.length}<small>players</small></span></header>
         <table class="btable"><thead><tr><th scope="col">Pos</th><th scope="col">Players</th><th scope="col">Avg age</th><th scope="col">Age rank</th></tr></thead><tbody>
         ${posList.map(pos => `<tr><td>${pos}</td><td>${t.byPos[pos] ? t.byPos[pos].n : 0}</td>${cell(posAvg(t, pos), cmp[pos])}</tr>`).join('')}
         <tr class="all"><td>All</td><td>${t.players.filter(p => p.pos !== 'DEF').length}</td>${cell(t.avg, allVals)}</tr></tbody></table>
@@ -1628,9 +1675,12 @@ footer input{width:min(100%,260px)}
         ${t.tenured ? `<div class="tenure"><b>${esc(t.tenured.p.n)}</b> <span class="asset-sub">${esc([t.tenured.p.pos, t.tenured.p.t].filter(Boolean).join(', '))}</span>
           <div class="asset-sub">On this roster since ${new Date(t.tenured.ts).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' })} (${durTxt(Date.now() - t.tenured.ts)})</div></div>`
           : '<div class="tempty">Not available yet</div>'}
-      </article>`;
-    });
-    return html + '</div>';
+      </article>
+      <article class="bcard"><h2 class="rtitle">Current roster</h2>
+        ${group('Starters', startRows, starters.length)}${group('Bench', bench.map(p => row(p, p.pos || '')).join(''), bench.length)}
+        ${group('Injured reserve', irList.map(p => row(p, p.pos || '')).join(''), irList.length)}${group('Taxi squad', taxiList.map(p => row(p, p.pos || '')).join(''), taxiList.length)}
+      </article></div>`;
+    return html;
   }
 
   // ---------- League history (shared) ----------
@@ -1944,7 +1994,7 @@ footer input{width:min(100%,260px)}
     if (!el) return;
     const k = el.dataset.opt;
     const openDetails = !!e.target.closest('details[open]');
-    opts[k] = (k === 'rounds' || k === 'season' || k === 'tradeTeam' || k === 'week') ? Number(el.value) : el.value;
+    opts[k] = (k === 'rounds' || k === 'season' || k === 'tradeTeam' || k === 'week' || k === 'buildTeam') ? Number(el.value) : el.value;
     saveOpts();
     if (k === 'tiebreak') runSim();
     render();
