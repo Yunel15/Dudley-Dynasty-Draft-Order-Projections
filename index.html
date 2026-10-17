@@ -187,9 +187,13 @@ td.tags{white-space:normal;min-width:160px;text-align:left;color:var(--muted);fo
 .feedwk{margin:22px 0 8px;font:700 1.3rem/1 "Barlow Condensed","Arial Narrow",sans-serif;color:var(--muted)}
 .post{display:flex;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:10px}
 .pav{width:42px;height:42px;flex:none;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:var(--accent-ink);font:700 1rem "Barlow Condensed","Arial Narrow",sans-serif}
+.pav.alt{background:var(--pylon);color:#fff}
+.pav.c2{background:#F5C242;color:#2B2100}
+.pav.c3{background:#8B7CF6;color:#fff}
+.seg.wrap{flex-wrap:wrap}
 .pbody{min-width:0;flex:1}
 .phead{display:flex;align-items:center;gap:5px;flex-wrap:wrap;font-size:.92rem}
-.pcheck{display:inline-grid;place-items:center;width:15px;height:15px;border-radius:50%;background:#1D9BF0;color:#fff;font-size:.6rem;font-weight:700}
+.ptag{display:inline-block;padding:1px 7px;border:1px solid var(--accent);border-radius:999px;color:var(--accent);font-size:.7rem;font-weight:600}
 .phandle{color:var(--muted)}
 .ptext{margin:4px 0 10px;line-height:1.45;overflow-wrap:anywhere}
 .ptext b{color:var(--ink)}
@@ -838,7 +842,11 @@ footer input{width:min(100%,260px)}
   }
 
   // ---------- News feed ----------
-  const REPORTER = { name: 'Dudley Insider', handle: '@DudleyInsider', initials: 'DI' };
+  const REPORTER = { name: 'NOT Adam Schefter', handle: '@NOTAdamSchefter', initials: 'NA', tag: 'Parody', cls: '' };
+  const ROAST = { name: 'Turnover Tony', handle: '@TurnoverTony', initials: 'TT', tag: 'Roasts', cls: 'alt' };
+  const COACH = { name: 'Coach JB', handle: '@CoachJB', initials: 'JB', tag: 'Coach', cls: 'c2' };
+  const ANALYST = { name: 'Nazzir Lam', handle: '@NazzirLam', initials: 'NL', tag: 'Analyst', cls: 'c3' };
+  const AUTHORS = { adam: REPORTER, roast: ROAST, coach: COACH, analyst: ANALYST };
   function hashStr(str){ let h = 2166136261; for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
   const choose = (arr, key) => arr[hashStr(key) % arr.length];
   const B = t => `<b>${esc(t)}</b>`;
@@ -852,7 +860,7 @@ footer input{width:min(100%,260px)}
       if (!myD.trades) await loadTrades();
       for (let i = 0; i < 100 && myD.tradesLoading; i++) await new Promise(r => setTimeout(r, 150));
       const posts = [];
-      const add = (week, kind, html, key) => posts.push({ week, kind, html, key: key || `${week}-${kind}-${posts.length}` });
+      const add = (week, kind, html, key, author) => posts.push({ week, kind, html, author: author || 'adam', key: key || `${week}-${kind}-${posts.length}` });
       const rec = new Map(myD.ids.map(r => [r, { w: 0, l: 0, t: 0, streak: 0 }]));
       const recTxt = r => `${r.w}-${r.l}${r.t ? '-' + r.t : ''}`;
       const pct = r => { const g = r.w + r.l + r.t; return g ? (r.w + 0.5 * r.t) / g : 0.5; };
@@ -864,12 +872,79 @@ footer input{width:min(100%,260px)}
       if (ids.size) myD.players = await playerNames([...ids]);
       const info = id => pname(id) || { nm: 'a player', pos: '', tm: '' };
 
+      // Weekly NFL stat lines (turnovers, missed kicks) for the most recent weeks
+      const statsByWeek = new Map();
+      const recentWeeks = myD.completedWeeks.map(x => x.week).sort((a, b) => a - b).slice(-6);
+      await Promise.all(recentWeeks.map(wk => getJSON(`/stats/nfl/regular/${myD.season}/${wk}`)
+        .then(r => { if (r && typeof r === 'object') statsByWeek.set(wk, r); }).catch(() => {})));
+
       myD.completedWeeks.slice().sort((a, b) => a.week - b.week).forEach(({ week: w, list }) => {
         const valid = list.filter(m => typeof m.points === 'number' && rec.has(m.roster_id));
         if (!valid.some(m => m.points > 0)) return;
         const name = rid => team(rid).name;
         const sorted = valid.slice().sort((a, b) => b.points - a.points);
         const top = sorted[0], low = sorted[sorted.length - 1];
+
+        // CoachJB: postgame press conference
+        add(w, 'coach_top', choose([
+          `Coach JB on ${B(name(top.roster_id))}’s <b>${p2(top.points)}</b>: “I’m proud of the guys. We’re not gonna get too high. We’re 1-0 this week.”`,
+          `“${p2(top.points)} is just a number,” says Coach JB of ${B(name(top.roster_id))}. “Doesn’t mean anything unless we do it again next week.”`,
+          `Coach JB after ${B(name(top.roster_id))}’s big week: “We just focus on the process. Honestly, I give all the credit to the guys in the locker room.”`
+        ], `${w}ct`), `${w}ct`, 'coach');
+        add(w, 'coach_low', choose([
+          `Coach JB on ${B(name(low.roster_id))}’s <b>${p2(low.points)}</b>: “That’s on me. We gotta get back to fundamentals. Tackling, blocking, you name it.”`,
+          `“We’re gonna watch the tape,” says Coach JB after ${B(name(low.roster_id))} put up ${p2(low.points)}. “And then we’re gonna watch it again.”`,
+          `Coach JB asked about ${B(name(low.roster_id))}’s ${p2(low.points)}: “Look, I’m not gonna sit here and make excuses. Okay, one excuse: the refs.”`
+        ], `${w}cl`), `${w}cl`, 'coach');
+
+        // Turnover Tony: roast managers for bad plays by their players
+        const wkStats = statsByWeek.get(w);
+        if (wkStats) {
+          const evs = [];
+          valid.forEach(m => {
+            const started = new Set(m.starters || []);
+            (m.players || []).forEach(pid => {
+              const st = wkStats[pid];
+              if (!st) return;
+              const ints = st.pass_int || 0, fl = st.fum_lost || 0, fm = st.fgmiss || 0;
+              let type = null, n = 0;
+              if (ints > 0 && ints >= fl) { type = 'int'; n = ints; }
+              else if (fl > 0) { type = 'fum'; n = fl; }
+              else if (fm > 0) { type = 'kick'; n = fm; }
+              if (!type) return;
+              const isStarter = started.has(pid);
+              evs.push({ rid: m.roster_id, pid, type, n, isStarter, score: n * (type === 'kick' ? 2 : 3) + (isStarter ? 1.5 : 0) });
+            });
+          });
+          evs.sort((a, b) => b.score - a.score).slice(0, 3).forEach(e => {
+            const nm = esc(info(e.pid).nm), t = B(name(e.rid)), s = e.n === 1 ? '' : 's', key = `${w}${e.type}${e.pid}`;
+            let html;
+            if (!e.isStarter) {
+              html = choose([
+                `${nm} turned it over this week, but ${t} had him on the bench. Smartest move that roster made all week. 🧠`,
+                `Good news for ${t}: ${nm} had a rough one, and he was sitting on the bench. Bad news: that was the best decision they made.`
+              ], key);
+            } else if (e.type === 'int') {
+              html = choose([
+                `🤡 ${t} started ${nm} in Week ${w}. He threw <b>${e.n} pick${s}</b>. Who was that football even for?`,
+                `${nm} threw ${e.n} interception${s} and ${t} watched it happen on their own roster. Bold strategy.`,
+                `${e.n} INT${s} from ${nm}. ${t} would have been better off starting a mannequin. The mannequin doesn’t throw it to the defense.`
+              ], key);
+            } else if (e.type === 'fum') {
+              html = choose([
+                `${nm} put the ball on the turf. ${t} had him in the lineup. 🤡 Butter fingers, butter lineup.`,
+                `🤡 ${nm} fumbled it away, and ${t}’s hopes went with it.`,
+                `Somebody tell ${nm} the ball goes in the hands, not on the ground. ${t} started him anyway.`
+              ], key);
+            } else {
+              html = choose([
+                `${nm} missed <b>${e.n} field goal${s}</b>. ${t} is basically running a kicker charity.`,
+                `🤡 ${nm} missed ${e.n} kick${s}. Kickers have one job, and ${t} started him anyway.`
+              ], key);
+            }
+            add(w, e.type, html, key, 'roast');
+          });
+        }
 
         if (top.points > seasonHigh && seasonHigh > 0) {
           add(w, 'high', choose([
@@ -969,6 +1044,34 @@ footer input{width:min(100%,260px)}
             `Losing streak hits ${n} for ${t}. Sources say the team is “fully committed to the process,” whatever that means.`
           ], `${w}ls${m.roster_id}`));
         }));
+
+        let bestS = null;
+        rec.forEach((R, rid) => { const n = Math.abs(R.streak); if (n >= 3 && (!bestS || n > bestS.n)) bestS = { rid, n, up: R.streak > 0 }; });
+        if (bestS) {
+          const tb = B(name(bestS.rid));
+          add(w, 'coach_streak', bestS.up ? choose([
+            `Coach JB on ${tb}’s ${bestS.n}-game win streak: “Streaks are for people who like talking about streaks. We’re 1-0 this week.”`,
+            `Asked about ${bestS.n} straight wins for ${tb}, Coach JB said: “Don’t ask me about streaks. Ask me about Sunday.”`
+          ], `${w}cs`) : choose([
+            `Coach JB on ${tb}’s ${bestS.n}-game skid: “Nobody’s panicking. We’re building something here. Something. Not sure what.”`,
+            `“I believe in this team,” says Coach JB after ${tb} dropped ${bestS.n} straight. “I believe in the process. I believe in a lot of things, honestly.”`
+          ], `${w}cs`), `${w}cs`, 'coach');
+        }
+
+        // Nazzir Lam: power rankings and tank watch
+        const ranked = [...rec.entries()].sort((a, b) => pct(b[1]) - pct(a[1]) || team(b[0]).pf - team(a[0]).pf);
+        add(w, 'power', `Nazzir Lam’s Week ${w} power rankings: ${ranked.slice(0, 3).map(([rid, R], i) => `${i + 1}. ${B(name(rid))} (${recTxt(R)})`).join(', ')}. Disagree? You’re wrong.`, `${w}pr`, 'analyst');
+        const worst = ranked[ranked.length - 1];
+        if (worst && (worst[1].w + worst[1].l + worst[1].t) > 0) {
+          const [wrid, WR] = worst, owner = ownerOf(myD.draftSeason, 1, wrid);
+          const tail = owner !== wrid
+            ? `The ${myD.draftSeason} 1st belongs to ${B(name(owner))}, so ${B(name(wrid))} is tanking for someone else.`
+            : `They still own their ${myD.draftSeason} 1st, so every loss pays off.`;
+          add(w, 'tank', choose([
+            `Tank watch, Week ${w}: ${B(name(wrid))} sits at ${recTxt(WR)}. ${tail}`,
+            `Nazzir Lam’s tank rankings: ${B(name(wrid))} (${recTxt(WR)}) holds the top spot in the race for the ${myD.draftSeason} rookie class. ${tail}`
+          ], `${w}tk`), `${w}tk`, 'analyst');
+        }
       });
 
       // Trades
@@ -993,6 +1096,16 @@ footer input{width:min(100%,260px)}
           html = `🚨 ${sides.length}-team trade, per league sources: ${sides.map(x => `${B(team(x.rid).name)} gets ${list(x.got)}`).join('; ')}.`;
         }
         add(t.leg || D.startWeek, 'trade', html, t.transaction_id);
+        if (sides.length === 2) {
+          const grades = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'F'];
+          const gr = k => grades[hashStr(k) % grades.length];
+          const an = g => (g[0] === 'A' || g[0] === 'F') ? 'an' : 'a';
+          const [a, b] = sides;
+          add(t.leg || D.startWeek, 'grade', choose([
+            `Nazzir Lam’s instant trade grades: ${B(team(a.rid).name)} <b>${gr(t.transaction_id + a.rid)}</b>, ${B(team(b.rid).name)} <b>${gr(t.transaction_id + b.rid)}</b>. Zero research, total confidence.`,
+            `Trade grade: ${B(team(a.rid).name)} gets ${an(gr(t.transaction_id + a.rid))} <b>${gr(t.transaction_id + a.rid)}</b>. ${B(team(b.rid).name)} gets ${an(gr(t.transaction_id + b.rid))} <b>${gr(t.transaction_id + b.rid)}</b>. Don’t @ me.`
+          ], t.transaction_id + 'g'), t.transaction_id + 'g', 'analyst');
+        }
       });
 
       // Preview of the next week
@@ -1009,7 +1122,7 @@ footer input{width:min(100%,260px)}
         add(next.week, 'preview', `📺 Game of the Week ${next.week}: ${B(team(a).name)} (${recTxt(rec.get(a))}) vs ${B(team(b).name)} (${recTxt(rec.get(b))}). Sources expect playoff intensity. The model gives ${esc(team(fav).name)} a <b>${Math.round(pf * 100)}%</b> chance; ${esc(team(dog).name)} has reportedly printed that number and taped it to the fridge.`, `prev${next.week}`);
       }
 
-      const kindOrder = ['preview', 'trade', 'high', 'top', 'upset', 'blowout', 'close', 'blunder', 'streak', 'skid', 'low'];
+      const kindOrder = ['preview', 'trade', 'grade', 'high', 'top', 'coach_top', 'upset', 'blowout', 'close', 'blunder', 'int', 'fum', 'kick', 'coach_low', 'coach_streak', 'streak', 'skid', 'power', 'tank', 'low'];
       posts.sort((x, y) => (y.week - x.week) || (kindOrder.indexOf(x.kind) - kindOrder.indexOf(y.kind)));
       myD.news = { posts };
     } catch (e) {
@@ -1023,16 +1136,21 @@ footer input{width:min(100%,260px)}
   function renderNews(){
     if (!D.news) { loadNews(); return '<p class="status">Checking with league sources…</p>'; }
     if (D.news.error) return `<div class="error"><strong>${esc(D.news.error)}</strong><br>Try Refresh.</div>`;
-    const { posts } = D.news;
+    const { posts: allPosts } = D.news;
+    const nf = opts.newsFilter || 'all';
+    const posts = allPosts.filter(p => nf === 'all' || p.author === nf);
     if (!posts.length) return '<p class="note">No news yet. Posts show up once Week 1 is final.</p>';
-    let html = `<p class="note">Satirical league coverage from ${esc(REPORTER.name)}, generated automatically from Sleeper results. All quotes and “sources” are made up.</p><div class="feed">`;
+    let html = `<p class="note">Parody league coverage, generated automatically from Sleeper results. Every account is fictional and not affiliated with any real person, and all quotes and “sources” are made up. ${esc(ROAST.handle)} roasts managers using each week’s stat lines for players on league rosters (recent weeks only), so it covers weekly turnover totals, not individual plays.</p>
+      <div class="controls"><div class="seg wrap" role="group">${[['all', 'All posts'], ['adam', REPORTER.handle], ['roast', ROAST.handle], ['coach', COACH.handle], ['analyst', ANALYST.handle]].map(([k, l]) =>
+        `<button type="button" data-newsf="${k}" aria-pressed="${nf === k}">${esc(l)}</button>`).join('')}</div></div><div class="feed">`;
     let lastWeek = null;
     posts.forEach(p => {
       if (p.week !== lastWeek) { html += `<h3 class="feedwk">Week ${p.week}</h3>`; lastWeek = p.week; }
       const h = hashStr(p.key);
+      const a = AUTHORS[p.author] || REPORTER;
       const likes = 20 + h % 480, reposts = 3 + (h >> 9) % 90, replies = 1 + (h >> 17) % 60;
-      html += `<article class="post"><span class="pav" aria-hidden="true">${REPORTER.initials}</span><div class="pbody">
-        <div class="phead"><b>${esc(REPORTER.name)}</b><span class="pcheck" aria-label="verified">✓</span><span class="phandle">${esc(REPORTER.handle)} · Wk ${p.week}</span></div>
+      html += `<article class="post"><span class="pav${a.cls ? ' ' + a.cls : ''}" aria-hidden="true">${a.initials}</span><div class="pbody">
+        <div class="phead"><b>${esc(a.name)}</b><span class="ptag">${esc(a.tag)}</span><span class="phandle">${esc(a.handle)} · Wk ${p.week}</span></div>
         <p class="ptext">${p.html}</p>
         <div class="pacts" aria-hidden="true"><span>💬 ${replies}</span><span>🔁 ${reposts}</span><span>♡ ${likes}</span></div>
       </div></article>`;
@@ -1663,6 +1781,8 @@ footer input{width:min(100%,260px)}
     if (b) { opts.basis = b.dataset.basis; saveOpts(); render(); return; }
     const br = e.target.closest('[data-side]');
     if (br) { opts.bracketSide = br.dataset.side; render(); return; }
+    const nfb = e.target.closest('[data-newsf]');
+    if (nfb) { opts.newsFilter = nfb.dataset.newsf; render(); return; }
     const wk = e.target.closest('[data-week-step]');
     if (wk) {
       const w = (opts.week || D.defWeek) + Number(wk.dataset.weekStep);
