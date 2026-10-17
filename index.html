@@ -149,7 +149,26 @@ td.avgp{font:700 1.15rem "Barlow Condensed","Arial Narrow",sans-serif}
 .l5{white-space:nowrap}
 .dot{display:inline-block;width:20px;height:20px;line-height:20px;border-radius:50%;font:700 .65rem/20px inherit;font-style:normal;margin:0 1px;text-align:center}
 .dot.w{background:var(--accent);color:var(--accent-ink)}.dot.l{background:var(--pylon-soft);color:var(--pylon-ink)}.dot.t{background:var(--line);color:var(--ink)}
-.mlist.single .mscore{font-size:2.4rem}
+.msingle{max-width:860px;margin:0 auto}
+.mlist.single{display:block;margin-top:0}
+.mlist.single .mcard{padding:12px 24px 18px}
+.mlist.single .mscore{font-size:3.2rem}
+.mlist.single .mteam{padding:14px 0}
+.mlist.single .tname{font-size:1.15rem}
+.mlist.single .ltable{table-layout:fixed;font-size:1rem}
+.mlist.single .ltable td{padding:9px 6px}
+.mlist.single .ltable .pl{width:34%}
+.mlist.single .ltable .pp{width:11%;font-size:1.05rem}
+.mlist.single .ltable .slot{width:10%;font-size:.85rem}
+.mlist.single .ltable .pl small{font-size:.8rem}
+.mlist.single .ltable td.pl{text-align:left}
+.mlist.single .ltable td.pl:last-child{text-align:right}
+.mlist.single .ltable td.pp:nth-child(2){text-align:right}
+.mlist.single .ltable td.pp:nth-child(4){text-align:left}
+.mlist.single .ltable th.lh{font-size:1rem;padding:10px 6px}
+.mlist.single .ltable th.lh small{font-size:1.1rem}
+.mlist.single .plbtn{text-align:inherit}
+.mlist.single .ltable tr.bk td{text-align:left}
 .ltable th.lh{text-align:left;padding:6px 4px;font-size:.8rem;font-weight:700;color:var(--ink);line-height:1.2}
 .ltable th.lh.r{text-align:right}
 .ltable th.lh small{display:block;color:var(--accent);font-size:.9rem}
@@ -1440,7 +1459,7 @@ footer input{width:min(100%,260px)}
     const anyPts = list.some(m => (m.points || 0) > 0);
     const done = w < D.firstOpen;
     const open = D.openMatch && D.openMatch.w === w ? pairs.find(g => g.mid === D.openMatch.id) : null;
-    if (open) html += `<button class="btn ghost mback" type="button" data-close-match>‹ All matchups</button>`;
+    if (open) html += `<div class="msingle"><button class="btn ghost mback" type="button" data-close-match>‹ All matchups</button>`;
     else html += `<p class="note">${done ? 'Final scores.' : anyPts ? 'Live scores. Tap Refresh to update.' : 'Upcoming. Scores appear once games start.'} Tap a matchup to open it full screen, then tap a player to see how their points were scored.</p>`;
     html += open ? '<div class="mlist single">' : '<div class="mlist">';
     const slots = (D.league.roster_positions || []).filter(p => !['BN', 'IR', 'TAXI'].includes(p));
@@ -1474,7 +1493,7 @@ footer input{width:min(100%,260px)}
       html += `<article class="mcard">${row(a, pa, winA)}${row(b, pb, winB)}
         ${open ? table : `<details class="lineups"><summary>Lineups</summary>${table}</details>`}</article>`;
     });
-    html += '</div>';
+    html += open ? '</div></div>' : '</div>';
     ensureNames(ids);
     return html;
   }
