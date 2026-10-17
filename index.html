@@ -149,6 +149,14 @@ td.avgp{font:700 1.15rem "Barlow Condensed","Arial Narrow",sans-serif}
 .mteam[data-open-match]{cursor:pointer}
 .mteam[data-open-match]:hover .tname{text-decoration:underline}
 .mback{margin-bottom:10px}
+.livewk{color:var(--pylon-ink)}
+.livedot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--pylon);margin-right:8px;animation:livep 1.4s infinite}
+@keyframes livep{50%{opacity:.25}}
+#toast{position:fixed;z-index:60;left:50%;bottom:18px;transform:translate(-50%,24px);opacity:0;pointer-events:none;width:min(440px,calc(100vw - 32px));text-align:left;background:var(--surface);color:var(--ink);border:1px solid var(--accent);border-radius:10px;padding:12px 14px;box-shadow:0 10px 30px rgba(0,0,0,.5);cursor:pointer;font:inherit;display:grid;gap:4px;transition:opacity .25s,transform .25s}
+#toast.show{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+#toast b{color:var(--accent);font-size:.75rem;text-transform:uppercase;letter-spacing:.06em}
+#toast span{font-size:.9rem}
+#toast em{font-style:normal;font-size:.72rem;color:var(--muted)}
 .ccols{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:12px}
 @media (max-width:700px){.ccols{grid-template-columns:1fr}}
 .ccol{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px;min-width:0}
@@ -592,6 +600,7 @@ footer input{width:min(100%,260px)}
       if (!seasons.includes(opts.season)) opts.season = D.draftSeason;
       runSim();
       render();
+      D.live = []; D.liveSeen = null; pollLive();
       $('#updated').textContent = `Updated ${new Date().toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}. Data from Sleeper.`;
     } catch (err) {
       $('#title').textContent = 'Dudley Dynasty';
@@ -601,6 +610,60 @@ footer input{width:min(100%,260px)}
       $('#refresh').disabled = false;
     }
   }
+
+  // ---------- Live waiver and free agent alerts ----------
+  const LIVE_MS = 45000;
+  let liveBusy = false;
+  async function pollLive(){
+    if (!D || liveBusy) return;
+    const myD = D; liveBusy = true;
+    try {
+      const w = Math.max(1, myD.defWeek || 1);
+      const list = await getJSON(`/league/${leagueId}/transactions/${w}`).catch(() => null);
+      if (!Array.isArray(list)) return;
+      const done = list.filter(t => t && (t.type === 'waiver' || t.type === 'free_agent') && t.status === 'complete');
+      if (!myD.liveSeen) { myD.liveSeen = new Set(done.map(t => t.transaction_id)); return; }
+      const fresh = done.filter(t => !myD.liveSeen.has(t.transaction_id)).sort((a, b) => (a.status_updated || 0) - (b.status_updated || 0));
+      if (!fresh.length) return;
+      fresh.forEach(t => myD.liveSeen.add(t.transaction_id));
+      const ids = new Set();
+      fresh.forEach(t => { Object.keys(t.adds || {}).forEach(id => ids.add(id)); Object.keys(t.drops || {}).forEach(id => ids.add(id)); });
+      if (ids.size) myD.players = await playerNames([...ids]);
+      if (D !== myD) return;
+      const budget = Number((myD.league.settings || {}).waiver_budget) || 0;
+      const tn = rid => B(team(rid).name);
+      const pf = pid => { const i = pname(pid); return i ? `${B(i.nm)}${i.pos ? ` (${esc([i.pos, i.tm].filter(Boolean).join(', '))})` : ''}` : B('a player'); };
+      fresh.forEach(t => {
+        const add = Object.entries(t.adds || {})[0], drop = Object.entries(t.drops || {})[0];
+        if (!add) return;
+        const rid = add[1], bid = Number((t.settings || {}).waiver_bid) || 0, key = 'live' + t.transaction_id;
+        const dropTxt = drop ? ` They dropped ${pf(drop[0])} to make room.` : '';
+        let html, author = 'adam';
+        if (t.type === 'free_agent') html = choose([
+          `🚨 JUST IN: ${tn(rid)} has signed ${pf(add[0])} as a free agent.${dropTxt}`,
+          `${tn(rid)} just grabbed ${pf(add[0])} off the free agent list.${dropTxt} Sources say it happened “minutes ago.”`
+        ], key);
+        else if (budget && bid >= budget * 0.25) { author = 'roast'; html = `🤡 LIVE: ${tn(rid)} just paid <b>$${bid}</b> in FAAB for ${pf(add[0])}. That’s ${Math.round(100 * bid / budget)}% of the budget on one claim.${dropTxt}`; }
+        else html = choose([
+          `🚨 JUST IN: ${tn(rid)} has won the waiver claim for ${pf(add[0])}${bid ? ` with a <b>$${bid}</b> bid` : ' at no cost'}.${dropTxt}`,
+          `🚨 WAIVER ALERT: ${pf(add[0])} is headed to ${tn(rid)}${bid ? ` for <b>$${bid}</b> in FAAB` : ''}.${dropTxt} League sources confirm.`
+        ], key);
+        myD.live.unshift({ week: w, kind: 'live', html, author, key, live: true });
+        showToast(html);
+      });
+      if (opts.tab === 'news') render();
+    } finally { liveBusy = false; }
+  }
+  function showToast(html){
+    let el = document.getElementById('toast');
+    if (!el) { el = document.createElement('button'); el.id = 'toast'; el.type = 'button'; el.setAttribute('role', 'status'); document.body.appendChild(el);
+      el.addEventListener('click', () => { el.classList.remove('show'); opts.tab = 'news'; saveOpts(); render(); window.scrollTo(0, 0); }); }
+    el.innerHTML = `<b>New transaction</b><span>${html}</span><em>Tap to open the News Feed</em>`;
+    el.classList.add('show');
+    clearTimeout(showToast.t); showToast.t = setTimeout(() => el.classList.remove('show'), 12000);
+  }
+  setInterval(() => { if (!document.hidden) pollLive(); }, LIVE_MS);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) pollLive(); });
 
   // ---------- Ordering ----------
   const team = rid => D.teams.get(rid) || { rid, name: `Team ${rid}`, avatar: null, wins: 0, losses: 0, ties: 0, pf: 0 };
@@ -1709,13 +1772,15 @@ footer input{width:min(100%,260px)}
     if (!posts.length) return '<p class="note">No news yet. Posts show up once Week 1 is final.</p>';
     let html = `<div class="feed">`;
     let lastWeek = null;
-    posts.forEach(p => {
-      if (p.week !== lastWeek) { html += `<h3 class="feedwk">Week ${p.week}</h3>`; lastWeek = p.week; }
+    const liveList = D.live || [];
+    if (liveList.length) html += `<h3 class="feedwk livewk"><span class="livedot"></span>Just in</h3>`;
+    liveList.concat(posts).forEach(p => {
+      if (!p.live && p.week !== lastWeek) { html += `<h3 class="feedwk">Week ${p.week}</h3>`; lastWeek = p.week; }
       const h = hashStr(p.key);
       const a = AUTHORS[p.author] || REPORTER;
       const likes = 20 + h % 480, reposts = 3 + (h >> 9) % 90, replies = 1 + (h >> 17) % 60;
       html += `<article class="post"><span class="pav${a.cls ? ' ' + a.cls : ''}" aria-hidden="true">${a.initials}</span><div class="pbody">
-        <div class="phead"><b>${esc(a.name)}</b><span class="ptag">${esc(a.tag)}</span><span class="phandle">${esc(a.handle)} · Wk ${p.week}</span></div>
+        <div class="phead"><b>${esc(a.name)}</b><span class="ptag">${esc(a.tag)}</span><span class="phandle">${esc(a.handle)} · ${p.live ? 'LIVE' : 'Wk ' + p.week}</span></div>
         <p class="ptext">${p.html}</p>
         <div class="pacts" aria-hidden="true"><span>💬 ${replies}</span><span>🔁 ${reposts}</span><span>♡ ${likes}</span></div>
       </div></article>`;
