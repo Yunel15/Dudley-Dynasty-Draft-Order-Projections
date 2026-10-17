@@ -143,6 +143,16 @@ td.avgp{font:700 1.15rem "Barlow Condensed","Arial Narrow",sans-serif}
 .mteam[data-open-match]{cursor:pointer}
 .mteam[data-open-match]:hover .tname{text-decoration:underline}
 .mback{margin-bottom:10px}
+.lawbar{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;margin:10px 0 18px}
+.lawdl{text-decoration:none;display:inline-block}
+.lawmeta{display:flex;flex-wrap:wrap;gap:6px 16px;color:var(--muted);font-size:.8rem}
+.lawmeta b{color:var(--ink)}
+.lawh{margin:18px 0 8px;font-size:1rem;color:var(--accent);text-transform:uppercase;letter-spacing:.06em}
+.lawsum{margin:0;padding-left:20px;display:grid;gap:6px;font-size:.9rem}
+.law{background:var(--surface);border:1px solid var(--line);border-radius:8px;margin:8px 0;padding:0 14px}
+.law summary{cursor:pointer;padding:12px 0;font-weight:700}
+.lawn{color:var(--accent);font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;margin-right:8px}
+.law ol{margin:0 0 12px;padding-left:20px;display:grid;gap:8px;font-size:.9rem}
 .scards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:10px 0 16px}
 .scard{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:6px}
 .scard .slabel{font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
@@ -676,10 +686,10 @@ footer input{width:min(100%,260px)}
         ? `${season} season hasn’t started. ${D.ids.length} teams.`
         : `${season} season, ${playedWeeks} of ${totalWeeks} weeks played. ${D.ids.length} teams.`;
 
-    const tabs = [['stand', 'Standings'], ['order', 'Draft Order'], ['proj', 'Projections'], ['match', 'Matchups'], ['news', 'News Feed'], ['odds', 'Playoff Odds'], ['bracket', 'Playoff Bracket'], ['pay', 'Payouts'], ['rec', 'League Records'], ['mgr', 'Manager Profiles'], ['build', 'Team Construction'], ['own', 'Pick Ownership'], ['trades', 'Trade History']];
+    const tabs = [['stand', 'Standings'], ['order', 'Draft Order'], ['proj', 'Projections'], ['match', 'Matchups'], ['news', 'News Feed'], ['odds', 'Playoff Odds'], ['bracket', 'Playoff Bracket'], ['pay', 'Payouts'], ['rec', 'League Records'], ['mgr', 'Manager Profiles'], ['build', 'Team Construction'], ['own', 'Pick Ownership'], ['trades', 'Trade History'], ['laws', 'League Bylaws']];
     let html = `<nav class="tabs" role="tablist">${tabs.map(([k, l]) =>
       `<button class="tab" role="tab" type="button" data-tab="${k}" aria-selected="${opts.tab === k}">${l}</button>`).join('')}</nav>`;
-    html += opts.tab === 'stand' ? renderStandings() : opts.tab === 'proj' ? renderProj() : opts.tab === 'odds' ? renderOdds() : opts.tab === 'match' ? renderMatchups() : opts.tab === 'news' ? renderNews() : opts.tab === 'bracket' ? renderBracket() : opts.tab === 'pay' ? renderPayouts() : opts.tab === 'rec' ? renderRecords() : opts.tab === 'mgr' ? renderProfiles() : opts.tab === 'build' ? renderBuild() : opts.tab === 'own' ? renderOwn() : opts.tab === 'trades' ? renderTrades() : renderOrder();
+    html += opts.tab === 'stand' ? renderStandings() : opts.tab === 'proj' ? renderProj() : opts.tab === 'odds' ? renderOdds() : opts.tab === 'match' ? renderMatchups() : opts.tab === 'news' ? renderNews() : opts.tab === 'bracket' ? renderBracket() : opts.tab === 'pay' ? renderPayouts() : opts.tab === 'rec' ? renderRecords() : opts.tab === 'mgr' ? renderProfiles() : opts.tab === 'build' ? renderBuild() : opts.tab === 'own' ? renderOwn() : opts.tab === 'trades' ? renderTrades() : opts.tab === 'laws' ? renderBylaws() : renderOrder();
     $('#app').innerHTML = html;
   }
 
@@ -759,6 +769,65 @@ footer input{width:min(100%,260px)}
       html += `<tr><td>${i + 1}</td><td class="tl">${teamBlock(t, '')}</td><td>${record(t)}</td><td>${t.pf.toFixed(2)}</td><td>${x.pa ? x.pa.toFixed(2) : '–'}</td><td>${streak}</td><td class="l5">${last5}</td></tr>`;
     });
     html += '</tbody></table></div><p class="note">Ranked by record, then points for. Streaks count regular-season games' + (D.median ? ', including the weekly median game' : '') + '.</p>';
+    return html;
+  }
+
+  // ---------- League Bylaws ----------
+  const BYLAWS = [
+    { n: 'I', t: 'League Structure', sum: '12-team dynasty league, no divisions. The Commissioner runs it; big changes need a vote.', r: [
+      ['Format', 'Dynasty league in which owners retain their full rosters from year to year.'],
+      ['Teams', 'The league consists of 12 teams. All owners are expected to remain active for the full season and offseason.'],
+      ['Divisions', 'The league has no divisions.'],
+      ['Governance', 'The Commissioner administers the league. Major rule changes require a league vote (see Article X).']] },
+    { n: 'II', t: 'Financials', sum: '$35 buy-in per team. $420 pool: 60% champion, 24% runner-up, 8% third, 8% points leader.', r: [
+      ['Buy-In', '$35 per team, due by the start of each season.'],
+      ['Prize Pool', '1st place: $252 (60%). 2nd place: $100 (24%). 3rd place: $34 (8%). Regular season points leader: $34 (8%).'],
+      ['Payment Handling', 'All funds are collected and held by the Commissioner.']] },
+    { n: 'III', t: 'Roster Composition', sum: '30-man rosters with 5 taxi and 2 IR slots. Start 1 QB, 2 RB, 3 WR, 1 TE, 1 FLEX, 1 SUPERFLEX.', r: [
+      ['Starting Lineup', '1 QB, 2 RB, 3 WR, 1 TE, 1 FLEX (RB/WR/TE), 1 SUPERFLEX.'],
+      ['Roster Size', '30 players total, including taxi squad and IR slots.'],
+      ['Taxi Squad', '5 slots reserved for rookies and second-year players only. A player must be dropped from or promoted off the taxi squad before the start of each year.'],
+      ['Injured Reserve', '2 slots. Only players with an official IR, PUP or Out designation may occupy an IR slot.']] },
+    { n: 'IV', t: 'Scoring', sum: 'PPR scoring.', r: [['Scoring Format', 'PPR.']] },
+    { n: 'V', t: 'Rookie & Startup Drafts', sum: 'Rookie draft order follows record order (lowest to highest). Future picks can be traded once that season’s dues are collected.', r: [
+      ['Startup Draft', 'Conducted on 08/07/2026 in the league’s inaugural year.'],
+      ['Rookie Draft', 'Held annually before the NFL season starts.'],
+      ['Draft Order', 'Rookie draft order is determined by record order (lowest to highest).'],
+      ['Draft Pick Trading', 'Future picks may be traded upon collection of league dues for that corresponding season.']] },
+    { n: 'VI', t: 'Trades', sum: 'Trade deadline is Week 14. Trading away future picks means paying that year’s dues, held as a security deposit.', r: [
+      ['Trade Deadline', 'Week 14 of the NFL season.'],
+      ['Future Picks', 'Any future picks traded away will result in paying that year’s league dues. That payment will be held until that year comes up and will act as a security deposit.']] },
+    { n: 'VII', t: 'Waivers & Free Agency', sum: 'FAAB waivers with a $10,000 budget each season.', r: [
+      ['Waiver System', 'FAAB (Free Agent Acquisition Budget).'],
+      ['FAAB Budget', '$10,000 per season.']] },
+    { n: 'VIII', t: 'Schedule & Playoffs', sum: 'Regular season is Weeks 1–14. 7 teams make the playoffs in Weeks 15–17.', r: [
+      ['Regular Season', 'Weeks 1–14.'], ['Playoffs', '7 teams, Weeks 15–17.']] },
+    { n: 'IX', t: 'Owner Conduct & Activity', sum: 'Set a competitive lineup every week. Tanking, collusion and harassment are grounds for removal.', r: [
+      ['Active Ownership Required', 'Owners must set a valid, competitive lineup each week and manage their roster in good faith.'],
+      ['Inactivity', 'An owner who fails to set a lineup for 2 consecutive weeks or abandons the team may be removed at the Commissioner’s discretion.'],
+      ['Tanking / Collusion', 'Intentionally losing, roster-dumping, or colluding is prohibited and grounds for removal without refund.'],
+      ['Conduct', 'Owners are expected to communicate respectfully. Repeated harassment or disruptive behavior is grounds for removal.']] },
+    { n: 'X', t: 'Rule Changes & Voting', sum: 'Any owner can propose changes in the offseason. Passing takes a vote of all 12 owners; no mid-season rule changes.', r: [
+      ['Proposals', 'Any owner may propose a rule change during the offseason window.'],
+      ['Voting', 'Changes pass with a majority / two-thirds vote of all 12 owners. The Commissioner breaks ties.'],
+      ['In-Season Changes', 'No scoring or roster rules may change mid-season except to correct a platform error.'],
+      ['Amendments', 'Approved changes are recorded in the bylaws and dated.']] },
+    { n: 'XI', t: 'Replacing Owners', sum: 'Leaving owners forfeit unpaid dues. A replacement inherits the roster and picks.', r: [
+      ['Departing Owners', 'An owner leaving the league forfeits any unpaid dues and the roster reverts to the league.'],
+      ['Replacement', 'The Commissioner recruits a replacement owner, who inherits the existing roster and draft picks unless the league votes on an orphan draft/redistribution.']] },
+    { n: 'XII', t: 'Commissioner Powers & Removal', sum: 'The Commissioner enforces the bylaws; the co-commissioner rules on anything involving the Commissioner’s own team.', r: [
+      ['Authority', 'The Commissioner enforces these bylaws, processes disputed transactions, and manages league logistics fairly and impartially.'],
+      ['Conflicts', 'In any matter involving the Commissioner’s own team, a co-commissioner rules.']] }
+  ];
+  function renderBylaws(){
+    const kv = [['Effective date', '8/5/2026'], ['Commissioner', 'Yunel Dudley'], ['Co-commissioner', 'Geno'], ['Teams', '12'], ['Platform', 'Sleeper']];
+    let html = `<h2 class="sech">League Bylaws</h2>
+      <div class="lawbar"><a class="btn lawdl" href="League_Bylaws.pdf" download="Dudley_Dynasty_League_Bylaws.pdf">Download the bylaws (PDF)</a>
+      <span class="lawmeta">${kv.map(([k, v]) => `<span><b>${esc(v)}</b> ${esc(k)}</span>`).join('')}</span></div>
+      <h3 class="lawh">The short version</h3><ul class="lawsum">${BYLAWS.map(a => `<li><b>${esc(a.t)}:</b> ${esc(a.sum)}</li>`).join('')}</ul>
+      <h3 class="lawh">The full rules</h3>`;
+    html += BYLAWS.map(a => `<details class="law"><summary><span class="lawn">Article ${a.n}</span> ${esc(a.t)}</summary><ol>${a.r.map(([k, v]) => `<li><b>${esc(k)}:</b> ${esc(v)}</li>`).join('')}</ol></details>`).join('');
+    html += '<p class="note">By joining or remaining in Dudley Dynasty each owner agrees to abide by these bylaws.</p>';
     return html;
   }
 
