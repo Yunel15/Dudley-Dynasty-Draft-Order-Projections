@@ -2561,7 +2561,7 @@ footer input{width:min(100%,260px)}
   $('#app').addEventListener('click', e => {
     document.querySelectorAll('.tabgroup.open').forEach(g => { if (!g.contains(e.target)) g.classList.remove('open'); });
     const cpick = e.target.closest('[data-calc-pick]');
-    if (cpick) { const k = cpick.dataset.calcPick; D.calc[k].items.push(cpick.dataset.key); D.calcFocus = k; render(); return; }
+    if (cpick) { const k = cpick.dataset.calcPick; D.calc[k].items.push(cpick.dataset.key); render(); return; }
     if (!e.target.closest('.csearch')) document.querySelectorAll('.csug').forEach(u => { u.hidden = true; });
     const crm = e.target.closest('[data-calc-rm]');
     if (crm) { const it = D.calc[crm.dataset.calcRm].items; it.splice(it.indexOf(crm.dataset.key), 1); render(); return; }
