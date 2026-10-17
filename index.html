@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="theme-color" content="#141B2B">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Dynasty Draft Order</title>
+<title>Dudley Dynasty</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -141,6 +141,20 @@ td.avgp{font:700 1.15rem "Barlow Condensed","Arial Narrow",sans-serif}
 .ltable .pp{font-weight:600;white-space:nowrap}
 .ltable .slot{text-align:center;color:var(--accent);font-weight:600;font-size:.72rem;width:2.6rem}
 .ltable .empty{color:var(--muted)}
+.plbtn{background:none;border:0;padding:0;color:inherit;font:inherit;text-align:inherit;line-height:inherit;cursor:pointer}
+.plbtn:hover{text-decoration:underline dotted}
+.plbtn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.ltable tr.bk td{padding:4px 4px 10px;text-align:left;white-space:normal}
+.bkblock{margin:6px 0 0;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+.bkhead{display:flex;justify-content:space-between;gap:8px;font-size:.85rem}
+.bkhead span{color:var(--accent);font-weight:700}
+.ltable .bkt{width:100%;margin-top:6px;font-size:.78rem}
+.ltable .bkt td{padding:3px 2px;text-align:right;border-top:1px solid var(--line);white-space:nowrap}
+.ltable .bkt td:first-child{text-align:left;white-space:normal}
+.ltable .bkt tr.tot td{font-weight:700}
+.bknote{font-size:.8rem;color:var(--muted);margin:6px 0 0}
+.bkvid{display:block;margin-top:6px;font-size:.8rem;color:var(--accent);font-weight:600}
+.bkclipt{margin-top:8px;font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
 
 /* Bracket */
 .bracket{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(230px,1fr);gap:16px;overflow-x:auto;margin-top:14px;padding-bottom:8px}
@@ -275,7 +289,7 @@ footer input{width:min(100%,260px)}
 <div class="wrap">
   <header class="top">
     <div>
-      <h1 id="title">Rookie draft order</h1>
+      <h1 id="title">Dudley Dynasty</h1>
       <p class="sub" id="sub">Loading from Sleeper…</p>
     </div>
     <button class="btn" id="refresh" type="button">Refresh</button>
@@ -296,6 +310,9 @@ footer input{width:min(100%,260px)}
 (() => {
   const DEFAULT_LEAGUE = '1389350335302078464';
   const API = 'https://api.sleeper.app/v1';
+  // Highlight clips (Highlightly). Set CLIP_API to your Cloudflare Worker URL (recommended, keeps the key private).
+  // Leave blank to hide clips entirely.
+  const CLIP_API = '';
   const SIMS = 5000;
   // League constitution, Article II: Financials
   const BUY_IN = 35;
@@ -440,14 +457,14 @@ footer input{width:min(100%,260px)}
       let players = {};
       try { players = JSON.parse(store.get('playerNames') || '{}'); } catch (e) {}
 
-      D = { league, season, teams, ids, tradedMap, seasons, draftSeason: seasons[0], median, startWeek, lastReg, firstOpen, hist, remaining, schedUnknown, completedWeeks, records: null, recordsLoading: false, trades: null, tradesLoading: false, profiles: null, profilesLoading: false, money: null, moneyLoading: false, news: null, newsLoading: false, build: null, buildLoading: false, historyPromise: null, rosters, users,
+      D = { seasonStart: (nflState && nflState.season_start_date) || null, league, season, teams, ids, tradedMap, seasons, draftSeason: seasons[0], median, startWeek, lastReg, firstOpen, hist, remaining, schedUnknown, completedWeeks, records: null, recordsLoading: false, trades: null, tradesLoading: false, profiles: null, profilesLoading: false, money: null, moneyLoading: false, news: null, newsLoading: false, build: null, buildLoading: false, historyPromise: null, rosters, users,
         playoff: { teams: pTeams, rounds: pRounds, type: pType, start: pws, lastWeek }, defWeek, weekData, weekLoading: new Set(), bracket: null, bracketLoading: false, players, namesLoading: false };
       if (!seasons.includes(opts.season)) opts.season = D.draftSeason;
       runSim();
       render();
       $('#updated').textContent = `Updated ${new Date().toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}. Data from Sleeper.`;
     } catch (err) {
-      $('#title').textContent = 'Rookie draft order';
+      $('#title').textContent = 'Dudley Dynasty';
       $('#sub').textContent = 'Couldn’t load the league.';
       $('#app').innerHTML = `<div class="error"><strong>${esc(err.message || 'Something went wrong loading from Sleeper.')}</strong><br>Check the league ID below, then try Refresh.</div>`;
     } finally {
@@ -587,8 +604,8 @@ footer input{width:min(100%,260px)}
 
   function render(){
     const { league, season } = D;
-    $('#title').textContent = league.name || 'Rookie draft order';
-    document.title = `${league.name || 'League'} draft order`;
+    $('#title').textContent = 'Dudley Dynasty';
+    document.title = 'Dudley Dynasty';
     const totalWeeks = D.lastReg - D.startWeek + 1;
     const playedWeeks = Math.min(D.firstOpen - D.startWeek, totalWeeks);
     $('#sub').textContent = seasonDone()
@@ -1222,6 +1239,102 @@ footer input{width:min(100%,260px)}
   }
   const SLOT = { QB: 'QB', RB: 'RB', WR: 'WR', TE: 'TE', K: 'K', DEF: 'DEF', FLEX: 'FLX', SUPER_FLEX: 'SF', WRRB_FLEX: 'W/R', REC_FLEX: 'W/T', IDP_FLEX: 'IDP' };
 
+  // ---------- Player scoring breakdown ----------
+  const STAT_LABELS = {
+    pass_yd: 'Passing yards', pass_td: 'Passing TD', pass_int: 'Interceptions thrown', pass_2pt: 'Passing 2-pt conversion',
+    pass_cmp: 'Completions', pass_att: 'Pass attempts', pass_inc: 'Incomplete passes', pass_sack: 'Sacks taken', pass_fd: 'Passing first downs',
+    rush_yd: 'Rushing yards', rush_td: 'Rushing TD', rush_att: 'Carries', rush_2pt: 'Rushing 2-pt conversion', rush_fd: 'Rushing first downs',
+    rec: 'Receptions', rec_yd: 'Receiving yards', rec_td: 'Receiving TD', rec_2pt: 'Receiving 2-pt conversion', rec_fd: 'Receiving first downs', rec_tgt: 'Targets',
+    fum: 'Fumbles', fum_lost: 'Fumbles lost', fum_rec: 'Fumble recoveries', fum_rec_td: 'Fumble recovery TD',
+    xpm: 'Extra points made', xpmiss: 'Extra points missed', fgm: 'Field goals made', fgmiss: 'Field goals missed',
+    fgm_0_19: 'FG 0-19 yards', fgm_20_29: 'FG 20-29 yards', fgm_30_39: 'FG 30-39 yards', fgm_40_49: 'FG 40-49 yards', fgm_50p: 'FG 50+ yards',
+    sack: 'Sacks', int: 'Interceptions', ff: 'Forced fumbles', def_td: 'Defensive TD', def_st_td: 'Special teams TD', st_td: 'Special teams TD',
+    safe: 'Safeties', blk_kick: 'Blocked kicks', pts_allow: 'Points allowed', tkl: 'Tackles', tkl_solo: 'Solo tackles', tkl_ast: 'Assisted tackles', pass_def: 'Passes defended'
+  };
+  const statLabel = k => STAT_LABELS[k] || (k.startsWith('pts_allow_') ? `Points allowed (${k.slice(10).replace('_', '-')})` : k.startsWith('bonus_') ? 'Bonus: ' + k.slice(6).replace(/_/g, ' ') : (k.charAt(0).toUpperCase() + k.slice(1).replace(/_/g, ' ')));
+
+  function fetchStats(w){
+    if (!D.statsCache) D.statsCache = new Map();
+    if (D.statsCache.has(w)) return Promise.resolve(D.statsCache.get(w));
+    return getJSON(`/stats/nfl/regular/${D.season}/${w}`)
+      .then(r => (r && typeof r === 'object') ? r : null).catch(() => null)
+      .then(r => { if (r) D.statsCache.set(w, r); return r; });
+  }
+
+  function breakdownHtml(pid, w, reported, stats){
+    const info = pname(pid) || { nm: 'Player', pos: '', tm: '' };
+    const link = '<div class="bkclips" data-clips></div>';
+    const head = `<div class="bkhead"><b>${esc(info.nm)}</b><span>${reported.toFixed(2)} pts</span></div>`;
+    const st = stats && stats[pid];
+    const sc = D.league.scoring_settings || {};
+    if (!st) return head + '<p class="bknote">Scoring details aren’t available for this week yet.</p>' + link;
+    const rows = Object.keys(st).filter(k => typeof st[k] === 'number' && st[k] !== 0 && typeof sc[k] === 'number' && sc[k] !== 0)
+      .map(k => ({ k, v: st[k], m: sc[k], p: st[k] * sc[k] })).sort((a, b) => Math.abs(b.p) - Math.abs(a.p));
+    const rest = reported - rows.reduce((t, r) => t + r.p, 0);
+    const pt = x => `<td class="${x < 0 ? 'neg' : ''}">${x > 0 ? '+' : x < 0 ? '−' : ''}${Math.abs(x).toFixed(2)}</td>`;
+    let body = rows.map(r => `<tr><td>${esc(statLabel(r.k))}</td><td>${Number.isInteger(r.v) ? r.v : r.v.toFixed(2)}</td><td>×${Number(r.m.toFixed(4))}</td>${pt(r.p)}</tr>`).join('');
+    if (Math.abs(rest) > 0.005) body += `<tr><td>Bonuses and other</td><td></td><td></td>${pt(rest)}</tr>`;
+    if (!body) return head + '<p class="bknote">No points scored this week.</p>' + link;
+    return head + `<table class="bkt"><tbody>${body}<tr class="tot"><td colspan="3">Total</td><td>${reported.toFixed(2)}</td></tr></tbody></table>` + link;
+  }
+
+  // ---------- Highlight clips ----------
+  const CLIP_ABBR = { WAS: 'WSH', JAC: 'JAX', LA: 'LAR' };
+  function fetchClips(info, w){
+    if (!CLIP_API || !D.seasonStart || !info || !info.tm || !info.nm) return Promise.resolve([]);
+    const ab = CLIP_ABBR[info.tm] || info.tm;
+    const key = ab + '|' + w;
+    if (!D.clipCache) D.clipCache = new Map();
+    if (D.clipCache.has(key)) return D.clipCache.get(key);
+    const t0 = Date.parse(D.seasonStart + 'T00:00:00Z') + (w - 1) * 7 * 864e5 - 864e5;
+    const t1 = t0 + 7 * 864e5;
+    const q = side => fetch(`${CLIP_API}/highlights?season=${D.season}&${side}TeamAbbreviation=${encodeURIComponent(ab)}&limit=100`)
+      .then(r => r.ok ? r.json() : { data: [] }).then(j => j.data || []).catch(() => []);
+    const pr = Promise.all([q('home'), q('away')]).then(([a, b]) => {
+      const seen = new Set();
+      return a.concat(b).filter(h => {
+        if (!h || seen.has(h.id)) return false; seen.add(h.id);
+        const d = h.match && Date.parse(h.match.date);
+        return d >= t0 && d < t1;
+      });
+    });
+    D.clipCache.set(key, pr);
+    return pr;
+  }
+  async function showClips(block, pid, w){
+    const slot = block.querySelector('[data-clips]');
+    const info = pname(pid);
+    if (!slot || !info) return;
+    const last = String(info.nm).trim().split(/\s+/).slice(-1)[0].replace(/[^A-Za-z'’-]/g, '').toLowerCase();
+    if (last.length < 3 || /^(jr|sr|ii|iii|iv)$/.test(last)) return;
+    const all = await fetchClips(info, w);
+    const hits = all.filter(h => ((h.title || '') + ' ' + (h.description || '')).toLowerCase().includes(last))
+      .sort((a, b) => (a.type === 'VERIFIED' ? 0 : 1) - (b.type === 'VERIFIED' ? 0 : 1)).slice(0, 4);
+    if (!hits.length || !block.isConnected) return;
+    slot.innerHTML = '<div class="bkclipt">Clips</div>' + hits.map(h => {
+      const u = /^https:\/\//.test(h.url || '') ? h.url : (/^https:\/\//.test(h.embedUrl || '') ? h.embedUrl : '');
+      return u ? `<a class="bkvid" href="${esc(u)}" target="_blank" rel="noopener noreferrer">▶ ${esc(h.title || 'Watch clip')}</a>` : '';
+    }).join('');
+  }
+
+  async function toggleBreakdown(btn){
+    const pid = btn.dataset.pid, w = Number(btn.dataset.w), pts = Number(btn.dataset.pts) || 0;
+    const row = btn.closest('tr') && btn.closest('tr').nextElementSibling;
+    if (!row || !row.classList.contains('bk')) return;
+    const holder = row.firstElementChild;
+    const existing = [...holder.children].find(c => c.dataset.bk === pid);
+    if (existing) { existing.remove(); row.hidden = !holder.children.length; return; }
+    const block = document.createElement('div');
+    block.className = 'bkblock';
+    block.dataset.bk = pid;
+    block.innerHTML = '<p class="bknote">Loading scoring…</p>';
+    holder.appendChild(block);
+    row.hidden = false;
+    const stats = await fetchStats(w);
+    block.innerHTML = breakdownHtml(pid, w, pts, stats);
+    showClips(block, pid, w);
+  }
+
   // ---------- Matchups ----------
   function renderMatchups(){
     const w = opts.week || D.defWeek;
@@ -1246,7 +1359,7 @@ footer input{width:min(100%,260px)}
     }
     const anyPts = list.some(m => (m.points || 0) > 0);
     const done = w < D.firstOpen;
-    html += `<p class="note">${done ? 'Final scores.' : anyPts ? 'Live scores. Tap Refresh to update.' : 'Upcoming. Scores appear once games start.'} Open a matchup’s lineups to see each starter’s points.</p><div class="mlist">`;
+    html += `<p class="note">${done ? 'Final scores.' : anyPts ? 'Live scores. Tap Refresh to update.' : 'Upcoming. Scores appear once games start.'} Open a matchup’s lineups, then tap a player to see how their points were scored.</p><div class="mlist">`;
     const slots = (D.league.roster_positions || []).filter(p => !['BN', 'IR', 'TAXI'].includes(p));
     const ids = [];
     pairs.forEach(g => g.forEach(m => (m.starters || []).forEach(id => ids.push(id))));
@@ -1266,10 +1379,11 @@ footer input{width:min(100%,260px)}
           const pts = ((m.starters_points || [])[i]) || 0;
           if (!id || id === '0') return side === 'l' ? '<td class="pl empty">Empty</td><td class="pp">0.00</td>' : '<td class="pp">0.00</td><td class="pl empty">Empty</td>';
           const info = pname(id);
-          const label = info ? `${esc(info.nm)}<small>${esc([info.pos, info.tm].filter(Boolean).join(', '))}</small>` : '<span class="asset-sub">Loading…</span>';
+          const inner = info ? `${esc(info.nm)}<small>${esc([info.pos, info.tm].filter(Boolean).join(', '))}</small>` : '<span class="asset-sub">Loading…</span>';
+          const label = `<button type="button" class="plbtn" data-pid="${esc(id)}" data-pts="${pts}" data-w="${w}">${inner}</button>`;
           return side === 'l' ? `<td class="pl">${label}</td><td class="pp">${pts.toFixed(2)}</td>` : `<td class="pp">${pts.toFixed(2)}</td><td class="pl">${label}</td>`;
         };
-        lineup += `<tr>${cell(a, 'l')}<td class="slot">${esc(SLOT[slots[i]] || slots[i] || '')}</td>${cell(b, 'r')}</tr>`;
+        lineup += `<tr>${cell(a, 'l')}<td class="slot">${esc(SLOT[slots[i]] || slots[i] || '')}</td>${cell(b, 'r')}</tr><tr class="bk" hidden><td colspan="5"></td></tr>`;
       }
       html += `<article class="mcard">${row(a, pa, winA)}${row(b, pb, winB)}
         <details class="lineups"><summary>Lineups</summary><div class="lwrap"><table class="ltable"><tbody>${lineup}</tbody></table></div></details></article>`;
@@ -2009,6 +2123,8 @@ footer input{width:min(100%,260px)}
     if (br) { opts.bracketSide = br.dataset.side; render(); return; }
     const nflb = e.target.closest('[data-nfl]');
     if (nflb) { opts.nflFilter = opts.nflFilter === nflb.dataset.nfl ? null : nflb.dataset.nfl; render(); return; }
+    const plb = e.target.closest('[data-pid]');
+    if (plb) { toggleBreakdown(plb); return; }
     const wk = e.target.closest('[data-week-step]');
     if (wk) {
       const w = (opts.week || D.defWeek) + Number(wk.dataset.weekStep);
