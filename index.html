@@ -199,6 +199,18 @@ td.tags{white-space:normal;min-width:160px;text-align:left;color:var(--muted);fo
 .ptext b{color:var(--ink)}
 .pacts{display:flex;gap:26px;font-size:.82rem;color:var(--muted)}
 
+/* Team construction */
+.bgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(320px,100%),1fr));gap:12px;margin-top:14px}
+.bcard{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px;min-width:0}
+.bcard header{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.btable{margin-top:12px}
+.btable th:first-child,.btable td:first-child{text-align:left;padding-left:2px}
+.btable tr.all td{font-weight:600;border-top:2px solid var(--line)}
+.chip.stack{border-color:var(--accent)}
+.chip.stack b{color:var(--accent)}
+.tenure{line-height:1.35}
+.tenure b{font-size:.95rem}
+
 /* Manager profiles */
 .pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:12px;margin-top:14px}
 .pcard{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:16px;min-width:0}
@@ -403,7 +415,7 @@ footer input{width:min(100%,260px)}
       let players = {};
       try { players = JSON.parse(store.get('playerNames') || '{}'); } catch (e) {}
 
-      D = { league, season, teams, ids, tradedMap, seasons, draftSeason: seasons[0], median, startWeek, lastReg, firstOpen, hist, remaining, schedUnknown, completedWeeks, records: null, recordsLoading: false, trades: null, tradesLoading: false, profiles: null, profilesLoading: false, money: null, moneyLoading: false, news: null, newsLoading: false, historyPromise: null, rosters, users,
+      D = { league, season, teams, ids, tradedMap, seasons, draftSeason: seasons[0], median, startWeek, lastReg, firstOpen, hist, remaining, schedUnknown, completedWeeks, records: null, recordsLoading: false, trades: null, tradesLoading: false, profiles: null, profilesLoading: false, money: null, moneyLoading: false, news: null, newsLoading: false, build: null, buildLoading: false, historyPromise: null, rosters, users,
         playoff: { teams: pTeams, rounds: pRounds, type: pType, start: pws, lastWeek }, defWeek, weekData, weekLoading: new Set(), bracket: null, bracketLoading: false, players, namesLoading: false };
       if (!seasons.includes(opts.season)) opts.season = D.draftSeason;
       runSim();
@@ -560,10 +572,10 @@ footer input{width:min(100%,260px)}
         ? `${season} season hasn’t started. ${D.ids.length} teams.`
         : `${season} season, ${playedWeeks} of ${totalWeeks} weeks played. ${D.ids.length} teams.`;
 
-    const tabs = [['order', 'Draft Order'], ['proj', 'Projections'], ['match', 'Matchups'], ['news', 'News Feed'], ['odds', 'Playoff Odds'], ['bracket', 'Playoff Bracket'], ['pay', 'Payouts'], ['rec', 'League Records'], ['mgr', 'Manager Profiles'], ['own', 'Pick Ownership'], ['trades', 'Trade History']];
+    const tabs = [['order', 'Draft Order'], ['proj', 'Projections'], ['match', 'Matchups'], ['news', 'News Feed'], ['odds', 'Playoff Odds'], ['bracket', 'Playoff Bracket'], ['pay', 'Payouts'], ['rec', 'League Records'], ['mgr', 'Manager Profiles'], ['build', 'Team Construction'], ['own', 'Pick Ownership'], ['trades', 'Trade History']];
     let html = `<nav class="tabs" role="tablist">${tabs.map(([k, l]) =>
       `<button class="tab" role="tab" type="button" data-tab="${k}" aria-selected="${opts.tab === k}">${l}</button>`).join('')}</nav>`;
-    html += opts.tab === 'proj' ? renderProj() : opts.tab === 'odds' ? renderOdds() : opts.tab === 'match' ? renderMatchups() : opts.tab === 'news' ? renderNews() : opts.tab === 'bracket' ? renderBracket() : opts.tab === 'pay' ? renderPayouts() : opts.tab === 'rec' ? renderRecords() : opts.tab === 'mgr' ? renderProfiles() : opts.tab === 'own' ? renderOwn() : opts.tab === 'trades' ? renderTrades() : renderOrder();
+    html += opts.tab === 'proj' ? renderProj() : opts.tab === 'odds' ? renderOdds() : opts.tab === 'match' ? renderMatchups() : opts.tab === 'news' ? renderNews() : opts.tab === 'bracket' ? renderBracket() : opts.tab === 'pay' ? renderPayouts() : opts.tab === 'rec' ? renderRecords() : opts.tab === 'mgr' ? renderProfiles() : opts.tab === 'build' ? renderBuild() : opts.tab === 'own' ? renderOwn() : opts.tab === 'trades' ? renderTrades() : renderOrder();
     $('#app').innerHTML = html;
   }
 
@@ -793,13 +805,13 @@ footer input{width:min(100%,260px)}
     const { seasons, cards } = D.records;
     if (!seasons.length) return '<p class="note">No games have been played yet. Records fill in after week 1 is final.</p>';
     const span = seasons.length > 1 ? `${seasons.length} seasons (${seasons[0]} to ${seasons[seasons.length - 1]})` : `the ${seasons[0]} season`;
-    let html = `<p class="note">All-time records from completed regular-season games across ${span}. Each card shows the record holder and the next four.</p><div class="rgrid">`;
+    let html = `<p class="note">All-time records from completed regular-season games across ${span}. Each card shows the current record holder.</p><div class="rgrid">`;
     cards.forEach(c => {
       if (!c.rows.length) return;
-      const [first, ...rest] = c.rows;
+      const first = c.rows[0];
       html += `<article class="rcard"><h3>${esc(c.title)}</h3><div class="rval">${esc(first.val)}</div>
         <div class="rwho">${esc(first.who)}</div><div class="rwhen">${esc(first.when)}</div>
-        ${rest.length ? `<ol class="rlist">${rest.map(r => `<li><span title="${esc(r.who + ', ' + r.when)}">${esc(r.who)}, ${esc(r.when)}</span><b>${esc(r.val)}</b></li>`).join('')}</ol>` : ''}</article>`;
+      </article>`;
     });
     return html + '</div>';
   }
@@ -1477,6 +1489,148 @@ footer input{width:min(100%,260px)}
         <td class="avgp ${net >= 0 ? 'pos' : 'neg'}">${usd(net)}</td><td class="tags">${esc(tags)}</td></tr>`;
     });
     return html + '</tbody></table></div>';
+  }
+
+  // ---------- Team construction ----------
+  const POS_ORDER = ['QB', 'RB', 'WR', 'TE', 'K', 'DL', 'LB', 'DB'];
+
+  async function playerInfoFor(ids){
+    let cache = {};
+    try { cache = JSON.parse(store.get('playerInfo') || '{}'); } catch (e) {}
+    const missing = ids.filter(id => !cache[id]);
+    if (missing.length) {
+      const all = await getJSON('/players/nfl');
+      missing.forEach(id => {
+        const p = all[id];
+        if (!p) return;
+        cache[id] = {
+          n: p.full_name || [p.first_name, p.last_name].filter(Boolean).join(' ') || id,
+          pos: p.position || '', t: p.team || '', b: p.birth_date || '',
+          a: typeof p.age === 'number' ? p.age : null
+        };
+      });
+      store.set('playerInfo', JSON.stringify(cache));
+    }
+    return cache;
+  }
+  const ageOf = p => {
+    if (p.b) { const t = Date.parse(p.b); if (!isNaN(t)) return (Date.now() - t) / 31557600000; }
+    return p.a;
+  };
+  const durTxt = ms => {
+    const d = Math.max(0, Math.floor(ms / 86400000));
+    if (d < 14) return `${d} day${d === 1 ? '' : 's'}`;
+    if (d < 60) return `${Math.floor(d / 7)} weeks`;
+    if (d < 730) return `${Math.round(d / 30.4)} months`;
+    return `${(d / 365.25).toFixed(1)} years`;
+  };
+
+  // Who has held each player the longest, from draft picks and transactions across every season
+  async function loadAcquisitions(hist){
+    const holder = new Map();
+    for (const L of hist.slice().reverse()) {
+      const ownerOfRid = new Map(L.rosters.map(r => [r.roster_id, r.owner_id || `${L.id}-${r.roster_id}`]));
+      const ev = [];
+      const drafts = await getJSON(`/league/${L.id}/drafts`).catch(() => []);
+      for (const d of (Array.isArray(drafts) ? drafts : [])) {
+        const picks = await getJSON(`/draft/${d.draft_id}/picks`).catch(() => []);
+        const ts = d.last_picked || d.start_time || 0;
+        (Array.isArray(picks) ? picks : []).forEach(pk => {
+          if (pk.player_id && ownerOfRid.has(pk.roster_id)) ev.push({ ts, ord: pk.pick_no || 0, kind: 'add', pid: pk.player_id, owner: ownerOfRid.get(pk.roster_id) });
+        });
+      }
+      const weeks = await Promise.all([...Array(19).keys()].map(w => getJSON(`/league/${L.id}/transactions/${w}`).catch(() => [])));
+      weeks.forEach(list => (Array.isArray(list) ? list : []).forEach(t => {
+        if (!t || t.status !== 'complete') return;
+        const ts = t.status_updated || t.created || 0;
+        Object.entries(t.adds || {}).forEach(([pid, rid]) => { if (ownerOfRid.has(rid)) ev.push({ ts, ord: 0, kind: 'add', pid, owner: ownerOfRid.get(rid) }); });
+        Object.entries(t.drops || {}).forEach(([pid, rid]) => { if (ownerOfRid.has(rid)) ev.push({ ts, ord: 0, kind: 'drop', pid, owner: ownerOfRid.get(rid) }); });
+      }));
+      ev.sort((a, b) => (a.ts - b.ts) || (a.kind === b.kind ? 0 : a.kind === 'drop' ? -1 : 1) || (a.ord - b.ord));
+      ev.forEach(e => {
+        if (e.kind === 'add') holder.set(e.pid, { owner: e.owner, ts: e.ts, ord: e.ord });
+        else { const h = holder.get(e.pid); if (h && h.owner === e.owner) holder.delete(e.pid); }
+      });
+    }
+    return holder;
+  }
+
+  async function loadBuild(){
+    if (!D || D.build || D.buildLoading) return;
+    const myD = D;
+    myD.buildLoading = true;
+    try {
+      const hist = await loadHistory();
+      const rosters = (myD.rosters || []).filter(r => r.roster_id != null);
+      const ids = [...new Set(rosters.flatMap(r => r.players || []))];
+      const [info, holder] = await Promise.all([playerInfoFor(ids), loadAcquisitions(hist).catch(() => new Map())]);
+      myD.build = { info, holder, rosters };
+    } catch (e) {
+      myD.build = { error: e.message || 'Couldn’t load player data from Sleeper.' };
+    } finally {
+      myD.buildLoading = false;
+      if (D === myD && opts.tab === 'build') render();
+    }
+  }
+
+  function renderBuild(){
+    if (!D.build) { loadBuild(); return '<p class="status">Loading rosters and player ages…</p>'; }
+    if (D.build.error) return `<div class="error"><strong>${esc(D.build.error)}</strong><br>Try Refresh.</div>`;
+    const { info, holder, rosters } = D.build;
+    if (!rosters.some(r => (r.players || []).length)) return '<p class="note">Rosters are empty so far. Team construction shows up once teams have players.</p>';
+
+    const teams = rosters.map(r => {
+      const players = (r.players || []).map(id => info[id] ? { id, ...info[id] } : null).filter(Boolean);
+      const byPos = {};
+      let ageSum = 0, ageN = 0;
+      players.forEach(p => {
+        if (!p.pos || p.pos === 'DEF') return;
+        const a = ageOf(p);
+        const b = byPos[p.pos] || (byPos[p.pos] = { n: 0, ages: [] });
+        b.n++;
+        if (a != null) { b.ages.push(a); ageSum += a; ageN++; }
+      });
+      const nfl = {};
+      players.forEach(p => { if (p.pos === 'DEF') return; const k = p.t || 'FA'; nfl[k] = (nfl[k] || 0) + 1; });
+      const key = r.owner_id || `${leagueId}-${r.roster_id}`;
+      let tenured = null;
+      players.forEach(p => {
+        const h = holder.get(p.id);
+        if (!h || h.owner !== key) return;
+        if (!tenured || h.ts < tenured.ts || (h.ts === tenured.ts && h.ord < tenured.ord)) tenured = { p, ts: h.ts, ord: h.ord };
+      });
+      return { rid: r.roster_id, players, byPos, avg: ageN ? ageSum / ageN : null, nfl, tenured };
+    }).sort((a, b) => team(a.rid).name.localeCompare(team(b.rid).name));
+
+    const posList = POS_ORDER.filter(pos => teams.some(t => t.byPos[pos] && t.byPos[pos].ages.length));
+    const posAvg = (t, pos) => { const b = t.byPos[pos]; return b && b.ages.length ? avg(b.ages) : null; };
+    const cmp = {};
+    posList.forEach(pos => { cmp[pos] = teams.map(t => posAvg(t, pos)).filter(v => v != null); });
+    const allVals = teams.map(t => t.avg).filter(v => v != null);
+    const cell = (val, vals) => {
+      if (val == null) return '<td>–</td><td>–</td>';
+      const r = 1 + vals.filter(v => v < val - 1e-9).length, n = vals.length;
+      const cls = n >= 6 ? (r <= 3 ? ' class="pos"' : r > n - 3 ? ' class="neg"' : '') : '';
+      return `<td>${val.toFixed(1)}</td><td${cls}>#${r} of ${n}</td>`;
+    };
+
+    let html = `<p class="note">Ages come from Sleeper’s player database. Age rank compares each team’s average age at that position to the rest of the league: #1 is the youngest, and the three youngest and oldest teams are colored. Longest tenured is the player who has been on the roster the longest, based on draft and transaction history; players acquired at the same time are ordered by draft pick.</p><div class="bgrid">`;
+    teams.forEach(t => {
+      const tm = team(t.rid);
+      html += `<article class="bcard"><header>${teamBlock(tm, esc(tm.manager))}<span class="count">${t.players.length}<small>players</small></span></header>
+        <table class="btable"><thead><tr><th scope="col">Pos</th><th scope="col">Players</th><th scope="col">Avg age</th><th scope="col">Age rank</th></tr></thead><tbody>
+        ${posList.map(pos => `<tr><td>${pos}</td><td>${t.byPos[pos] ? t.byPos[pos].n : 0}</td>${cell(posAvg(t, pos), cmp[pos])}</tr>`).join('')}
+        <tr class="all"><td>All</td><td>${t.players.filter(p => p.pos !== 'DEF').length}</td>${cell(t.avg, allVals)}</tr></tbody></table>
+        <div class="yr">Players per NFL team</div><div class="chips">
+        ${Object.entries(t.nfl).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).map(([k, n]) =>
+          `<span class="chip${n >= 3 ? ' stack' : ''}"><b>${esc(k)}</b>${n} player${n === 1 ? '' : 's'}</span>`).join('') || '<span class="tempty">No players</span>'}</div>
+        <div class="yr">Longest tenured</div>
+        ${t.tenured ? `<div class="tenure"><b>${esc(t.tenured.p.n)}</b> <span class="asset-sub">${esc([t.tenured.p.pos, t.tenured.p.t].filter(Boolean).join(', '))}</span>
+          <div class="asset-sub">On this roster since ${new Date(t.tenured.ts).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' })} (${durTxt(Date.now() - t.tenured.ts)})</div></div>`
+          : '<div class="tempty">Not available yet</div>'}
+      </article>`;
+    });
+    return html + '</div>';
   }
 
   // ---------- League history (shared) ----------
