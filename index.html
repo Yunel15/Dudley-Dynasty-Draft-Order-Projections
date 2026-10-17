@@ -133,6 +133,27 @@ td.avgp{font:700 1.15rem "Barlow Condensed","Arial Narrow",sans-serif}
 .mteam.win .mscore{color:var(--accent)}
 .lineups summary{cursor:pointer;color:var(--muted);font-size:.85rem;padding-top:6px}
 .lwrap{overflow-x:auto;margin-top:8px}
+.mteam[data-open-match]{cursor:pointer}
+.mteam[data-open-match]:hover .tname{text-decoration:underline}
+.mback{margin-bottom:10px}
+.scards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:10px 0 16px}
+.scard{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:6px}
+.scard .slabel{font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.scard b{font:700 1.3rem/1 "Barlow Condensed","Arial Narrow",sans-serif}
+.scard.good b{color:var(--accent)}.scard.bad b{color:var(--pylon-ink)}
+.stbl{width:100%;border-collapse:collapse;font-size:.85rem;font-variant-numeric:tabular-nums}
+.stbl th{font-size:.7rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);text-align:center;padding:6px 6px;border-bottom:1px solid var(--line);font-weight:600}
+.stbl td{padding:7px 6px;text-align:center;border-top:1px solid var(--line);white-space:nowrap}
+.stbl .tl{text-align:left}
+.stk{font-weight:700}.stk.w{color:var(--accent)}.stk.l{color:var(--pylon-ink)}.stk.t{color:var(--muted)}
+.l5{white-space:nowrap}
+.dot{display:inline-block;width:20px;height:20px;line-height:20px;border-radius:50%;font:700 .65rem/20px inherit;font-style:normal;margin:0 1px;text-align:center}
+.dot.w{background:var(--accent);color:var(--accent-ink)}.dot.l{background:var(--pylon-soft);color:var(--pylon-ink)}.dot.t{background:var(--line);color:var(--ink)}
+.mlist.single .mscore{font-size:2.4rem}
+.ltable th.lh{text-align:left;padding:6px 4px;font-size:.8rem;font-weight:700;color:var(--ink);line-height:1.2}
+.ltable th.lh.r{text-align:right}
+.ltable th.lh small{display:block;color:var(--accent);font-size:.9rem}
+.ltable th.lh.slot{text-align:center;color:var(--muted);font-weight:600;width:2.6rem}
 .ltable{width:100%;border-collapse:collapse;font-size:.8rem;font-variant-numeric:tabular-nums}
 .ltable td{padding:5px 4px;border-top:1px solid var(--line);vertical-align:middle}
 .ltable .pl{width:40%;line-height:1.2}
@@ -339,7 +360,8 @@ footer input{width:min(100%,260px)}
   function loadOpts(){
     let saved = {};
     try { saved = JSON.parse(store.get('opts:' + leagueId) || '{}'); } catch (e) {}
-    opts = Object.assign({ tab:'order', basis:'standings', type:'linear', tiebreak:'pf-low', rounds:null, season:null }, saved);
+    opts = Object.assign({ tab:'stand', basis:'standings', type:'linear', tiebreak:'pf-low', rounds:null, season:null }, saved);
+    opts.tab = 'stand'; // always land on Standings
   }
   function saveOpts(){
     const { tab, basis, type, tiebreak, rounds } = opts;
@@ -614,10 +636,10 @@ footer input{width:min(100%,260px)}
         ? `${season} season hasn’t started. ${D.ids.length} teams.`
         : `${season} season, ${playedWeeks} of ${totalWeeks} weeks played. ${D.ids.length} teams.`;
 
-    const tabs = [['order', 'Draft Order'], ['proj', 'Projections'], ['match', 'Matchups'], ['news', 'News Feed'], ['odds', 'Playoff Odds'], ['bracket', 'Playoff Bracket'], ['pay', 'Payouts'], ['rec', 'League Records'], ['mgr', 'Manager Profiles'], ['build', 'Team Construction'], ['own', 'Pick Ownership'], ['trades', 'Trade History']];
+    const tabs = [['stand', 'Standings'], ['order', 'Draft Order'], ['proj', 'Projections'], ['match', 'Matchups'], ['news', 'News Feed'], ['odds', 'Playoff Odds'], ['bracket', 'Playoff Bracket'], ['pay', 'Payouts'], ['rec', 'League Records'], ['mgr', 'Manager Profiles'], ['build', 'Team Construction'], ['own', 'Pick Ownership'], ['trades', 'Trade History']];
     let html = `<nav class="tabs" role="tablist">${tabs.map(([k, l]) =>
       `<button class="tab" role="tab" type="button" data-tab="${k}" aria-selected="${opts.tab === k}">${l}</button>`).join('')}</nav>`;
-    html += opts.tab === 'proj' ? renderProj() : opts.tab === 'odds' ? renderOdds() : opts.tab === 'match' ? renderMatchups() : opts.tab === 'news' ? renderNews() : opts.tab === 'bracket' ? renderBracket() : opts.tab === 'pay' ? renderPayouts() : opts.tab === 'rec' ? renderRecords() : opts.tab === 'mgr' ? renderProfiles() : opts.tab === 'build' ? renderBuild() : opts.tab === 'own' ? renderOwn() : opts.tab === 'trades' ? renderTrades() : renderOrder();
+    html += opts.tab === 'stand' ? renderStandings() : opts.tab === 'proj' ? renderProj() : opts.tab === 'odds' ? renderOdds() : opts.tab === 'match' ? renderMatchups() : opts.tab === 'news' ? renderNews() : opts.tab === 'bracket' ? renderBracket() : opts.tab === 'pay' ? renderPayouts() : opts.tab === 'rec' ? renderRecords() : opts.tab === 'mgr' ? renderProfiles() : opts.tab === 'build' ? renderBuild() : opts.tab === 'own' ? renderOwn() : opts.tab === 'trades' ? renderTrades() : renderOrder();
     $('#app').innerHTML = html;
   }
 
@@ -640,6 +662,64 @@ footer input{width:min(100%,260px)}
       <button type="button" data-basis="standings" aria-pressed="${opts.basis === 'standings'}">Standings today</button>
       <button type="button" data-basis="projected" aria-pressed="${opts.basis === 'projected'}">Projected finish</button>
     </div></div>`;
+  }
+
+  // ---------- Standings ----------
+  function standingsData(){
+    const res = new Map(D.ids.map(r => [r, { g: [], pa: 0, hi: 0, lo: Infinity }]));
+    const weeks = [...D.completedWeeks].sort((a, b) => a.week - b.week);
+    weeks.forEach(({ list }) => {
+      const groups = new Map();
+      list.forEach(m => { if (m.matchup_id == null || !res.has(m.roster_id)) return; if (!groups.has(m.matchup_id)) groups.set(m.matchup_id, []); groups.get(m.matchup_id).push(m); });
+      const scores = list.filter(m => res.has(m.roster_id) && (m.points || 0) > 0).map(m => m.points).sort((x, y) => x - y);
+      const med = scores.length ? (scores[Math.floor((scores.length - 1) / 2)] + scores[Math.floor(scores.length / 2)]) / 2 : 0;
+      groups.forEach(g => {
+        if (g.length !== 2 || !(g[0].points > 0 || g[1].points > 0)) return;
+        g.forEach((m, i) => {
+          const o = g[1 - i], r = res.get(m.roster_id);
+          r.g.push(m.points > o.points ? 'W' : m.points < o.points ? 'L' : 'T');
+          r.pa += o.points || 0;
+          r.hi = Math.max(r.hi, m.points || 0); r.lo = Math.min(r.lo, m.points || 0);
+          if (D.median && med) r.g.push(m.points > med ? 'W' : m.points < med ? 'L' : 'T');
+        });
+      });
+    });
+    res.forEach(r => {
+      let cur = { t: '', n: 0 }, bw = 0, bl = 0, run = 0, rt = '';
+      r.g.forEach(x => {
+        if (x === rt) run++; else { rt = x; run = 1; }
+        if (x === 'W') bw = Math.max(bw, run);
+        if (x === 'L') bl = Math.max(bl, run);
+        cur = { t: x, n: run };
+      });
+      r.cur = cur; r.bestW = bw; r.bestL = bl;
+    });
+    return res;
+  }
+  function renderStandings(){
+    const info = standingsData();
+    const gp = t => t.wins + t.losses + t.ties;
+    const pct = t => gp(t) ? (t.wins + 0.5 * t.ties) / gp(t) : 0;
+    const order = D.ids.slice().sort((a, b) => (pct(team(b)) - pct(team(a))) || (team(b).pf - team(a).pf) || (a - b));
+    const played = Math.max(0, ...D.ids.map(r => gp(team(r))));
+    const any = played > 0;
+    const sN = (r, t) => { const c = info.get(r).cur; return c.n && c.t === t ? c.n : 0; };
+    const top = (arr, f) => arr.map(r => ({ r, v: f(r) })).filter(x => x.v > 0).sort((a, b) => b.v - a.v || a.r - b.r)[0];
+    const hot = top(D.ids, r => sN(r, 'W')), cold = top(D.ids, r => sN(r, 'L'));
+    const bestW = top(D.ids, r => info.get(r).bestW), bestL = top(D.ids, r => info.get(r).bestL);
+    const card = (label, x, unit, cls) => `<div class="scard ${cls}"><span class="slabel">${label}</span>${x ? `${teamBlock(team(x.r), '')}<b>${x.v} ${unit}</b>` : '<span class="asset-sub">None yet</span>'}</div>`;
+    let html = `<h2 class="sech">League Standings</h2>`;
+    if (!any) return html + '<p class="note">Standings appear once the season starts.</p>';
+    html += `<div class="scards">${card('Longest active win streak', hot, 'wins', 'good')}${card('Longest active losing streak', cold, 'losses', 'bad')}${card('Best win streak this season', bestW, 'wins', 'good')}${card('Worst losing streak this season', bestL, 'losses', 'bad')}</div>`;
+    html += `<div class="lwrap"><table class="stbl"><thead><tr><th>#</th><th class="tl">Team</th><th>Record</th><th>PF</th><th>PA</th><th>Streak</th><th>Last 5</th></tr></thead><tbody>`;
+    order.forEach((r, i) => {
+      const t = team(r), x = info.get(r), c = x.cur;
+      const streak = c.n ? `<span class="stk ${c.t === 'W' ? 'w' : c.t === 'L' ? 'l' : 't'}">${c.t}${c.n}</span>` : '–';
+      const last5 = x.g.slice(-5).map(g => `<i class="dot ${g.toLowerCase()}" title="${g}">${g}</i>`).join('');
+      html += `<tr><td>${i + 1}</td><td class="tl">${teamBlock(t, '')}</td><td>${record(t)}</td><td>${t.pf.toFixed(2)}</td><td>${x.pa ? x.pa.toFixed(2) : '–'}</td><td>${streak}</td><td class="l5">${last5}</td></tr>`;
+    });
+    html += '</tbody></table></div><p class="note">Ranked by record, then points for. Streaks count regular-season games' + (D.median ? ', including the weekly median game' : '') + '.</p>';
+    return html;
   }
 
   function renderOrder(){
@@ -1353,23 +1433,26 @@ footer input{width:min(100%,260px)}
     const list = D.weekData.get(w);
     const groups = new Map();
     list.forEach(m => { if (m.matchup_id == null) return; if (!groups.has(m.matchup_id)) groups.set(m.matchup_id, []); groups.get(m.matchup_id).push(m); });
-    const pairs = [...groups.entries()].sort((a, b) => a[0] - b[0]).map(e => e[1]).filter(g => g.length === 2);
+    const pairs = [...groups.entries()].sort((a, b) => a[0] - b[0]).map(e => { e[1].mid = e[0]; return e[1]; }).filter(g => g.length === 2);
     if (!pairs.length) {
       return html + `<p class="note">${w >= start ? 'Playoff matchups for this week aren’t set yet.' : 'No matchups are scheduled for this week.'}</p>`;
     }
     const anyPts = list.some(m => (m.points || 0) > 0);
     const done = w < D.firstOpen;
-    html += `<p class="note">${done ? 'Final scores.' : anyPts ? 'Live scores. Tap Refresh to update.' : 'Upcoming. Scores appear once games start.'} Open a matchup’s lineups, then tap a player to see how their points were scored.</p><div class="mlist">`;
+    const open = D.openMatch && D.openMatch.w === w ? pairs.find(g => g.mid === D.openMatch.id) : null;
+    if (open) html += `<button class="btn ghost mback" type="button" data-close-match>‹ All matchups</button>`;
+    else html += `<p class="note">${done ? 'Final scores.' : anyPts ? 'Live scores. Tap Refresh to update.' : 'Upcoming. Scores appear once games start.'} Tap a matchup to open it full screen, then tap a player to see how their points were scored.</p>`;
+    html += open ? '<div class="mlist single">' : '<div class="mlist">';
     const slots = (D.league.roster_positions || []).filter(p => !['BN', 'IR', 'TAXI'].includes(p));
     const ids = [];
     pairs.forEach(g => g.forEach(m => (m.starters || []).forEach(id => ids.push(id))));
-    pairs.forEach(g => {
+    (open ? [open] : pairs).forEach(g => {
       const [a, b] = g;
       const pa = a.points || 0, pb = b.points || 0;
       const winA = anyPts && pa > pb, winB = anyPts && pb > pa;
       const row = (m, pts, win) => {
         const t = team(m.roster_id);
-        return `<div class="mteam${win ? ' win' : ''}">${teamBlock(t, `${record(t)}`)}<span class="mscore">${anyPts ? pts.toFixed(2) : '–'}</span></div>`;
+        return `<div class="mteam${win ? ' win' : ''}"${open ? '' : ` data-open-match="${g.mid}" role="button" tabindex="0"`}>${teamBlock(t, `${record(t)}`)}<span class="mscore">${anyPts ? pts.toFixed(2) : '–'}</span></div>`;
       };
       let lineup = '';
       const n = Math.max(slots.length, (a.starters || []).length, (b.starters || []).length);
@@ -1385,8 +1468,11 @@ footer input{width:min(100%,260px)}
         };
         lineup += `<tr>${cell(a, 'l')}<td class="slot">${esc(SLOT[slots[i]] || slots[i] || '')}</td>${cell(b, 'r')}</tr><tr class="bk" hidden><td colspan="5"></td></tr>`;
       }
+      const ta = team(a.roster_id), tb = team(b.roster_id);
+      const thead = `<thead><tr><th class="lh" colspan="2">${esc(ta.name)}<small>${anyPts ? pa.toFixed(2) : '–'}</small></th><th class="lh slot">vs</th><th class="lh r" colspan="2">${esc(tb.name)}<small>${anyPts ? pb.toFixed(2) : '–'}</small></th></tr></thead>`;
+      const table = `<div class="lwrap"><table class="ltable">${thead}<tbody>${lineup}</tbody></table></div>`;
       html += `<article class="mcard">${row(a, pa, winA)}${row(b, pb, winB)}
-        <details class="lineups"><summary>Lineups</summary><div class="lwrap"><table class="ltable"><tbody>${lineup}</tbody></table></div></details></article>`;
+        ${open ? table : `<details class="lineups"><summary>Lineups</summary>${table}</details>`}</article>`;
     });
     html += '</div>';
     ensureNames(ids);
@@ -2114,6 +2200,7 @@ footer input{width:min(100%,260px)}
   }
 
   // ---------- Events ----------
+  $('#app').addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('[data-open-match]')) { e.preventDefault(); e.target.click(); } });
   $('#app').addEventListener('click', e => {
     const tab = e.target.closest('[data-tab]');
     if (tab) { opts.tab = tab.dataset.tab; saveOpts(); render(); return; }
@@ -2123,6 +2210,9 @@ footer input{width:min(100%,260px)}
     if (br) { opts.bracketSide = br.dataset.side; render(); return; }
     const nflb = e.target.closest('[data-nfl]');
     if (nflb) { opts.nflFilter = opts.nflFilter === nflb.dataset.nfl ? null : nflb.dataset.nfl; render(); return; }
+    const om = e.target.closest('[data-open-match]');
+    if (om) { D.openMatch = { w: opts.week || D.defWeek, id: Number(om.dataset.openMatch) }; render(); window.scrollTo(0, 0); return; }
+    if (e.target.closest('[data-close-match]')) { D.openMatch = null; render(); return; }
     const plb = e.target.closest('[data-pid]');
     if (plb) { toggleBreakdown(plb); return; }
     const wk = e.target.closest('[data-week-step]');
