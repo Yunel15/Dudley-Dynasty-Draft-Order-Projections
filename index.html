@@ -412,6 +412,47 @@ td.tags{white-space:normal;min-width:160px;text-align:left;color:var(--muted);fo
 footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--line);font-size:.85rem;color:var(--muted)}
 footer form{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;margin-top:8px}
 footer input{width:min(100%,260px)}
+
+/* Mobile layout */
+@media (max-width:600px){
+  .wrap{padding-left:12px;padding-right:12px}
+  .mcard{padding:6px 10px 10px}
+  .mlist.single .mcard{padding:10px 10px 14px}
+  .mhead{gap:6px;padding:8px 0 6px}
+  .mside .av,.mside .avatar{width:44px;height:44px}
+  .mname{font-size:1rem}
+  .mside .mscore,.mlist.single .mscore{font-size:2.5rem}
+  .mvs{padding-top:14px;font-size:.8rem}
+  .ltable,.mlist.single .ltable{table-layout:fixed;width:100%;font-size:.78rem}
+  .ltable td,.mlist.single .ltable td{padding:8px 2px}
+  .ltable .pl,.mlist.single .ltable .pl{width:31%;overflow:hidden}
+  .ltable .pp,.mlist.single .ltable .pp{width:12%;font-size:.85rem}
+  .ltable .slot,.mlist.single .ltable .slot{width:14%;font-size:.7rem}
+  .ltable td.pl,.mlist.single .ltable td.pl,.ltable td.pl:last-child,.mlist.single .ltable td.pl:last-child{text-align:center}
+  .ltable .pp:nth-child(2),.mlist.single .ltable td.pp:nth-child(2){text-align:right;padding-right:4px}
+  .ltable .pp:nth-child(4),.mlist.single .ltable td.pp:nth-child(4){text-align:left;padding-left:4px}
+  .plbtn,.plbtn.plr,.mlist.single .plbtn{display:flex;flex-direction:column;align-items:center;gap:3px;width:100%;text-align:center}
+  .plt{display:block;width:100%;min-width:0;white-space:normal;overflow-wrap:break-word;line-height:1.15;font-size:.78rem}
+  .plbtn{white-space:normal;min-width:0}
+  .ltable .pl small{font-size:.66rem}
+  .hs,.mlist.single .hs{width:36px;height:36px}
+  .ltable th.lh,.mlist.single .ltable th.lh{font-size:.8rem;padding:8px 2px}
+  .ltable tr.bk td{padding:4px 0 10px}
+  .bkt{font-size:.72rem}
+  .ltable .bkt td{padding:3px 1px}
+  .controls{gap:10px}
+  .tflist,.rgrid{grid-template-columns:1fr}
+  .tfcols{gap:8px}
+  .tfcols li{grid-template-columns:auto minmax(0,1fr) auto;font-size:.8rem}
+  .tfcols .hs{width:30px;height:30px}
+  .cdgrid b{font-size:1.8rem}
+  .stbl{font-size:.78rem}
+  .stbl th,.stbl td{padding:6px 3px}
+  .scards{grid-template-columns:1fr}
+  .scard{min-width:0}
+  .lawbar{gap:10px}
+  .lawdl{width:100%;text-align:center}
+}
 </style>
 </head>
 <body>
