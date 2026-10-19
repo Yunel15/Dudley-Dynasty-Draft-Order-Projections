@@ -856,7 +856,7 @@ footer input{width:min(100%,260px)}
         ? `${season} season hasn’t started. ${D.ids.length} teams.`
         : `${season} season, ${playedWeeks} of ${totalWeeks} weeks played. ${D.ids.length} teams.`;
 
-    const tabs = [['stand', 'Standings'], ['order', 'Draft Order'], ['proj', 'Tankathon Projections'], ['match', 'Matchups'], ['news', 'News Feed'], ['odds', 'Playoff Odds'], ['bracket', 'Playoff Bracket'], ['pay', 'Payouts'], ['rec', 'League Records'], ['mgr', 'Manager Profiles'], ['build', 'Team Construction'], ['own', 'Pick Ownership'], ['trades', 'Trade History'], ['finder', 'Trade Finder'], ['calc', 'Trade Calculator'], ['laws', 'League Bylaws']];
+    const tabs = [['stand', 'Standings'], ['order', 'Tankathon'], ['proj', 'Tankathon Projections'], ['match', 'Matchups'], ['news', 'News Feed'], ['odds', 'Playoff Odds'], ['bracket', 'Playoff Bracket'], ['pay', 'Payouts'], ['rec', 'League Records'], ['mgr', 'Manager Profiles'], ['build', 'Team Construction'], ['own', 'Pick Ownership'], ['trades', 'Trade History'], ['finder', 'Trade Finder'], ['calc', 'Trade Calculator'], ['laws', 'League Bylaws']];
     const GROUPS = [{ label: 'Tankathon', keys: ['order', 'proj'] }, { label: 'Playoffs', keys: ['odds', 'bracket'] }, { label: 'Trades', keys: ['trades', 'finder', 'calc'] }];
     const tabBtn = ([k, l]) => `<button class="tab" role="tab" type="button" data-tab="${k}" aria-selected="${opts.tab === k}">${l}</button>`;
     const menuBtn = ([k, l]) => `<button class="tabopt" role="menuitem" type="button" data-tab="${k}" aria-current="${opts.tab === k}">${l}</button>`;
