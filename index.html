@@ -326,7 +326,7 @@ td.neg{color:var(--pylon-ink);font-weight:600}
 td.tags{white-space:normal;min-width:160px;text-align:left;color:var(--muted);font-size:.8rem}
 
 /* News feed */
-.feed{max-width:620px;margin-top:10px}
+.feed{max-width:620px;margin:10px auto 0}
 .feedwk{margin:22px 0 8px;font:700 1.3rem/1 "Barlow Condensed","Arial Narrow",sans-serif;color:var(--muted)}
 .post{display:flex;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:10px}
 .pav{width:42px;height:42px;flex:none;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:var(--accent-ink);font:700 1rem "Barlow Condensed","Arial Narrow",sans-serif}
@@ -1818,7 +1818,7 @@ footer input{width:min(100%,260px)}
       if (!p.live && p.week !== lastWeek) { html += `<h3 class="feedwk">Week ${p.week}</h3>`; lastWeek = p.week; }
       const h = hashStr(p.key);
       const a = AUTHORS[p.author] || REPORTER;
-      const likes = 20 + h % 480, reposts = 3 + (h >> 9) % 90, replies = 1 + (h >> 17) % 60;
+      const likes = 20 + h % 480, reposts = 3 + (h >>> 9) % 90, replies = 1 + (h >>> 17) % 60;
       html += `<article class="post"><span class="pav${a.cls ? ' ' + a.cls : ''}" aria-hidden="true">${a.initials}</span><div class="pbody">
         <div class="phead"><b>${esc(a.name)}</b><span class="ptag">${esc(a.tag)}</span><span class="phandle">${esc(a.handle)} · ${p.live ? 'LIVE' : 'Wk ' + p.week}</span></div>
         <p class="ptext">${p.html}</p>
