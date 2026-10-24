@@ -233,6 +233,8 @@ td.avgp{font:700 1.15rem "Barlow Condensed","Arial Narrow",sans-serif}
 .stbl .tl{text-align:left}
 .stk{font-weight:700}.stk.w{color:var(--accent)}.stk.l{color:var(--pylon-ink)}.stk.t{color:var(--muted)}
 .l5{white-space:nowrap}
+.tlink{all:unset;cursor:pointer;display:block;border-radius:8px}.tlink:hover .tname,.tlink:focus-visible .tname{color:var(--accent);text-decoration:underline}.tlink:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.sos{display:inline-block;min-width:34px;padding:2px 7px;border-radius:999px;font-weight:700;font-size:.75rem;cursor:help}.sos.hard{background:var(--pylon-soft);color:var(--pylon-ink)}.sos.mid{background:var(--line);color:var(--ink)}.sos.easy{background:var(--accent);color:var(--accent-ink)}.sosd{display:block;font-size:.65rem;color:var(--muted);margin-top:2px}
 .dot{display:inline-block;width:20px;height:20px;line-height:20px;border-radius:50%;font:700 .65rem/20px inherit;font-style:normal;margin:0 1px;text-align:center}
 .dot.w{background:var(--accent);color:var(--accent-ink)}.dot.l{background:var(--pylon-soft);color:var(--pylon-ink)}.dot.t{background:var(--line);color:var(--ink)}
 .msingle{max-width:860px;margin:0 auto}
@@ -862,7 +864,7 @@ footer input{width:min(100%,260px)}
         ? `${season} season hasn’t started. ${D.ids.length} teams.`
         : `${season} season, ${playedWeeks} of ${totalWeeks} weeks played. ${D.ids.length} teams.`;
 
-    const tabs = [['stand', 'Standings'], ['order', 'Tankathon'], ['proj', 'Tankathon Projections'], ['match', 'Matchups'], ['news', 'News Feed'], ['odds', 'Playoff Odds'], ['bracket', 'Playoff Bracket'], ['pay', 'Payouts'], ['rec', 'League Records'], ['mgr', 'Manager Profiles'], ['build', 'Team Construction'], ['own', 'Pick Ownership'], ['trades', 'Trade History'], ['finder', 'Trade Finder'], ['calc', 'Trade Calculator'], ['laws', 'League Bylaws']];
+    const tabs = [['stand', 'Standings'], ['match', 'Matchups'], ['odds', 'Playoff Odds'], ['bracket', 'Playoff Bracket'], ['order', 'Tankathon'], ['proj', 'Tankathon Projections'], ['news', 'News Feed'], ['pay', 'Payouts'], ['rec', 'League Records'], ['mgr', 'Manager Profiles'], ['build', 'Team Construction'], ['own', 'Pick Ownership'], ['trades', 'Trade History'], ['finder', 'Trade Finder'], ['calc', 'Trade Calculator'], ['laws', 'League Bylaws']];
     const GROUPS = [{ label: 'Tankathon', keys: ['order', 'proj'] }, { label: 'Playoffs', keys: ['odds', 'bracket'] }, { label: 'Trades', keys: ['trades', 'finder', 'calc'] }];
     const tabBtn = ([k, l]) => `<button class="tab" role="tab" type="button" data-tab="${k}" aria-selected="${opts.tab === k}">${l}</button>`;
     const menuBtn = ([k, l]) => `<button class="tabopt" role="menuitem" type="button" data-tab="${k}" aria-current="${opts.tab === k}">${l}</button>`;
@@ -899,7 +901,7 @@ footer input{width:min(100%,260px)}
 
   // ---------- Standings ----------
   function standingsData(){
-    const res = new Map(D.ids.map(r => [r, { g: [], pa: 0, hi: 0, lo: Infinity }]));
+    const res = new Map(D.ids.map(r => [r, { g: [], pa: 0, hi: 0, lo: Infinity, opps: [] }]));
     const weeks = [...D.completedWeeks].sort((a, b) => a.week - b.week);
     weeks.forEach(({ list }) => {
       const groups = new Map();
@@ -912,6 +914,7 @@ footer input{width:min(100%,260px)}
           const o = g[1 - i], r = res.get(m.roster_id);
           r.g.push(m.points > o.points ? 'W' : m.points < o.points ? 'L' : 'T');
           r.pa += o.points || 0;
+          r.opps.push(o.roster_id);
           r.hi = Math.max(r.hi, m.points || 0); r.lo = Math.min(r.lo, m.points || 0);
           if (D.median && med) r.g.push(m.points > med ? 'W' : m.points < med ? 'L' : 'T');
         });
@@ -929,6 +932,33 @@ footer input{width:min(100%,260px)}
     });
     return res;
   }
+  // Strength of schedule: average season PPG of the opponents a team has faced (played) or still faces (remaining).
+  function sosData(info){
+    const ppg = new Map(D.ids.map(r => { const h = D.hist.get(r) || []; return [r, h.length ? avg(h) : null]; }));
+    const known = [...ppg.values()].filter(v => v != null);
+    const lg = known.length ? avg(known) : 0;
+    const rem = new Map(D.ids.map(r => [r, []]));
+    (D.remaining || []).forEach(w => (w.pairs || []).forEach(([a, b]) => { if (rem.has(a)) rem.get(a).push(b); if (rem.has(b)) rem.get(b).push(a); }));
+    const score = list => { const v = list.map(o => ppg.get(o)).filter(x => x != null); return v.length ? avg(v) : null; };
+    const build = getOpps => {
+      const m = new Map(D.ids.map(r => { const opps = getOpps(r); return [r, { v: score(opps), n: opps.length }]; }));
+      const ranked = D.ids.filter(r => m.get(r).v != null).sort((a, b) => m.get(b).v - m.get(a).v || a - b);
+      ranked.forEach((r, i) => { m.get(r).rank = i + 1; });
+      m.size_ = ranked.length;
+      return m;
+    };
+    const played = build(r => info.get(r).opps), remaining = build(r => rem.get(r));
+    return { lg, played, remaining, hasRem: remaining.size_ > 0 };
+  }
+  function sosCell(m, r, lg, label){
+    const x = m.get(r);
+    if (!x || x.v == null) return '–';
+    const n = m.size_, third = Math.max(1, Math.round(n / 3));
+    const cls = x.rank <= third ? 'hard' : x.rank > n - third ? 'easy' : 'mid';
+    const d = x.v - lg;
+    const tip = `${label}: ${ordinal(x.rank)} hardest of ${n}. Opponents average ${x.v.toFixed(1)} PPG (${d >= 0 ? '+' : ''}${d.toFixed(1)} vs league) over ${x.n} game${x.n === 1 ? '' : 's'}.`;
+    return `<span class="sos ${cls}" title="${esc(tip)}">${ordinal(x.rank)}</span><small class="sosd">${d >= 0 ? '+' : ''}${d.toFixed(1)}</small>`;
+  }
   function renderStandings(){
     const info = standingsData();
     const gp = t => t.wins + t.losses + t.ties;
@@ -942,16 +972,17 @@ footer input{width:min(100%,260px)}
     const bestW = top(D.ids, r => info.get(r).bestW), bestL = top(D.ids, r => info.get(r).bestL);
     const card = (label, x, unit, cls) => `<div class="scard ${cls}"><span class="slabel">${label}</span>${x ? `${teamBlock(team(x.r), '')}<b>${x.v} ${unit}</b>` : '<span class="asset-sub">None yet</span>'}</div>`;
     let html = `<h2 class="sech">League Standings</h2>`;
+    const sos = sosData(info);
     if (!any) return html + '<p class="note">Standings appear once the season starts.</p>';
     html += `<div class="scards">${card('Longest active win streak', hot, 'wins', 'good')}${card('Longest active losing streak', cold, 'losses', 'bad')}${card('Best win streak this season', bestW, 'wins', 'good')}${card('Worst losing streak this season', bestL, 'losses', 'bad')}</div>`;
-    html += `<div class="lwrap"><table class="stbl"><thead><tr><th>#</th><th class="tl">Team</th><th>Record</th><th>PF</th><th>PA</th><th>Streak</th><th>Last 5</th></tr></thead><tbody>`;
+    html += `<div class="lwrap"><table class="stbl"><thead><tr><th>#</th><th class="tl">Team</th><th>Record</th><th>PF</th><th>PA</th><th>Streak</th><th>Last 5</th><th title="Strength of schedule so far: 1st = hardest">SOS</th>${sos.hasRem ? '<th title="Remaining regular-season strength of schedule: 1st = hardest">Rem. SOS</th>' : ''}</tr></thead><tbody>`;
     order.forEach((r, i) => {
       const t = team(r), x = info.get(r), c = x.cur;
       const streak = c.n ? `<span class="stk ${c.t === 'W' ? 'w' : c.t === 'L' ? 'l' : 't'}">${c.t}${c.n}</span>` : '–';
       const last5 = x.g.slice(-5).map(g => `<i class="dot ${g.toLowerCase()}" title="${g}">${g}</i>`).join('');
-      html += `<tr><td>${i + 1}</td><td class="tl">${teamBlock(t, '')}</td><td>${record(t)}</td><td>${t.pf.toFixed(2)}</td><td>${x.pa ? x.pa.toFixed(2) : '–'}</td><td>${streak}</td><td class="l5">${last5}</td></tr>`;
+      html += `<tr><td>${i + 1}</td><td class="tl"><button type="button" class="tlink" data-build-team="${r}" title="View ${esc(t.name)} in Team Construction">${teamBlock(t, '')}</button></td><td>${record(t)}</td><td>${t.pf.toFixed(2)}</td><td>${x.pa ? x.pa.toFixed(2) : '–'}</td><td>${streak}</td><td class="l5">${last5}</td><td>${sosCell(sos.played, r, sos.lg, 'Played')}</td>${sos.hasRem ? `<td>${sosCell(sos.remaining, r, sos.lg, 'Remaining')}</td>` : ''}</tr>`;
     });
-    html += '</tbody></table></div><p class="note">Ranked by record, then points for. Streaks count regular-season games' + (D.median ? ', including the weekly median game' : '') + '.</p>';
+    html += '</tbody></table></div><p class="note">Ranked by record, then points for. Streaks count regular-season games' + (D.median ? ', including the weekly median game' : '') + '.</p><p class="note"><b>SOS</b> ranks each schedule by the average points per game of the opponents faced, 1st being the hardest. <span class="sos hard">Red</span> is the toughest third, <span class="sos easy">teal</span> the easiest.' + (sos.hasRem ? ' <b>Rem. SOS</b> does the same for the rest of the regular season.' : '') + ' The small number under each rating is how many points per game those opponents score above or below the league average.</p>';
     return html;
   }
 
@@ -2785,6 +2816,8 @@ footer input{width:min(100%,260px)}
     if (crm) { const it = D.calc[crm.dataset.calcRm].items; it.splice(it.indexOf(crm.dataset.key), 1); render(); return; }
     const grp = e.target.closest('[data-group]');
     if (grp) { const o = grp.parentElement.classList.toggle('open'); grp.setAttribute('aria-expanded', o); return; }
+    const bt = e.target.closest('[data-build-team]');
+    if (bt) { opts.buildTeam = Number(bt.dataset.buildTeam); opts.nflFilter = null; opts.tab = 'build'; saveOpts(); render(); window.scrollTo(0, 0); return; }
     const tab = e.target.closest('[data-tab]');
     if (tab) { opts.tab = tab.dataset.tab; saveOpts(); render(); return; }
     const b = e.target.closest('[data-basis]');
