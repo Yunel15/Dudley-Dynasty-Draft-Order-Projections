@@ -278,6 +278,54 @@ td.avgp{font:700 1.15rem "Barlow Condensed","Arial Narrow",sans-serif}
 .pc-dcrow ol{margin:0;padding:0;list-style:none;font-size:.85rem;line-height:1.6}.pc-dcrow li.me{color:var(--accent);font-weight:700}
 .pc-hist{list-style:none;margin:0;padding:0}.pc-hist li{display:flex;gap:9px;padding:8px 0;border-top:1px solid var(--line);font-size:.82rem}.pc-hist li:first-child{border-top:0;padding-top:0}
 .pc-hist i{font-style:normal;width:20px;flex:none;text-align:center}.pc-hist b{color:var(--ink)}.pc-hist span{display:block;font-size:.72rem;color:var(--muted);margin-top:2px}
+.pc-overlay.m{padding:0;display:block}
+.pc-overlay.m .pc-modal{max-width:none;min-height:100%;border:0;border-radius:0;box-shadow:none;overflow:visible}
+.pm-bar{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:6px;height:50px;padding:0 8px;padding-top:env(safe-area-inset-top,0px);background:var(--surface);border-bottom:1px solid var(--line)}
+.pm-back{all:unset;cursor:pointer;width:40px;height:40px;display:grid;place-items:center;font-size:1.9rem;line-height:1;color:var(--ink);border-radius:10px}.pm-back:active{background:var(--line)}
+.pm-bt{min-width:0}.pm-bt b{display:block;font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.pm-bt span{display:block;font-size:.72rem;color:var(--muted)}
+.pm-hero{position:relative;overflow:hidden;padding:16px 16px 14px;color:#fff;background:linear-gradient(140deg,var(--tc) 0%,color-mix(in srgb,var(--tc) 65%,#000) 100%)}
+.pm-logo{position:absolute;right:-30px;top:-20px;width:170px;opacity:.16;pointer-events:none}
+.pm-id{position:relative;display:flex;align-items:flex-end;gap:12px}
+.pm-photo{flex:none;width:96px;height:96px;border-radius:14px;background:rgba(0,0,0,.18);overflow:hidden;display:flex;align-items:flex-end;justify-content:center}.pm-photo img{width:118%;height:auto;margin-bottom:-4px}
+.pm-who{min-width:0}.pm-owner{font-size:.72rem;opacity:.88;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pm-who h2{margin:2px 0 6px;font-size:1.6rem;line-height:1.05;font-weight:800}
+.pm-chips{display:flex;align-items:center;gap:6px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.03em}
+.pm-chips .pc-pos{padding:3px 8px;border-radius:6px}.pm-chips #pcdepth{padding:3px 8px;border-radius:6px;background:rgba(0,0,0,.28)}
+.pm-facts{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:1px;margin-top:14px;background:rgba(255,255,255,.18);border-radius:10px;overflow:hidden}
+.pm-facts>div{background:color-mix(in srgb,var(--tc) 55%,#000);padding:7px 6px;text-align:center}
+.pm-facts span{display:block;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;opacity:.75}.pm-facts b{font-size:1.05rem;font-weight:800}
+.pm-facts .pm-col{grid-column:1/-1;text-align:left;display:flex;justify-content:space-between;align-items:center;padding:7px 10px}.pm-facts .pm-col b{font-size:.9rem}
+.pm-ranks{position:relative;display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.pm-ranks span{background:rgba(0,0,0,.25);border-radius:999px;padding:4px 10px;font-size:.72rem;font-weight:700;text-transform:uppercase}.pm-ranks b{font-size:.9rem;margin-right:3px}
+.pm-tabs{position:sticky;top:50px;z-index:4;display:flex;overflow-x:auto;scrollbar-width:none;background:var(--bg);border-bottom:1px solid var(--line)}.pm-tabs::-webkit-scrollbar{display:none}
+.pm-tabs button{flex:1 0 auto;border:0;background:none;padding:12px 14px;font-weight:700;font-size:.85rem;color:var(--muted);border-bottom:2px solid transparent;cursor:pointer}
+.pm-tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.pm-pane{padding:12px 12px 28px}
+.pm-pills{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin-bottom:10px}.pm-pills::-webkit-scrollbar{display:none}
+.pm-pills button{flex:none;border:1px solid var(--line);background:none;padding:6px 14px;border-radius:999px;font-weight:700;font-size:.82rem;color:var(--muted)}
+.pm-pills button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.pm-pills select{flex:none;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 10px;color:var(--muted);font-weight:700;font-size:.82rem}
+.pm-sum{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px}.pm-sum div{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 4px;text-align:center}
+.pm-sum b{display:block;font-size:1.05rem;color:var(--accent)}.pm-sum span{font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.pm-glist{display:flex;flex-direction:column;gap:6px}.pm-sub{margin:12px 2px 2px;font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.pm-g{background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.pm-gh,.pm-car{all:unset;box-sizing:border-box;width:100%;display:grid;grid-template-columns:34px 52px 1fr auto;grid-template-areas:"wk opp lu pt" "line line line pt";align-items:center;column-gap:6px;row-gap:3px;padding:10px 12px;cursor:pointer}
+.pm-g.bye .pm-gh,.pm-g.fut .pm-gh,.pm-g.dnp .pm-gh{cursor:default}
+.pm-gh .pc-lu{grid-area:lu;justify-self:start}
+.pm-wk{grid-area:wk;font-weight:800;font-size:.85rem;color:var(--muted)}.pm-opp{grid-area:opp;font-weight:700;font-size:.9rem}
+.pm-line{grid-area:line;font-size:.78rem;color:#C9D0DC;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pm-pt{grid-area:pt;text-align:right;min-width:56px}.pm-pt b{display:block;font-size:1.25rem;font-weight:800;line-height:1.1}.pm-pt small{font-size:.66rem;color:var(--muted)}
+.pm-pt.hi b{color:var(--accent)}.pm-pt.lo b{color:var(--pylon-ink)}
+.pm-g.bye{background:none;border-style:dashed}.pm-g.bye .pm-gh{padding:8px 12px}.pm-g.bye .pm-opp{color:var(--muted)}
+.pm-g.fut .pm-pt b,.pm-g.dnp .pm-pt b{font-size:1rem;color:var(--muted)}.pm-g.fut .pm-line,.pm-g.dnp .pm-line{color:var(--muted)}
+.pm-gh[aria-expanded="true"]{background:rgba(255,255,255,.03)}
+.pm-det{padding:4px 12px 12px;border-top:1px solid var(--line)}
+.pm-dg{margin-top:8px}.pm-dgh{display:block;font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:4px}
+.pm-dgc{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}.pm-dgc div{background:var(--bg);border-radius:6px;padding:5px 2px;text-align:center}
+.pm-dgc span{display:block;font-size:.6rem;color:var(--muted);text-transform:uppercase}.pm-dgc b{font-size:.9rem}
+.pm-car{background:var(--surface);border:1px solid var(--line);border-radius:10px;grid-template-columns:1fr auto;grid-template-areas:"cy pt" "line pt"}
+.pm-cy{grid-area:cy}.pm-cy b{font-size:1rem}.pm-cy small{margin-left:8px;font-size:.72rem;color:var(--muted)}
+.pm-pane .pc-news h4{font-size:1rem}.pm-pane .pc-news p{-webkit-line-clamp:unset;display:block}
+.pm-pane .pc-dc{gap:12px}.pm-pane .pc-dcrow{grid-template-columns:48px 1fr;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px}
 @media (max-width:900px){.pc-grid{grid-template-columns:1fr}.pc-left{border-right:0}
   .pc-hero{flex-direction:column;align-items:stretch;padding:16px 16px 0;gap:0;min-height:0}.pc-photo{width:auto;height:170px;order:2;margin:0 -16px}.pc-photo>img{width:130px;margin-bottom:40px}
   .pc-logo{left:auto;right:-40px;width:200px}.pc-main{padding:0 30px 8px 0}.pc-main h2{font-size:1.8rem}.pc-facts b{font-size:1.15rem}.pc-facts div{padding:0 10px}
@@ -3082,7 +3130,7 @@ footer input{width:min(100%,260px)}
   let PC = null;
   function openPlayer(pid){
     const info = (D.build && D.build.info && D.build.info[pid]) || {};
-    PC = { pid, info, season: D.season, seasons: [], newsOpen: null };
+    PC = { pid, info, season: D.season, seasons: [], mtab: 'log' };
     const ry = info.ry || (info.ye != null ? D.season - info.ye : null);
     for (let y = D.season; y >= Math.max(ry || D.season - 4, D.season - 12); y--) PC.seasons.push(y);
     const old = document.getElementById('pcov'); if (old) old.remove();
@@ -3091,10 +3139,37 @@ footer input{width:min(100%,260px)}
     document.body.appendChild(el); document.body.classList.add('sk-lock');
     el.addEventListener('click', e => {
       if (e.target === el || e.target.closest('[data-pc-close]')) return closePlayer();
-      const s = e.target.closest('[data-pc-season]'); if (s) { PC.season = Number(s.dataset.pcSeason); drawLog(); if (s.closest('#pccareer')) document.getElementById('pcpills').scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+      const s = e.target.closest('[data-pc-season]');
+      if (s) { PC.season = Number(s.dataset.pcSeason); const fromCareer = !!s.closest('#pccareer'); drawLog();
+        if (fromCareer) { if (isPhone()) setMTab('log'); else document.getElementById('pcpills').scrollIntoView({ behavior: 'smooth', block: 'start' }); } return; }
+      const mt = e.target.closest('[data-pm-tab]'); if (mt) { setMTab(mt.dataset.pmTab); return; }
+      const ex = e.target.closest('[data-pm-exp]');
+      if (ex) { const d = ex.nextElementSibling; if (d) { d.hidden = !d.hidden; ex.setAttribute('aria-expanded', String(!d.hidden)); } return; }
     });
     el.addEventListener('change', e => { if (e.target.matches('[data-pc-more]') && e.target.value) { PC.season = Number(e.target.value); drawLog(); } });
     drawPlayer();
+  }
+  const PHONE = matchMedia('(max-width: 700px)');
+  const isPhone = () => PHONE.matches;
+  (PHONE.addEventListener ? PHONE.addEventListener.bind(PHONE, 'change') : PHONE.addListener.bind(PHONE))(() => { if (PC) drawPlayer(); });
+  function setMTab(k){
+    if (!PC) return; PC.mtab = k;
+    document.querySelectorAll('#pcov [data-pm-tab]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.pmTab === k)));
+    document.querySelectorAll('#pcov [data-pm-pane]').forEach(p => { p.hidden = p.dataset.pmPane !== k; });
+    const ov = document.getElementById('pcov'), tabs = ov && ov.querySelector('.pm-tabs');
+    if (ov && tabs && ov.scrollTop > tabs.offsetTop) ov.scrollTop = tabs.offsetTop - 50;
+  }
+  // Short one-line stat summary for the phone game log and career cards.
+  function statLine(pos, s){
+    if (!s) return '';
+    const p = [], k = (v, l) => `${n0(v)} ${l}`;
+    if (pos === 'QB') { p.push(`${n0(s.pass_cmp)}/${n0(s.pass_att)}, ${n0(s.pass_yd)} yds`); if (s.pass_td) p.push(k(s.pass_td, 'TD')); if (s.pass_int) p.push(k(s.pass_int, 'INT')); if (s.rush_yd || s.rush_td) p.push(`${n0(s.rush_att)}-${n0(s.rush_yd)} rush${s.rush_td ? `, ${s.rush_td} TD` : ''}`); }
+    else if (pos === 'RB') { p.push(`${n0(s.rush_att)}-${n0(s.rush_yd)} rush${s.rush_td ? `, ${s.rush_td} TD` : ''}`); if (s.rec_tgt || s.rec) p.push(`${n0(s.rec)}/${n0(s.rec_tgt)}, ${n0(s.rec_yd)} rec yds${s.rec_td ? `, ${s.rec_td} TD` : ''}`); }
+    else if (pos === 'K') p.push(`${n0(s.fgm)}/${n0(s.fga)} FG`, `${n0(s.xpm)}/${n0(s.xpa)} XP`);
+    else if (pos === 'DEF') p.push(k(s.pts_allow, 'PA'), k(s.sack, 'sacks'), k(s.int, 'INT'));
+    else { p.push(`${n0(s.rec)}/${n0(s.rec_tgt)}, ${n0(s.rec_yd)} yds${s.rec_td ? `, ${s.rec_td} TD` : ''}`); if (s.rush_yd || s.rush_td) p.push(`${n0(s.rush_att)}-${n0(s.rush_yd)} rush`); }
+    if (s.fum_lost) p.push(k(s.fum_lost, 'fum lost'));
+    return p.join(' · ');
   }
   function closePlayer(){ const el = document.getElementById('pcov'); if (el) el.remove(); document.body.classList.remove('sk-lock'); PC = null; }
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && document.getElementById('pcov')) closePlayer(); });
@@ -3106,7 +3181,32 @@ footer input{width:min(100%,260px)}
     const [nm, color] = TEAMS[tm] || ['Free agent', '#2C364B'];
     const owner = D.build && D.build.holder && D.build.holder.get(pid);
     const lu = lineupByWeek(pid), luN = [...lu.values()];
+    const ov = document.getElementById('pcov'); if (ov) ov.classList.toggle('m', isPhone());
     const photo = pos === 'DEF' ? `https://sleepercdn.com/images/team_logos/nfl/${encodeURIComponent(String(pid).toLowerCase())}.png` : `https://sleepercdn.com/content/nfl/players/${encodeURIComponent(pid)}.jpg`;
+    if (isPhone()) {
+      const starts = luN.filter(x => x.started).length;
+      const tabs = [['log', 'Game log'], ['career', 'Career'], ['news', 'News'], ['hist', 'History']].concat(tm && pos !== 'DEF' ? [['depth', 'Depth']] : []);
+      if (!tabs.some(t => t[0] === my.mtab)) my.mtab = 'log';
+      const hid = k => my.mtab === k ? '' : 'hidden';
+      box.innerHTML = `<div class="pm-bar"><button type="button" class="pm-back" data-pc-close aria-label="Close">‹</button><div class="pm-bt"><b>${esc(info.n || pid)}</b><span>${esc([pos, tm || 'FA'].join(' · '))}</span></div></div>
+        <header class="pm-hero" style="--tc:${color}">
+          ${tm ? `<img class="pm-logo" src="https://sleepercdn.com/images/team_logos/nfl/${esc(tm.toLowerCase())}.png" alt="" onerror="this.remove()">` : ''}
+          <div class="pm-id"><div class="pm-photo"><img src="${photo}" alt="" onerror="this.remove()"></div>
+            <div class="pm-who">${owner ? `<div class="pm-owner">→ ${esc(ownerName(owner.owner))} · ${durTxt(Date.now() - owner.ts)}</div>` : '<div class="pm-owner">Not on a roster in this league</div>'}
+              <h2>${esc(info.n || pid)}</h2><div class="pm-chips"><span class="pc-pos pb-${esc(pos || 'X')}">${esc(pos || '–')}</span><span id="pcdepth">${esc(tm ? nm : 'Free agent')}</span></div></div></div>
+          <div class="pm-facts" id="pcfacts">
+            <div><span>Age</span><b>${ageOf(info) == null ? '–' : Math.floor(ageOf(info))}</b></div><div><span>Ht</span><b>–</b></div><div><span>Wt</span><b>–</b></div>
+            <div><span>Exp</span><b>${info.ye == null ? '–' : info.ye || 'R'}</b></div><div class="pm-col"><span>College</span><b>–</b></div>
+          </div>
+          <div class="pm-ranks" id="pcranks"><span><b>…</b></span></div>
+        </header>
+        <nav class="pm-tabs" role="tablist">${tabs.map(([k, l]) => `<button type="button" role="tab" data-pm-tab="${k}" aria-selected="${my.mtab === k}">${l}</button>`).join('')}</nav>
+        <section class="pm-pane" data-pm-pane="log" ${hid('log')}><div class="pm-pills" id="pcpills"></div><div id="pclog"><p class="status">Loading game log…</p></div></section>
+        <section class="pm-pane" data-pm-pane="career" ${hid('career')}><div id="pccareer"><p class="status">Loading career stats…</p></div></section>
+        <section class="pm-pane" data-pm-pane="news" ${hid('news')}><div id="pcnews"><p class="status">Loading news…</p></div></section>
+        <section class="pm-pane" data-pm-pane="hist" ${hid('hist')}>${historyHtml(pid)}${luN.length ? `<p class="pc-note">${starts} start${starts === 1 ? '' : 's'} in ${luN.length} rostered week${luN.length === 1 ? '' : 's'} this season.</p>` : ''}</section>
+        ${tm && pos !== 'DEF' ? `<section class="pm-pane" data-pm-pane="depth" ${hid('depth')}><div id="pcdc"><p class="status">Loading depth chart…</p></div></section>` : ''}`;
+    } else
     box.innerHTML = `<header class="pc-hero" style="--tc:${color}">
         ${tm ? `<img class="pc-logo" src="https://sleepercdn.com/images/team_logos/nfl/${esc(tm.toLowerCase())}.png" alt="" onerror="this.remove()">` : ''}
         <div class="pc-photo"><img src="${photo}" alt="" onerror="this.remove()"><div class="pc-tag"><span class="pc-pos pb-${esc(pos || 'X')}">${esc(pos || '–')}</span><span id="pcdepth">${esc(tm ? nm : 'Free agent')}</span></div></div>
@@ -3136,13 +3236,13 @@ footer input{width:min(100%,260px)}
           ${tm && pos !== 'DEF' ? '<h3>Depth chart</h3><div id="pcdc"><p class="status">Loading depth chart…</p></div>' : ''}
         </aside>
       </div>`;
-    box.querySelector('.pc-x').focus();
+    const fx = box.querySelector('.pc-x, .pm-back'); if (fx) fx.focus({ preventScroll: true });
     drawLog(); drawCareer();
     // Bio, rankings, news and depth chart fill in as they arrive.
     playerFor(pid).then(p => { if (PC !== my || !p) return;
       const f = document.getElementById('pcfacts'); if (!f) return;
       f.children[1].querySelector('b').innerHTML = esc(heightTxt(p.height));
-      f.children[2].querySelector('b').innerHTML = p.weight ? `${esc(p.weight)}<small> lbs</small>` : '–';
+      f.children[2].querySelector('b').innerHTML = p.weight ? `${esc(p.weight)}<small>${isPhone() ? '' : ' lbs'}</small>` : '–';
       f.children[4].querySelector('b').innerHTML = esc(p.college || '–');
       const dc = document.getElementById('pcdepth');
       if (dc && tm && p.depth_chart_order) dc.textContent = `${nm} #${p.depth_chart_order}`;
@@ -3226,6 +3326,23 @@ footer input{width:min(100%,260px)}
       return `<tr><td>${r.w}</td><td>${esc(r.opp || '-')}</td><td>${r.proj != null ? r.proj.toFixed(2) : '-'}</td><td class="pc-fp"${ptsShade(r.pts)}><b>${r.pts.toFixed(2)}</b></td>${luCell}<td>${r.snp == null ? '-' : r.snp}</td>${cols.map((c, ci) => { const v = c[1](r.st); return `<td${shade(ci, v)}>${dash(v)}</td>`; }).join('')}</tr>`;
     }).join('');
     const tot = played.reduce((t, r) => t + r.pts, 0);
+    if (isPhone()) {
+      const sumM = played.length ? `<div class="pm-sum"><div><b>${tot.toFixed(1)}</b><span>Pts</span></div><div><b>${(tot / played.length).toFixed(1)}</b><span>PPG</span></div><div><b>${played.length}</b><span>Games</span></div><div><b>${Math.max(...played.map(r => r.pts)).toFixed(1)}</b><span>Best</span></div></div>` : '';
+      const tone = v => { if (v == null || played.length < 2) return ''; const vs = played.map(r => r.pts), lo = Math.min(...vs), hi = Math.max(...vs); if (hi === lo) return ''; const t = (v - lo) / (hi - lo); return t >= .66 ? ' hi' : t <= .33 ? ' lo' : ''; };
+      // Played weeks newest first, then the rest of the schedule in order under "Upcoming".
+      const past = rows.filter(r => r.done).reverse(), next = rows.filter(r => !r.done);
+      const item = r => {
+        if (r.bye && !r.playedIt) return `<div class="pm-g bye"><div class="pm-gh"><span class="pm-wk">W${r.w}</span><span class="pm-opp">BYE</span></div></div>`;
+        const luB = r.lu ? `<span class="pc-lu ${r.lu.started ? 'on' : ''}">${r.lu.started ? 'Start' : 'Bench'}</span>` : '';
+        if (!r.playedIt) return `<div class="pm-g ${r.done ? 'dnp' : 'fut'}"><div class="pm-gh"><span class="pm-wk">W${r.w}</span><span class="pm-opp">${esc(r.opp || '-')}</span>${luB}<span class="pm-line">${r.done ? 'Did not play' : 'Upcoming'}</span><span class="pm-pt"><b>${r.done ? '–' : (r.proj != null ? r.proj.toFixed(1) : '–')}</b><small>${r.done ? '' : 'proj'}</small></span></div></div>`;
+        const det = groups.map(g => `<div class="pm-dg"><span class="pm-dgh">${g[0]}</span><div class="pm-dgc">${g[1].map(c => `<div><span>${c[0]}</span><b>${dash(c[1](r.st))}</b></div>`).join('')}</div></div>`).join('')
+          + `<div class="pm-dg"><span class="pm-dgh">Usage</span><div class="pm-dgc"><div><span>Snap%</span><b>${r.snp == null ? '-' : r.snp}</b></div><div><span>Proj</span><b>${r.proj != null ? r.proj.toFixed(1) : '-'}</b></div></div></div>`;
+        return `<div class="pm-g"><button type="button" class="pm-gh" data-pm-exp aria-expanded="false"><span class="pm-wk">W${r.w}</span><span class="pm-opp">${esc(r.opp || '-')}</span>${luB}<span class="pm-line">${esc(statLine(pos, r.st))}</span><span class="pm-pt${tone(r.pts)}"><b>${r.pts.toFixed(1)}</b><small>${r.proj != null ? `proj ${r.proj.toFixed(1)}` : ''}</small></span></button><div class="pm-det" hidden>${det}</div></div>`;
+      };
+      const items = past.map(item).join('') + (next.length ? `<h4 class="pm-sub">Upcoming</h4>${next.map(item).join('')}` : '');
+      box.innerHTML = (wk || pj) ? `${sumM}<div class="pm-glist">${items}</div><p class="pc-note">Tap a game for the full stat line. Points use this league’s scoring.</p>` : '<p class="pc-empty">Couldn’t load stats from Sleeper. Try again in a moment.</p>';
+      return;
+    }
     const sum = played.length ? `<div class="pc-sum"><div><b>${tot.toFixed(1)}</b><span>Fantasy pts</span></div><div><b>${(tot / played.length).toFixed(1)}</b><span>Per game</span></div><div><b>${played.length}</b><span>Games</span></div><div><b>${Math.max(...played.map(r => r.pts)).toFixed(1)}</b><span>Best game</span></div></div>` : '';
     box.innerHTML = (wk || pj) ? `${sum}<div class="pc-tblwrap"><table class="pc-log"><thead>${head1}${head2}</thead><tbody>${body}</tbody></table></div><p class="pc-note">Fantasy points and projections use this league’s scoring.${cur ? ' Lineup shows whether his league team started him.' : ''}</p>`
       : '<p class="pc-empty">Couldn’t load stats from Sleeper. Try again in a moment.</p>';
@@ -3239,6 +3356,12 @@ footer input{width:min(100%,260px)}
     const box = document.getElementById('pccareer'); if (!box) return;
     const groups = (GROUPS[pos] || GROUPS.WR).map(k => G[k]), cols = groups.flatMap(g => g[1]);
     const have = rows.filter(r => r.st && (r.st.gp || r.st.gms_active));
+    if (isPhone()) {
+      box.innerHTML = have.length ? '<div class="pm-glist">' + have.map(r => { const gp = r.st.gp || r.st.gms_active || 0, f = fpts(r.st);
+        return `<button type="button" class="pm-car" data-pc-season="${r.y}"><span class="pm-cy"><b>${r.y}</b><small>${esc(r.tm || '–')} · ${gp} GP${r.st.pos_rank_ppr ? ` · ${esc(pos)}${r.st.pos_rank_ppr}` : ''}</small></span><span class="pm-line">${esc(statLine(pos, r.st))}</span><span class="pm-pt"><b>${f.toFixed(1)}</b><small>${gp ? (f / gp).toFixed(1) : '–'} ppg</small></span></button>`; }).join('') + '</div><p class="pc-note">Tap a season to open its game log.</p>'
+        : '<p class="pc-empty">No NFL regular-season stats yet.</p>';
+      return;
+    }
     box.innerHTML = have.length ? `<div class="pc-tblwrap"><table class="pc-log"><thead><tr class="pc-gh"><th colspan="2"></th><th colspan="4">Fantasy</th>${groups.map(g => `<th colspan="${g[1].length}">${g[0]}</th>`).join('')}</tr>
       <tr><th>Season</th><th>Team</th><th>GP</th><th class="pc-fp">FPts</th><th>PPG</th><th>Rank</th>${cols.map(c => `<th>${c[0]}</th>`).join('')}</tr></thead><tbody>
       ${have.map(r => { const gp = r.st.gp || r.st.gms_active || 0, f = fpts(r.st); return `<tr><td><button type="button" class="linkbtn" data-pc-season="${r.y}">${r.y}</button></td><td>${esc(r.tm || '–')}</td><td>${gp}</td><td class="pc-fp"><b>${f.toFixed(1)}</b></td><td>${gp ? (f / gp).toFixed(1) : '–'}</td><td>${r.st.pos_rank_ppr ? `${esc(pos)}${r.st.pos_rank_ppr}` : '–'}</td>${cols.map(c => `<td>${dash(c[1](r.st))}</td>`).join('')}</tr>`; }).join('')}
