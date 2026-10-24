@@ -234,6 +234,11 @@ td.avgp{font:700 1.15rem "Barlow Condensed","Arial Narrow",sans-serif}
 .stbl .tl{text-align:left}
 .stk{font-weight:700}.stk.w{color:var(--accent)}.stk.l{color:var(--pylon-ink)}.stk.t{color:var(--muted)}
 .l5{white-space:nowrap}
+.stkbtn{all:unset;cursor:pointer;padding:2px 6px;border-radius:6px;font-weight:700}.stkbtn:hover,.stkbtn:focus-visible{background:var(--line)}.stkbtn.w{color:var(--accent)}.stkbtn.l{color:var(--pylon-ink)}.stkbtn.t{color:var(--muted)}
+.dotbtn{border:0;padding:0;cursor:pointer;transition:transform .12s}.dotbtn:hover,.dotbtn:focus-visible{transform:scale(1.18);outline:2px solid var(--accent);outline-offset:1px}
+.ftip{display:none;position:fixed;z-index:60;max-width:320px;padding:8px 11px;background:var(--surface);border:1px solid var(--accent);border-radius:8px;box-shadow:0 10px 28px rgba(0,0,0,.45);font-size:.78rem;line-height:1.45;pointer-events:none;text-align:left}
+.ftip .tip-h{display:block;font-weight:700;margin-bottom:4px}.ftip .tip-row{display:block;white-space:nowrap}.ftip .tip-f{display:block;margin-top:5px;color:var(--muted);font-size:.7rem}
+.ftip b{display:inline-block;width:14px;font-weight:700}.ftip .tip-w{color:var(--accent)}.ftip .tip-l{color:var(--pylon-ink)}.ftip .tip-t{color:var(--muted)}
 .stnotes{margin-top:10px}.stnotes summary{cursor:pointer;color:var(--muted);font-size:.8rem;width:max-content}.stnotes summary:hover{color:var(--accent)}
 .tlink{all:unset;cursor:pointer;display:block;border-radius:8px}.tlink:hover .tname,.tlink:focus-visible .tname{color:var(--accent);text-decoration:underline}.tlink:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .sos{display:inline-block;min-width:34px;padding:2px 7px;border-radius:999px;font-weight:700;font-size:.75rem;cursor:help}.sos.hard{background:var(--pylon-soft);color:var(--pylon-ink)}.sos.mid{background:var(--line);color:var(--ink)}.sos.easy{background:var(--accent);color:var(--accent-ink)}.sosd{display:block;font-size:.65rem;color:var(--muted);margin-top:2px}
@@ -989,9 +994,9 @@ footer input{width:min(100%,260px)}
 
   // ---------- Standings ----------
   function standingsData(){
-    const res = new Map(D.ids.map(r => [r, { g: [], pa: 0, hi: 0, lo: Infinity, opps: [] }]));
+    const res = new Map(D.ids.map(r => [r, { g: [], gm: [], pa: 0, hi: 0, lo: Infinity, opps: [] }]));
     const weeks = [...D.completedWeeks].sort((a, b) => a.week - b.week);
-    weeks.forEach(({ list }) => {
+    weeks.forEach(({ week, list }) => {
       const groups = new Map();
       list.forEach(m => { if (m.matchup_id == null || !res.has(m.roster_id)) return; if (!groups.has(m.matchup_id)) groups.set(m.matchup_id, []); groups.get(m.matchup_id).push(m); });
       const scores = list.filter(m => res.has(m.roster_id) && (m.points || 0) > 0).map(m => m.points).sort((x, y) => x - y);
@@ -1000,11 +1005,12 @@ footer input{width:min(100%,260px)}
         if (g.length !== 2 || !(g[0].points > 0 || g[1].points > 0)) return;
         g.forEach((m, i) => {
           const o = g[1 - i], r = res.get(m.roster_id);
-          r.g.push(m.points > o.points ? 'W' : m.points < o.points ? 'L' : 'T');
+          const res1 = m.points > o.points ? 'W' : m.points < o.points ? 'L' : 'T';
+          r.g.push(res1); r.gm.push({ res: res1, w: week, mid: m.matchup_id, pts: m.points || 0, opp: o.roster_id, oppPts: o.points || 0 });
           r.pa += o.points || 0;
           r.opps.push(o.roster_id);
           r.hi = Math.max(r.hi, m.points || 0); r.lo = Math.min(r.lo, m.points || 0);
-          if (D.median && med) r.g.push(m.points > med ? 'W' : m.points < med ? 'L' : 'T');
+          if (D.median && med) { const res2 = m.points > med ? 'W' : m.points < med ? 'L' : 'T'; r.g.push(res2); r.gm.push({ res: res2, w: week, mid: m.matchup_id, pts: m.points || 0, med }); }
         });
       });
     });
@@ -1066,8 +1072,13 @@ footer input{width:min(100%,260px)}
     html += `<div class="lwrap"><table class="stbl"><thead><tr><th>#</th><th class="tl">Team</th><th>Record</th><th>PF</th><th>PA</th><th>Streak</th><th>Last 5</th><th title="Strength of schedule so far: 1st = hardest">SOS</th>${sos.hasRem ? '<th title="Remaining regular-season strength of schedule: 1st = hardest">Rem. SOS</th>' : ''}</tr></thead><tbody>`;
     order.forEach((r, i) => {
       const t = team(r), x = info.get(r), c = x.cur;
-      const streak = c.n ? `<span class="stk ${c.t === 'W' ? 'w' : c.t === 'L' ? 'l' : 't'}">${c.t}${c.n}</span>` : '–';
-      const last5 = x.g.slice(-5).map(g => `<i class="dot ${g.toLowerCase()}" title="${g}">${g}</i>`).join('');
+      const gameLine = gm => gm.med != null
+        ? `<span class="tip-row"><b class="tip-${gm.res.toLowerCase()}">${gm.res}</b> Week ${gm.w} · median game: ${gm.pts.toFixed(2)} vs ${gm.med.toFixed(2)}</span>`
+        : `<span class="tip-row"><b class="tip-${gm.res.toLowerCase()}">${gm.res}</b> Week ${gm.w} · ${gm.pts.toFixed(2)}–${gm.oppPts.toFixed(2)} vs ${esc(team(gm.opp).name)}</span>`;
+      const go = gm => `data-goto-match="${gm.w}:${gm.mid}"`;
+      const sGames = c.n ? x.gm.slice(-c.n) : [];
+      const streak = c.n ? `<button type="button" class="stk stkbtn ${c.t === 'W' ? 'w' : c.t === 'L' ? 'l' : 't'}" ${go(sGames[sGames.length - 1])} data-tip="${esc(`<span class="tip-h">${c.t === 'W' ? 'Win' : c.t === 'L' ? 'Losing' : 'Tie'} streak: ${c.n}</span>${sGames.slice().reverse().map(gameLine).join('')}<span class="tip-f">Click to open the latest game</span>`)}" aria-label="${c.t}${c.n} streak. Open latest matchup">${c.t}${c.n}</button>` : '–';
+      const last5 = x.gm.slice(-5).map(gm => `<button type="button" class="dot dotbtn ${gm.res.toLowerCase()}" ${go(gm)} data-tip="${esc(gameLine(gm) + '<span class="tip-f">Click to open this matchup</span>')}" aria-label="${gm.res}, week ${gm.w}. Open matchup">${gm.res}</button>`).join('');
       html += `<tr><td>${i + 1}</td><td class="tl"><button type="button" class="tlink" data-build-team="${r}" title="View ${esc(t.name)} in Team Construction">${teamBlock(t, '')}</button></td><td>${record(t)}</td><td>${t.pf.toFixed(2)}</td><td>${x.pa ? x.pa.toFixed(2) : '–'}</td><td>${streak}</td><td class="l5">${last5}</td><td>${sosCell(sos.played, r, sos.lg, 'Played')}</td>${sos.hasRem ? `<td>${sosCell(sos.remaining, r, sos.lg, 'Remaining')}</td>` : ''}</tr>`;
     });
     html += '</tbody></table></div><details class="stnotes"><summary>How these are calculated</summary><p class="note">Ranked by record, then points for. Streaks count regular-season games' + (D.median ? ', including the weekly median game' : '') + '.</p><p class="note"><b>SOS</b> ranks each schedule by the average points per game of the opponents faced, 1st being the hardest. <span class="sos hard">Red</span> is the toughest third, <span class="sos easy">teal</span> the easiest.' + (sos.hasRem ? ' <b>Rem. SOS</b> does the same for the rest of the regular season.' : '') + ' The small number under each rating is how many points per game those opponents score above or below the league average.</p</details>';
@@ -2903,6 +2914,23 @@ footer input{width:min(100%,260px)}
     return html + '</div>';
   }
 
+  // ---------- Floating tooltips for [data-tip] (HTML built by the app, escaped at build time) ----------
+  let tipEl = null;
+  function showTip(el){
+    if (!tipEl) { tipEl = document.createElement('div'); tipEl.className = 'ftip'; tipEl.setAttribute('role', 'tooltip'); document.body.appendChild(tipEl); }
+    tipEl.innerHTML = el.dataset.tip; tipEl.style.display = 'block';
+    const r = el.getBoundingClientRect(), t = tipEl.getBoundingClientRect();
+    let left = Math.min(Math.max(8, r.left + r.width / 2 - t.width / 2), innerWidth - t.width - 8);
+    let top = r.bottom + 8; if (top + t.height > innerHeight - 8) top = r.top - t.height - 8;
+    tipEl.style.left = left + 'px'; tipEl.style.top = Math.max(8, top) + 'px';
+  }
+  function hideTip(){ if (tipEl) tipEl.style.display = 'none'; }
+  document.addEventListener('mouseover', e => { const el = e.target.closest && e.target.closest('[data-tip]'); if (el && matchMedia('(hover:hover)').matches) showTip(el); });
+  document.addEventListener('mouseout', e => { const el = e.target.closest && e.target.closest('[data-tip]'); if (el && !el.contains(e.relatedTarget)) hideTip(); });
+  document.addEventListener('focusin', e => { if (e.target.matches && e.target.matches('[data-tip]')) showTip(e.target); });
+  document.addEventListener('focusout', hideTip);
+  window.addEventListener('scroll', hideTip, { passive: true });
+
   // ---------- Events ----------
   $('#app').addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('[data-open-match]')) { e.preventDefault(); e.target.click(); } });
   $('#app').addEventListener('click', e => {
@@ -2914,6 +2942,10 @@ footer input{width:min(100%,260px)}
     if (crm) { const it = D.calc[crm.dataset.calcRm].items; it.splice(it.indexOf(crm.dataset.key), 1); render(); return; }
     const grp = e.target.closest('[data-group]');
     if (grp) { const o = grp.parentElement.classList.toggle('open'); grp.setAttribute('aria-expanded', o); return; }
+    const gm = e.target.closest('[data-goto-match]');
+    if (gm) { const [w, mid] = gm.dataset.gotoMatch.split(':').map(Number); hideTip();
+      opts.tab = 'match'; opts.week = w; D.openMatch = { w, id: mid }; saveOpts(); render();
+      const card = document.querySelector(`[data-card="${mid}"]`); window.scrollTo(0, card ? Math.max(0, window.scrollY + card.getBoundingClientRect().top - 80) : 0); return; }
     const pf = e.target.closest('[data-pos-filter]');
     if (pf) { opts.posFilter = opts.posFilter === pf.dataset.posFilter ? null : pf.dataset.posFilter; render(); return; }
     const ot = e.target.closest('[data-own-team]');
