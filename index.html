@@ -358,12 +358,14 @@ td.tags{white-space:normal;min-width:160px;text-align:left;color:var(--muted);fo
 .btable{margin-top:12px}
 .btable th:first-child,.btable td:first-child{text-align:left;padding-left:2px}
 .btable tr.all td{font-weight:600;border-top:2px solid var(--line)}
-.btable tr.prow td{border-top:2px solid var(--line);overflow:visible}
+.btable tr.prow td{border-top:2px solid var(--line);overflow:visible;white-space:normal}
 .pickbtn{all:unset;box-sizing:border-box;position:relative;display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;cursor:pointer;padding:4px 8px;border:1px solid var(--line);border-radius:6px;text-align:left}
 .pickbtn b{color:var(--accent)}.pickbtn .pp-go{color:var(--muted);font-size:.78rem}
 .pickbtn:hover,.pickbtn:focus-visible{border-color:var(--accent)}.pickbtn:hover .pp-go,.pickbtn:focus-visible .pp-go{color:var(--accent)}
 .pickpop{display:none;position:absolute;z-index:20;left:0;right:0;top:calc(100% + 6px);min-width:240px;max-height:320px;overflow:auto;background:var(--surface);border:1px solid var(--accent);border-radius:8px;padding:6px 10px 10px;box-shadow:0 10px 28px rgba(0,0,0,.45);white-space:normal;cursor:default}
 .pickbtn:hover .pickpop,.pickbtn:focus-visible .pickpop{display:block}
+.posbtn{display:inline-flex;width:auto;min-width:34px;justify-content:center;padding:2px 10px}.posbtn[aria-pressed="true"]{background:var(--accent)}.posbtn[aria-pressed="true"] b{color:var(--accent-ink)}
+.posbtn .pickpop{min-width:220px;right:auto}.pp-pl{display:flex;justify-content:space-between;gap:12px;padding:3px 0;border-top:1px solid var(--line);font-size:.8rem}.pp-pl b{color:var(--ink);font-weight:600}
 .pp-yr{display:block;margin:8px 0 5px;font-weight:600;font-size:.8rem;color:var(--muted)}.pp-chips{display:flex;flex-wrap:wrap;gap:5px}
 .ocard.flash{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent);transition:box-shadow .4s,border-color .4s}
 @media (hover:none){.pickbtn:hover .pickpop{display:none}}
@@ -2473,9 +2475,10 @@ footer input{width:min(100%,260px)}
     const group = (title, rowsHtml, n) => n ? `<h3 class="rhead">${title}<small>${n}</small></h3><ul class="rlist2">${rowsHtml}</ul>` : '';
 
     const nflF = opts.nflFilter && t.nfl[opts.nflFilter] ? opts.nflFilter : null;
-    const matches = p => !nflF || (p.pos !== 'DEF' && (p.t || 'FA') === nflF);
+    const posF = opts.posFilter && t.byPos[opts.posFilter] ? opts.posFilter : null;
+    const matches = p => (!nflF || (p.pos !== 'DEF' && (p.t || 'FA') === nflF)) && (!posF || p.pos === posF);
     const startItems = starters.map((id, i) => ({ id, label: SLOT[slots[i]] || slots[i] || '', p: pmap.get(id) }))
-      .filter(x => nflF ? (x.p && matches(x.p)) : true);
+      .filter(x => (nflF || posF) ? (x.p && matches(x.p)) : true);
     const startRows = startItems.map(x => (!x.id || x.id === '0')
       ? `<li class="rrow"><span class="pbadge">${esc(x.label)}</span><span></span><div class="rtx"><div class="rname empty">Empty slot</div></div><span></span></li>`
       : (x.p ? row(x.p, x.label) : '')).join('');
@@ -2495,7 +2498,9 @@ footer input{width:min(100%,260px)}
       <div class="bsplit">
       <article class="bcard"><header>${teamBlock(tm, `${esc(tm.manager)}${tm.manager ? ', ' : ''}${record(tm)}`)}<span class="count">${t.players.length}<small>players</small></span></header>
         <table class="btable"><thead><tr><th scope="col">Pos</th><th scope="col">Players</th><th scope="col">Avg age</th><th scope="col">Age rank</th></tr></thead><tbody>
-        ${posList.map(pos => `<tr><td>${pos}</td><td>${t.byPos[pos] ? t.byPos[pos].n : 0}</td>${cell(posAvg(t, pos), cmp[pos])}</tr>`).join('')}
+        ${posList.map(pos => { const ps = t.players.filter(p => p.pos === pos).sort((a, b) => (ageOf(a) ?? 99) - (ageOf(b) ?? 99));
+          const pop = ps.length ? `<span class="pickpop" role="tooltip"><span class="pp-yr">${pos} (${ps.length})</span>${ps.map(p => { const a = ageOf(p); return `<span class="pp-pl"><b>${esc(p.n)}</b><span class="asset-sub">${esc(p.t || 'FA')} · ${a == null ? '–' : a.toFixed(1)}</span></span>`; }).join('')}</span>` : '';
+          return `<tr><td>${pos}</td><td>${ps.length ? `<button type="button" class="pickbtn posbtn" data-pos-filter="${pos}" aria-pressed="${posF === pos}" aria-label="Show only ${pos}s on the roster"><b>${ps.length}</b>${pop}</button>` : 0}</td>${cell(posAvg(t, pos), cmp[pos])}</tr>`; }).join('')}
         <tr class="all"><td>All</td><td>${t.players.filter(p => p.pos !== 'DEF').length}</td>${cell(t.avg, allVals)}</tr>
         <tr class="prow"><td>Picks</td><td colspan="3"><button type="button" class="pickbtn" data-own-team="${sel}" aria-label="${myPicks.length} draft picks. Open Pick Ownership"><span><b>${myPicks.length}</b> draft pick${myPicks.length === 1 ? '' : 's'}${acqN ? ` <span class="asset-sub">(${acqN} acquired)</span>` : ''}</span><span class="pp-go">View ›</span><span class="pickpop" role="tooltip">${pickPop}</span></button></td></tr></tbody></table>
         <div class="yr">Players per NFL team <span class="asset-sub">(tap one to filter the roster)</span></div><div class="chips">
@@ -2506,7 +2511,7 @@ footer input{width:min(100%,260px)}
           <div class="asset-sub">On this roster since ${new Date(t.tenured.ts).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' })} (${durTxt(Date.now() - t.tenured.ts)})</div></div>`
           : '<div class="tempty">Not available yet</div>'}
       </article>
-      <article class="bcard"><h2 class="rtitle">Current roster</h2>${nflF ? `<div class="fbar">Showing <b>${esc(nflF)}</b> players only <button type="button" class="linkbtn" data-nfl="${esc(nflF)}">Clear filter</button></div>` : ''}
+      <article class="bcard"><h2 class="rtitle">Current roster</h2>${nflF ? `<div class="fbar">Showing <b>${esc(nflF)}</b> players only <button type="button" class="linkbtn" data-nfl="${esc(nflF)}">Clear filter</button></div>` : ''}${posF ? `<div class="fbar">Showing <b>${esc(posF)}</b>s only <button type="button" class="linkbtn" data-pos-filter="${esc(posF)}">Clear filter</button></div>` : ''}
         ${group('Starters', startRows, startItems.length)}${group('Bench', bench.map(p => row(p, p.pos || '')).join(''), bench.length)}
         ${group('Injured reserve', irList.map(p => row(p, p.pos || '')).join(''), irList.length)}${group('Taxi squad', taxiList.map(p => row(p, p.pos || '')).join(''), taxiList.length)}
       </article></div>`;
@@ -2833,13 +2838,15 @@ footer input{width:min(100%,260px)}
     if (crm) { const it = D.calc[crm.dataset.calcRm].items; it.splice(it.indexOf(crm.dataset.key), 1); render(); return; }
     const grp = e.target.closest('[data-group]');
     if (grp) { const o = grp.parentElement.classList.toggle('open'); grp.setAttribute('aria-expanded', o); return; }
+    const pf = e.target.closest('[data-pos-filter]');
+    if (pf) { opts.posFilter = opts.posFilter === pf.dataset.posFilter ? null : pf.dataset.posFilter; render(); return; }
     const ot = e.target.closest('[data-own-team]');
     if (ot) { const rid = ot.dataset.ownTeam; opts.tab = 'own'; saveOpts(); render();
       const card = document.getElementById('own-' + rid);
       if (card) { card.scrollIntoView({ behavior: 'smooth', block: 'start' }); card.classList.add('flash'); setTimeout(() => card.classList.remove('flash'), 1600); }
       return; }
     const bt = e.target.closest('[data-build-team]');
-    if (bt) { opts.buildTeam = Number(bt.dataset.buildTeam); opts.nflFilter = null; opts.tab = 'build'; saveOpts(); render(); window.scrollTo(0, 0); return; }
+    if (bt) { opts.buildTeam = Number(bt.dataset.buildTeam); opts.nflFilter = null; opts.posFilter = null; opts.tab = 'build'; saveOpts(); render(); window.scrollTo(0, 0); return; }
     const tab = e.target.closest('[data-tab]');
     if (tab) { opts.tab = tab.dataset.tab; saveOpts(); render(); return; }
     const b = e.target.closest('[data-basis]');
@@ -2873,7 +2880,7 @@ footer input{width:min(100%,260px)}
     opts[k] = (k === 'rounds' || k === 'season' || k === 'tradeTeam' || k === 'week' || k === 'buildTeam' || k === 'tfTeam' || k === 'tfTol') ? Number(el.value) : el.value;
     saveOpts();
     if (k === 'tiebreak') runSim();
-    if (k === 'buildTeam') opts.nflFilter = null;
+    if (k === 'buildTeam') { opts.nflFilter = null; opts.posFilter = null; }
     render();
     if (openDetails) { const d = document.querySelector('details.more'); if (d) d.open = true; }
   });
