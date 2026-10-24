@@ -234,6 +234,20 @@ td.avgp{font:700 1.15rem "Barlow Condensed","Arial Narrow",sans-serif}
 .stbl .tl{text-align:left}
 .stk{font-weight:700}.stk.w{color:var(--accent)}.stk.l{color:var(--pylon-ink)}.stk.t{color:var(--muted)}
 .l5{white-space:nowrap}
+.pc-modal{max-width:760px}
+.pc-head{display:flex;align-items:center;gap:12px;padding-bottom:12px;border-bottom:1px solid var(--line)}.pc-head .hs{width:56px;height:56px;flex:none}
+.pc-id{flex:1;min-width:0}.pc-id h2{margin:0;font-size:1.3rem;line-height:1.2}.pc-own{color:var(--ink)}
+.pc-tabs{display:flex;gap:6px;margin:12px 0}.pc-tabs button{flex:1;padding:8px;border:1px solid var(--line);border-radius:8px;background:none;cursor:pointer;font-weight:600;color:var(--muted)}
+.pc-tabs button:hover{color:var(--ink)}.pc-tabs button[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.pc-season{margin-bottom:10px;display:inline-flex}
+.pc-sum{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}.pc-sum div{border:1px solid var(--line);border-radius:8px;padding:8px;text-align:center}
+.pc-sum b{display:block;font-size:1.15rem;color:var(--accent)}.pc-sum span{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.pc-tbl td,.pc-tbl th{padding:6px 7px}.pc-pts{color:var(--accent)}.pc-dnp td{color:var(--muted);font-size:.78rem}
+.pc-lu{font-size:.7rem;padding:2px 7px;border-radius:999px;background:var(--line);color:var(--muted)}.pc-lu.on{background:var(--accent);color:var(--accent-ink);font-weight:700}
+.pc-note{margin:10px 2px 0;font-size:.72rem;color:var(--muted)}.pc-empty{color:var(--muted);font-size:.85rem;margin:14px 2px}
+.pc-hist{list-style:none;margin:0;padding:0}.pc-hist li{display:flex;gap:10px;padding:10px 2px;border-top:1px solid var(--line)}.pc-hist li:first-child{border-top:0}
+.pc-hist i{font-style:normal;width:22px;flex:none;text-align:center}.pc-hist b{color:var(--ink)}.pc-hist span{display:block;font-size:.75rem;color:var(--muted);margin-top:2px}
+@media (max-width:520px){.pc-sum{grid-template-columns:repeat(2,1fr)}.pc-modal{padding:12px}}
 .sk-overlay{position:fixed;inset:0;z-index:80;background:rgba(5,9,18,.72);display:flex;align-items:flex-start;justify-content:center;padding:6vh 12px 12px;overflow-y:auto}
 body.sk-lock{overflow:hidden}
 .sk-modal{width:100%;max-width:560px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;box-shadow:0 20px 50px rgba(0,0,0,.5)}
@@ -259,7 +273,7 @@ body.sk-lock{overflow:hidden}
 .ftip .tip-ev{display:flex;gap:8px;padding:5px 0;border-top:1px solid var(--line)}.ftip .tip-h + .tip-ev{border-top:0}
 .ftip .tip-ev i{font-style:normal;flex:none;width:18px;text-align:center}.ftip .tip-ev b{font-weight:600;color:var(--ink)}
 .ftip .tip-ev em{display:block;font-style:normal;color:var(--muted);font-size:.7rem;margin-top:1px}
-.rrow.hasTip{cursor:help}.rrow.hasTip:hover,.rrow.hasTip:focus-visible{background:rgba(255,255,255,.03);outline:none}.ftip .tip-w{color:var(--accent)}.ftip .tip-l{color:var(--pylon-ink)}.ftip .tip-t{color:var(--muted)}
+.prow-click{cursor:pointer;border-radius:8px}.prow-click:hover,.prow-click:focus-visible{background:rgba(255,255,255,.04);outline:none}.prow-click:hover .rname,.prow-click:focus-visible .rname{color:var(--accent);text-decoration:underline}.ftip .tip-w{color:var(--accent)}.ftip .tip-l{color:var(--pylon-ink)}.ftip .tip-t{color:var(--muted)}
 .stnotes{margin-top:10px}.stnotes summary{cursor:pointer;color:var(--muted);font-size:.8rem;width:max-content}.stnotes summary:hover{color:var(--accent)}
 .tlink{all:unset;cursor:pointer;display:block;border-radius:8px}.tlink:hover .tname,.tlink:focus-visible .tname{color:var(--accent);text-decoration:underline}.tlink:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .sos{display:inline-block;min-width:34px;padding:2px 7px;border-radius:999px;font-weight:700;font-size:.75rem;cursor:help}.sos.hard{background:var(--pylon-soft);color:var(--pylon-ink)}.sos.mid{background:var(--line);color:var(--ink)}.sos.easy{background:var(--accent);color:var(--accent-ink)}.sosd{display:block;font-size:.65rem;color:var(--muted);margin-top:2px}
@@ -2447,7 +2461,7 @@ footer input{width:min(100%,260px)}
   async function playerInfoFor(ids){
     let cache = {};
     try { cache = JSON.parse(store.get('playerInfo') || '{}'); } catch (e) {}
-    const missing = ids.filter(id => !cache[id]);
+    const missing = ids.filter(id => !cache[id] || cache[id].ye === undefined);
     if (missing.length) {
       const all = await getJSON('/players/nfl');
       missing.forEach(id => {
@@ -2456,7 +2470,8 @@ footer input{width:min(100%,260px)}
         cache[id] = {
           n: p.full_name || [p.first_name, p.last_name].filter(Boolean).join(' ') || id,
           pos: p.position || '', t: p.team || '', b: p.birth_date || '',
-          a: typeof p.age === 'number' ? p.age : null
+          a: typeof p.age === 'number' ? p.age : null,
+          ry: Number(p.rookie_year) || null, ye: typeof p.years_exp === 'number' ? p.years_exp : null
         };
       });
       store.set('playerInfo', JSON.stringify(cache));
@@ -2593,29 +2608,9 @@ footer input{width:min(100%,260px)}
     const ownerKey = t.r.owner_id || `${leagueId}-${t.r.roster_id}`;
     const since = id => { const h = holder.get(id); return h && h.owner === ownerKey ? h.ts : null; };
     const posIdx = p => { const i = POS_ORDER.indexOf(p.pos); return i < 0 ? 99 : i; };
-    const nameOfOwner = key => { const r = (D.rosters || []).find(x => (x.owner_id || `${leagueId}-${x.roster_id}`) === key); return r ? team(r.roster_id).name : 'a former team'; };
-    const histTip = p => {
-      const evs = (holder.log && holder.log.get(p.id)) || [];
-      const dt = ts => ts ? new Date(ts).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' }) : '';
-      const wk = e => e.week ? `Week ${e.week}, ${e.season}` : dt(e.ts);
-      const line = e => {
-        const to = e.to ? B2(nameOfOwner(e.to)) : '', from = e.from ? B2(nameOfOwner(e.from)) : '';
-        const txt = e.how === 'draft' ? `Drafted by ${to} in the ${esc(e.draft)}, pick ${e.round}.${String(e.slot).padStart(2, '0')}${e.no ? ` (#${e.no} overall)` : ''}`
-          : e.how === 'trade' ? `Traded ${from ? `from ${from} ` : ''}to ${to}`
-          : e.how === 'waiver' ? `Claimed off waivers by ${to}${e.bid ? ` for $${e.bid.toLocaleString()} FAAB` : ''}`
-          : e.how === 'fa' ? `Signed as a free agent by ${to}`
-          : e.how === 'drop' ? `Dropped by ${from}`
-          : `Moved to ${to} by the commissioner`;
-        const ic = { draft: '🎯', trade: '🔁', waiver: '📝', fa: '✍️', drop: '✂️', commish: '⚙️' }[e.how];
-        return `<span class="tip-ev"><i>${ic}</i><span>${txt}<em>${e.how === 'draft' ? dt(e.ts) : wk(e)}</em></span></span>`;
-      };
-      const body = evs.length ? evs.slice().reverse().map(line).join('') : '<span class="tip-ev"><span>No draft or transaction history found for this player.</span></span>';
-      return `<span class="tip-h">${esc(p.n)} · player history</span>${body}`;
-    };
-    const B2 = x => `<b>${esc(x)}</b>`;
     const row = (p, label) => {
       const ts = since(p.id), a = ageOf(p);
-      return `<li class="rrow hasTip" tabindex="0" data-tip="${esc(histTip(p))}"><span class="pbadge pb-${esc(p.pos || 'X')}">${esc(label)}</span>${shot(p.id, p.pos, p.t, p.n)}
+      return `<li class="rrow prow-click" role="button" tabindex="0" data-player="${esc(p.id)}" aria-label="Open ${esc(p.n)} game log and history"><span class="pbadge pb-${esc(p.pos || 'X')}">${esc(label)}</span>${shot(p.id, p.pos, p.t, p.n)}
         <div class="rtx"><div class="rname">${esc(p.n)}</div><div class="rsub">${esc([p.pos, p.t || 'FA'].filter(Boolean).join(' · '))} · Age ${a == null ? '–' : a.toFixed(1)}</div></div>
         <span class="rten">${ts ? durTxt(Date.now() - ts) : ''}</span></li>`;
     };
@@ -2974,6 +2969,126 @@ footer input{width:min(100%,260px)}
     return html + '</div>';
   }
 
+  // ---------- Player card: fantasy game logs, career, and transaction history ----------
+  const SAPI = 'https://api.sleeper.com';
+  const pcache = new Map();
+  const statsFor = (pid, season, weekly) => {
+    const k = `${pid}:${season}:${weekly ? 'w' : 's'}`;
+    if (!pcache.has(k)) pcache.set(k, fetch(`${SAPI}/stats/nfl/player/${encodeURIComponent(pid)}?season_type=regular&season=${season}${weekly ? '&grouping=week' : ''}`, { cache: 'no-cache' })
+      .then(r => r.ok ? r.json() : null).catch(() => null));
+    return pcache.get(k);
+  };
+  // Fantasy points with this league's own scoring settings.
+  const fpts = st => { const sc = (D.league && D.league.scoring_settings) || {}; let t = 0; for (const k in st || {}) if (sc[k] != null && typeof st[k] === 'number') t += st[k] * sc[k]; return Math.round(t * 100) / 100; };
+  const n0 = v => (v == null || isNaN(v)) ? 0 : v;
+  const STATCOLS = {
+    QB: [['C/A', s => `${n0(s.pass_cmp)}/${n0(s.pass_att)}`], ['Pass Yd', s => n0(s.pass_yd)], ['Pass TD', s => n0(s.pass_td)], ['INT', s => n0(s.pass_int)], ['Rush Yd', s => n0(s.rush_yd)], ['Rush TD', s => n0(s.rush_td)]],
+    RB: [['Att', s => n0(s.rush_att)], ['Rush Yd', s => n0(s.rush_yd)], ['Rush TD', s => n0(s.rush_td)], ['Tgt', s => n0(s.rec_tgt)], ['Rec', s => n0(s.rec)], ['Rec Yd', s => n0(s.rec_yd)], ['Rec TD', s => n0(s.rec_td)]],
+    WR: [['Tgt', s => n0(s.rec_tgt)], ['Rec', s => n0(s.rec)], ['Rec Yd', s => n0(s.rec_yd)], ['Rec TD', s => n0(s.rec_td)], ['Rush Yd', s => n0(s.rush_yd)]],
+    K: [['FG', s => `${n0(s.fgm)}/${n0(s.fga)}`], ['XP', s => `${n0(s.xpm)}/${n0(s.xpa)}`], ['Long', s => n0(s.fgm_lng)]],
+    DEF: [['Pts Allowed', s => n0(s.pts_allow)], ['Sacks', s => n0(s.sack)], ['INT', s => n0(s.int)], ['Fum Rec', s => n0(s.fum_rec)], ['TD', s => n0(s.def_td) + n0(s.st_td)]]
+  };
+  STATCOLS.TE = STATCOLS.WR;
+  const ownerName = key => { const r = (D.rosters || []).find(x => (x.owner_id || `${leagueId}-${x.roster_id}`) === key); return r ? team(r.roster_id).name : 'a former team'; };
+  function historyHtml(pid){
+    const log = D.build && D.build.holder && D.build.holder.log;
+    const evs = (log && log.get(pid)) || [];
+    if (!evs.length) return '<p class="pc-empty">No draft or transaction history found for this player in this league.</p>';
+    const dt = ts => ts ? new Date(ts).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' }) : '';
+    const B = x => `<b>${esc(ownerName(x))}</b>`;
+    return '<ol class="pc-hist">' + evs.slice().reverse().map(e => {
+      const txt = e.how === 'draft' ? `Drafted by ${B(e.to)} in the ${esc(e.draft)}, pick ${e.round}.${String(e.slot).padStart(2, '0')}${e.no ? ` (#${e.no} overall)` : ''}`
+        : e.how === 'trade' ? `Traded ${e.from ? `from ${B(e.from)} ` : ''}to ${B(e.to)}`
+        : e.how === 'waiver' ? `Claimed off waivers by ${B(e.to)}${e.bid ? ` for $${e.bid.toLocaleString()} FAAB` : ''}`
+        : e.how === 'fa' ? `Signed as a free agent by ${B(e.to)}`
+        : e.how === 'drop' ? `Dropped by ${B(e.from)}`
+        : `Moved to ${B(e.to)} by the commissioner`;
+      const ic = { draft: '🎯', trade: '🔁', waiver: '📝', fa: '✍️', drop: '✂️', commish: '⚙️' }[e.how];
+      return `<li><i>${ic}</i><div>${txt}<span>${e.how === 'draft' || !e.week ? dt(e.ts) : `Week ${e.week}, ${e.season} · ${dt(e.ts)}`}</span></div></li>`;
+    }).join('') + '</ol>';
+  }
+  // Which league team had this player each completed week, and whether he was in their starting lineup (current season).
+  function lineupByWeek(pid){
+    const out = new Map();
+    (D.completedWeeks || []).forEach(({ week, list }) => (list || []).forEach(m => {
+      if ((m.players || []).includes(pid)) out.set(week, { rid: m.roster_id, started: (m.starters || []).includes(pid) });
+    }));
+    return out;
+  }
+  let PC = null;
+  function openPlayer(pid){
+    const info = (D.build && D.build.info && D.build.info[pid]) || {};
+    const ry = info.ry || (info.ye != null ? D.season - info.ye : null);
+    const first = Math.max(ry || D.season - 4, D.season - 9);
+    PC = { pid, info, tab: 'log', season: D.season, seasons: [] };
+    for (let y = D.season; y >= first; y--) PC.seasons.push(y);
+    const old = document.getElementById('pcov'); if (old) old.remove();
+    const el = document.createElement('div'); el.className = 'sk-overlay'; el.id = 'pcov';
+    el.innerHTML = `<div class="sk-modal pc-modal" role="dialog" aria-modal="true" aria-label="${esc(info.n || 'Player')}"><div id="pcbody"></div></div>`;
+    document.body.appendChild(el); document.body.classList.add('sk-lock');
+    el.addEventListener('click', e => {
+      if (e.target === el || e.target.closest('[data-pc-close]')) return closePlayer();
+      const go = e.target.closest('[data-pc-goto]'); if (go) { PC.season = Number(go.dataset.pcGoto); PC.tab = 'log'; drawPlayer(); return; }
+      const tb = e.target.closest('[data-pc-tab]'); if (tb) { PC.tab = tb.dataset.pcTab; drawPlayer(); }
+    });
+    el.addEventListener('change', e => { if (e.target.matches('[data-pc-season]')) { PC.season = Number(e.target.value); drawPlayer(); } });
+    drawPlayer();
+    const x = el.querySelector('.sk-x'); if (x) x.focus();
+  }
+  function closePlayer(){ const el = document.getElementById('pcov'); if (el) el.remove(); document.body.classList.remove('sk-lock'); PC = null; }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && document.getElementById('pcov')) closePlayer(); });
+  async function drawPlayer(){
+    const box = document.getElementById('pcbody'); if (!box || !PC) return;
+    const my = PC, { pid, info } = my;
+    const a = ageOf(info);
+    const pos = info.pos || '', cols = STATCOLS[pos] || STATCOLS.WR;
+    const owner = D.build && D.build.holder && D.build.holder.get(pid);
+    const head = `<header class="pc-head">${shot(pid, pos, info.t, info.n)}<div class="pc-id"><h2>${esc(info.n || pid)}</h2>
+        <div class="asset-sub">${esc([pos, info.t || 'FA', a == null ? null : `Age ${a.toFixed(1)}`, info.ye != null ? (info.ye ? `${info.ye} yr${info.ye === 1 ? '' : 's'} exp` : 'Rookie') : null].filter(Boolean).join(' · '))}</div>
+        ${owner ? `<div class="asset-sub">On <b class="pc-own">${esc(ownerName(owner.owner))}</b> for ${durTxt(Date.now() - owner.ts)}</div>` : ''}</div>
+        <button type="button" class="sk-x" data-pc-close aria-label="Close">×</button></header>
+      <div class="pc-tabs" role="tablist">${[['log', 'Game log'], ['career', 'Career'], ['tx', 'Transactions']].map(([k, l]) => `<button type="button" role="tab" data-pc-tab="${k}" aria-selected="${my.tab === k}">${l}</button>`).join('')}</div>`;
+    if (my.tab === 'tx') { box.innerHTML = head + `<div class="pc-pane">${historyHtml(pid)}</div>`; return; }
+    if (my.tab === 'career') {
+      box.innerHTML = head + '<div class="pc-pane"><p class="status">Loading career stats…</p></div>';
+      const rows = await Promise.all(my.seasons.map(y => statsFor(pid, y, false).then(j => ({ y, st: j && j.stats, tm: j && j.team }))));
+      if (PC !== my || my.tab !== 'career') return;
+      const have = rows.filter(r => r.st && (r.st.gp || r.st.gms_active));
+      const body = have.length ? `<div class="lwrap"><table class="stbl pc-tbl"><thead><tr><th>Season</th><th>Team</th><th>GP</th><th>Fantasy pts</th><th>PPG</th><th title="Positional rank in PPR">Pos rank</th>${cols.map(c => `<th>${c[0]}</th>`).join('')}</tr></thead><tbody>
+        ${have.map(r => { const gp = r.st.gp || r.st.gms_active || 0, f = fpts(r.st); return `<tr><td><button type="button" class="linkbtn" data-pc-goto="${r.y}">${r.y}</button></td><td>${esc(r.tm || '–')}</td><td>${gp}</td><td><b class="pc-pts">${f.toFixed(1)}</b></td><td>${gp ? (f / gp).toFixed(1) : '–'}</td><td>${r.st.pos_rank_ppr ? `${esc(pos)}${r.st.pos_rank_ppr}` : '–'}</td>${cols.map(c => `<td>${esc(c[1](r.st))}</td>`).join('')}</tr>`; }).join('')}
+        </tbody></table></div><p class="pc-note">Fantasy points use this league’s scoring for every season. Tap a season to see its game log.</p>`
+        : '<p class="pc-empty">No NFL regular-season stats found for this player yet.</p>';
+      box.innerHTML = head + `<div class="pc-pane">${body}</div>`;
+      return;
+    }
+    // Game log
+    const seasonSel = `<label class="field pc-season">Season<select data-pc-season>${my.seasons.map(y => `<option value="${y}" ${y === my.season ? 'selected' : ''}>${y}</option>`).join('')}</select></label>`;
+    box.innerHTML = head + `<div class="pc-pane">${seasonSel}<p class="status">Loading game log…</p></div>`;
+    const wk = await statsFor(pid, my.season, true);
+    if (PC !== my || my.tab !== 'log') return;
+    const cur = my.season === D.season;
+    const lastWeek = cur ? Math.max(0, D.firstOpen - 1) : 18;
+    const lu = cur ? lineupByWeek(pid) : new Map();
+    const games = [];
+    for (let w = 1; w <= lastWeek; w++) {
+      const g = wk && wk[w];
+      games.push({ w, g, st: g && g.stats, pts: g && g.stats ? fpts(g.stats) : null, lu: lu.get(w) });
+    }
+    if (!cur) while (games.length && !(games[games.length - 1].st)) games.pop();
+    const playedIt = x => x.st && (x.st.gp || x.st.gms_active || x.pts);
+    const played = games.filter(playedIt);
+    const tot = played.reduce((t, x) => t + x.pts, 0);
+    const best = played.reduce((b, x) => !b || x.pts > b.pts ? x : b, null);
+    const sum = played.length ? `<div class="pc-sum"><div><b>${tot.toFixed(1)}</b><span>Fantasy pts</span></div><div><b>${(tot / played.length).toFixed(1)}</b><span>Per game</span></div><div><b>${played.length}</b><span>Games</span></div><div><b>${best.pts.toFixed(1)}</b><span>Best (Wk ${best.w})</span></div></div>` : '';
+    const luCell = x => !cur ? '' : `<td>${x.lu ? `<span class="pc-lu ${x.lu.started ? 'on' : ''}" title="${esc(team(x.lu.rid).name)}">${x.lu.started ? 'Started' : 'Bench'}</span>` : '<span class="asset-sub">–</span>'}</td>`;
+    const rowsH = games.slice().reverse().map(x => playedIt(x)
+      ? `<tr><td>${x.w}</td><td>${esc(x.g.opponent || '–')}</td><td><b class="pc-pts">${x.pts.toFixed(1)}</b></td>${luCell(x)}${cols.map(c => `<td>${esc(c[1](x.st))}</td>`).join('')}</tr>`
+      : `<tr class="pc-dnp"><td>${x.w}</td><td colspan="${2 + (cur ? 1 : 0) + cols.length}">Did not play / bye</td></tr>`).join('');
+    const tbl = games.length ? `<div class="lwrap"><table class="stbl pc-tbl"><thead><tr><th>Wk</th><th>Opp</th><th>Pts</th>${cur ? '<th>Lineup</th>' : ''}${cols.map(c => `<th>${c[0]}</th>`).join('')}</tr></thead><tbody>${rowsH}</tbody></table></div>`
+      : '<p class="pc-empty">No games played yet this season.</p>';
+    box.innerHTML = head + `<div class="pc-pane">${seasonSel}${wk ? sum + tbl : '<p class="pc-empty">Couldn’t load stats from Sleeper. Try again in a moment.</p>'}<p class="pc-note">Fantasy points use this league’s scoring.${cur ? ' Lineup shows whether his league team started him that week.' : ''}</p></div>`;
+  }
+
   // ---------- Streak breakdown (week-by-week matchups in the current streak) ----------
   function openStreak(rid){
     const x = standingsData().get(rid); if (!x) return;
@@ -3021,17 +3136,10 @@ footer input{width:min(100%,260px)}
   document.addEventListener('mouseout', e => { const el = e.target.closest && e.target.closest('[data-tip]'); if (el && !el.contains(e.relatedTarget)) hideTip(); });
   document.addEventListener('focusin', e => { if (e.target.matches && e.target.matches('[data-tip]')) showTip(e.target); });
   document.addEventListener('focusout', hideTip);
-  // Touch screens have no hover, so a tap on a roster row toggles its history.
-  document.addEventListener('click', e => {
-    if (matchMedia('(hover:hover)').matches) return;
-    const el = e.target.closest && e.target.closest('.rrow.hasTip');
-    if (el) { if (tipEl && tipEl.style.display === 'block' && tipEl.dataset.for === el.dataset.tip) { hideTip(); tipEl.dataset.for = ''; } else { showTip(el); tipEl.dataset.for = el.dataset.tip; } }
-    else hideTip();
-  });
   window.addEventListener('scroll', hideTip, { passive: true });
 
   // ---------- Events ----------
-  $('#app').addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('[data-open-match]')) { e.preventDefault(); e.target.click(); } });
+  $('#app').addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('[data-open-match], [data-player]')) { e.preventDefault(); e.target.click(); } });
   $('#app').addEventListener('click', e => {
     document.querySelectorAll('.tabgroup.open').forEach(g => { if (!g.contains(e.target)) g.classList.remove('open'); });
     const cpick = e.target.closest('[data-calc-pick]');
@@ -3041,6 +3149,8 @@ footer input{width:min(100%,260px)}
     if (crm) { const it = D.calc[crm.dataset.calcRm].items; it.splice(it.indexOf(crm.dataset.key), 1); render(); return; }
     const grp = e.target.closest('[data-group]');
     if (grp) { const o = grp.parentElement.classList.toggle('open'); grp.setAttribute('aria-expanded', o); return; }
+    const pl = e.target.closest('[data-player]');
+    if (pl) { openPlayer(pl.dataset.player); return; }
     const sk = e.target.closest('[data-streak]');
     if (sk) { hideTip(); openStreak(Number(sk.dataset.streak)); return; }
     const gm = e.target.closest('[data-goto-match]');
