@@ -255,7 +255,11 @@ body.sk-lock{overflow:hidden}
 .dotbtn{border:0;padding:0;cursor:pointer;transition:transform .12s}.dotbtn:hover,.dotbtn:focus-visible{transform:scale(1.18);outline:2px solid var(--accent);outline-offset:1px}
 .ftip{display:none;position:fixed;z-index:60;max-width:320px;padding:8px 11px;background:var(--surface);border:1px solid var(--accent);border-radius:8px;box-shadow:0 10px 28px rgba(0,0,0,.45);font-size:.78rem;line-height:1.45;pointer-events:none;text-align:left}
 .ftip .tip-h{display:block;font-weight:700;margin-bottom:4px}.ftip .tip-row{display:block;white-space:nowrap}.ftip .tip-f{display:block;margin-top:5px;color:var(--muted);font-size:.7rem}
-.ftip b{display:inline-block;width:14px;font-weight:700}.ftip .tip-w{color:var(--accent)}.ftip .tip-l{color:var(--pylon-ink)}.ftip .tip-t{color:var(--muted)}
+.ftip .tip-row b{display:inline-block;width:14px;font-weight:700}
+.ftip .tip-ev{display:flex;gap:8px;padding:5px 0;border-top:1px solid var(--line)}.ftip .tip-h + .tip-ev{border-top:0}
+.ftip .tip-ev i{font-style:normal;flex:none;width:18px;text-align:center}.ftip .tip-ev b{font-weight:600;color:var(--ink)}
+.ftip .tip-ev em{display:block;font-style:normal;color:var(--muted);font-size:.7rem;margin-top:1px}
+.rrow.hasTip{cursor:help}.rrow.hasTip:hover,.rrow.hasTip:focus-visible{background:rgba(255,255,255,.03);outline:none}.ftip .tip-w{color:var(--accent)}.ftip .tip-l{color:var(--pylon-ink)}.ftip .tip-t{color:var(--muted)}
 .stnotes{margin-top:10px}.stnotes summary{cursor:pointer;color:var(--muted);font-size:.8rem;width:max-content}.stnotes summary:hover{color:var(--accent)}
 .tlink{all:unset;cursor:pointer;display:block;border-radius:8px}.tlink:hover .tname,.tlink:focus-visible .tname{color:var(--accent);text-decoration:underline}.tlink:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .sos{display:inline-block;min-width:34px;padding:2px 7px;border-radius:999px;font-weight:700;font-size:.75rem;cursor:help}.sos.hard{background:var(--pylon-soft);color:var(--pylon-ink)}.sos.mid{background:var(--line);color:var(--ink)}.sos.easy{background:var(--accent);color:var(--accent-ink)}.sosd{display:block;font-size:.65rem;color:var(--muted);margin-top:2px}
@@ -2473,7 +2477,9 @@ footer input{width:min(100%,260px)}
 
   // Who has held each player the longest, from draft picks and transactions across every season
   async function loadAcquisitions(hist){
-    const holder = new Map();
+    const holder = new Map(), log = new Map();
+    const oldest = hist.length ? hist[hist.length - 1].season : null;
+    const note = (pid, e) => { if (!log.has(pid)) log.set(pid, []); log.get(pid).push(e); };
     for (const L of hist.slice().reverse()) {
       const ownerOfRid = new Map(L.rosters.map(r => [r.roster_id, r.owner_id || `${L.id}-${r.roster_id}`]));
       const ev = [];
@@ -2481,8 +2487,14 @@ footer input{width:min(100%,260px)}
       for (const d of (Array.isArray(drafts) ? drafts : [])) {
         const picks = await getJSON(`/draft/${d.draft_id}/picks`).catch(() => []);
         const ts = d.last_picked || d.start_time || 0;
+        const dName = `${d.season || L.season} ${String(d.season || L.season) === String(oldest) ? 'startup' : 'rookie'} draft`;
+        const teamsN = (d.settings && d.settings.teams) || L.rosters.length || 12;
         (Array.isArray(picks) ? picks : []).forEach(pk => {
-          if (pk.player_id && ownerOfRid.has(pk.roster_id)) ev.push({ ts, ord: pk.pick_no || 0, kind: 'add', pid: pk.player_id, owner: ownerOfRid.get(pk.roster_id) });
+          if (!pk.player_id || !ownerOfRid.has(pk.roster_id)) return;
+          const owner = ownerOfRid.get(pk.roster_id);
+          ev.push({ ts, ord: pk.pick_no || 0, kind: 'add', pid: pk.player_id, owner });
+          const slot = pk.draft_slot || (((pk.pick_no || 1) - 1) % teamsN) + 1;
+          note(pk.player_id, { ts, ord: pk.pick_no || 0, how: 'draft', to: owner, draft: dName, round: pk.round, slot, no: pk.pick_no });
         });
       }
       const weeks = await Promise.all([...Array(19).keys()].map(w => getJSON(`/league/${L.id}/transactions/${w}`).catch(() => [])));
@@ -2490,6 +2502,15 @@ footer input{width:min(100%,260px)}
         if (!t || t.status !== 'complete') return;
         const ts = t.status_updated || t.created || 0;
         Object.entries(t.adds || {}).forEach(([pid, rid]) => { if (ownerOfRid.has(rid)) ev.push({ ts, ord: 0, kind: 'add', pid, owner: ownerOfRid.get(rid) }); });
+        const how = t.type === 'trade' ? 'trade' : t.type === 'waiver' ? 'waiver' : t.type === 'free_agent' ? 'fa' : 'commish';
+        Object.entries(t.adds || {}).forEach(([pid, rid]) => {
+          if (!ownerOfRid.has(rid)) return;
+          const fromRid = (t.drops || {})[pid];
+          note(pid, { ts, ord: 1, how, to: ownerOfRid.get(rid), from: fromRid != null && ownerOfRid.has(fromRid) ? ownerOfRid.get(fromRid) : null, bid: Number((t.settings || {}).waiver_bid) || 0, week: t.leg, season: L.season });
+        });
+        if (t.type !== 'trade') Object.entries(t.drops || {}).forEach(([pid, rid]) => {
+          if (ownerOfRid.has(rid)) note(pid, { ts, ord: 0, how: 'drop', from: ownerOfRid.get(rid), week: t.leg, season: L.season });
+        });
         Object.entries(t.drops || {}).forEach(([pid, rid]) => { if (ownerOfRid.has(rid)) ev.push({ ts, ord: 0, kind: 'drop', pid, owner: ownerOfRid.get(rid) }); });
       }));
       ev.sort((a, b) => (a.ts - b.ts) || (a.kind === b.kind ? 0 : a.kind === 'drop' ? -1 : 1) || (a.ord - b.ord));
@@ -2498,6 +2519,8 @@ footer input{width:min(100%,260px)}
         else { const h = holder.get(e.pid); if (h && h.owner === e.owner) holder.delete(e.pid); }
       });
     }
+    log.forEach(list => list.sort((a, b) => (a.ts - b.ts) || (a.ord - b.ord)));
+    holder.log = log;
     return holder;
   }
 
@@ -2570,9 +2593,29 @@ footer input{width:min(100%,260px)}
     const ownerKey = t.r.owner_id || `${leagueId}-${t.r.roster_id}`;
     const since = id => { const h = holder.get(id); return h && h.owner === ownerKey ? h.ts : null; };
     const posIdx = p => { const i = POS_ORDER.indexOf(p.pos); return i < 0 ? 99 : i; };
+    const nameOfOwner = key => { const r = (D.rosters || []).find(x => (x.owner_id || `${leagueId}-${x.roster_id}`) === key); return r ? team(r.roster_id).name : 'a former team'; };
+    const histTip = p => {
+      const evs = (holder.log && holder.log.get(p.id)) || [];
+      const dt = ts => ts ? new Date(ts).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' }) : '';
+      const wk = e => e.week ? `Week ${e.week}, ${e.season}` : dt(e.ts);
+      const line = e => {
+        const to = e.to ? B2(nameOfOwner(e.to)) : '', from = e.from ? B2(nameOfOwner(e.from)) : '';
+        const txt = e.how === 'draft' ? `Drafted by ${to} in the ${esc(e.draft)}, pick ${e.round}.${String(e.slot).padStart(2, '0')}${e.no ? ` (#${e.no} overall)` : ''}`
+          : e.how === 'trade' ? `Traded ${from ? `from ${from} ` : ''}to ${to}`
+          : e.how === 'waiver' ? `Claimed off waivers by ${to}${e.bid ? ` for $${e.bid.toLocaleString()} FAAB` : ''}`
+          : e.how === 'fa' ? `Signed as a free agent by ${to}`
+          : e.how === 'drop' ? `Dropped by ${from}`
+          : `Moved to ${to} by the commissioner`;
+        const ic = { draft: '🎯', trade: '🔁', waiver: '📝', fa: '✍️', drop: '✂️', commish: '⚙️' }[e.how];
+        return `<span class="tip-ev"><i>${ic}</i><span>${txt}<em>${e.how === 'draft' ? dt(e.ts) : wk(e)}</em></span></span>`;
+      };
+      const body = evs.length ? evs.slice().reverse().map(line).join('') : '<span class="tip-ev"><span>No draft or transaction history found for this player.</span></span>';
+      return `<span class="tip-h">${esc(p.n)} · player history</span>${body}`;
+    };
+    const B2 = x => `<b>${esc(x)}</b>`;
     const row = (p, label) => {
       const ts = since(p.id), a = ageOf(p);
-      return `<li class="rrow"><span class="pbadge pb-${esc(p.pos || 'X')}">${esc(label)}</span>${shot(p.id, p.pos, p.t, p.n)}
+      return `<li class="rrow hasTip" tabindex="0" data-tip="${esc(histTip(p))}"><span class="pbadge pb-${esc(p.pos || 'X')}">${esc(label)}</span>${shot(p.id, p.pos, p.t, p.n)}
         <div class="rtx"><div class="rname">${esc(p.n)}</div><div class="rsub">${esc([p.pos, p.t || 'FA'].filter(Boolean).join(' · '))} · Age ${a == null ? '–' : a.toFixed(1)}</div></div>
         <span class="rten">${ts ? durTxt(Date.now() - ts) : ''}</span></li>`;
     };
@@ -2978,6 +3021,13 @@ footer input{width:min(100%,260px)}
   document.addEventListener('mouseout', e => { const el = e.target.closest && e.target.closest('[data-tip]'); if (el && !el.contains(e.relatedTarget)) hideTip(); });
   document.addEventListener('focusin', e => { if (e.target.matches && e.target.matches('[data-tip]')) showTip(e.target); });
   document.addEventListener('focusout', hideTip);
+  // Touch screens have no hover, so a tap on a roster row toggles its history.
+  document.addEventListener('click', e => {
+    if (matchMedia('(hover:hover)').matches) return;
+    const el = e.target.closest && e.target.closest('.rrow.hasTip');
+    if (el) { if (tipEl && tipEl.style.display === 'block' && tipEl.dataset.for === el.dataset.tip) { hideTip(); tipEl.dataset.for = ''; } else { showTip(el); tipEl.dataset.for = el.dataset.tip; } }
+    else hideTip();
+  });
   window.addEventListener('scroll', hideTip, { passive: true });
 
   // ---------- Events ----------
