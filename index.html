@@ -234,6 +234,23 @@ td.avgp{font:700 1.15rem "Barlow Condensed","Arial Narrow",sans-serif}
 .stbl .tl{text-align:left}
 .stk{font-weight:700}.stk.w{color:var(--accent)}.stk.l{color:var(--pylon-ink)}.stk.t{color:var(--muted)}
 .l5{white-space:nowrap}
+.sk-overlay{position:fixed;inset:0;z-index:80;background:rgba(5,9,18,.72);display:flex;align-items:flex-start;justify-content:center;padding:6vh 12px 12px;overflow-y:auto}
+body.sk-lock{overflow:hidden}
+.sk-modal{width:100%;max-width:560px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;box-shadow:0 20px 50px rgba(0,0,0,.5)}
+.sk-modal header{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.sk-x{all:unset;cursor:pointer;width:32px;height:32px;line-height:30px;text-align:center;font-size:1.5rem;border-radius:8px;color:var(--muted)}.sk-x:hover,.sk-x:focus-visible{background:var(--line);color:var(--ink)}
+.sk-list{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.sk-row{all:unset;box-sizing:border-box;cursor:pointer;display:grid;grid-template-columns:62px 26px 1fr 14px;align-items:center;gap:10px;padding:10px;border:1px solid var(--line);border-radius:8px}
+.sk-row:hover,.sk-row:focus-visible{border-color:var(--accent);background:rgba(255,255,255,.02)}
+.sk-wk{font-size:.78rem;font-weight:600;color:var(--muted)}.sk-go{color:var(--muted);font-size:1.2rem}
+.sk-res{display:inline-block;width:24px;height:24px;line-height:24px;border-radius:50%;text-align:center;font-weight:700;font-size:.72rem}
+.sk-res.w{background:var(--accent);color:var(--accent-ink)}.sk-res.l{background:var(--pylon-soft);color:var(--pylon-ink)}.sk-res.t{background:var(--line);color:var(--ink)}
+.sk-teams{display:flex;flex-direction:column;gap:6px;min-width:0}
+.sk-side{display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0;opacity:.72}.sk-side.win{opacity:1}.sk-side.win .sk-pts{color:var(--accent)}
+.sk-side .team{min-width:0}.sk-side .tname{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sk-pts{font-weight:700;font-variant-numeric:tabular-nums}
+.sk-note{margin:12px 2px 0;font-size:.75rem;color:var(--muted)}
+@media (max-width:520px){.sk-row{grid-template-columns:48px 24px 1fr 10px;gap:8px;padding:8px}}
 .stkbtn{all:unset;cursor:pointer;padding:2px 6px;border-radius:6px;font-weight:700}.stkbtn:hover,.stkbtn:focus-visible{background:var(--line)}.stkbtn.w{color:var(--accent)}.stkbtn.l{color:var(--pylon-ink)}.stkbtn.t{color:var(--muted)}
 .dotbtn{border:0;padding:0;cursor:pointer;transition:transform .12s}.dotbtn:hover,.dotbtn:focus-visible{transform:scale(1.18);outline:2px solid var(--accent);outline-offset:1px}
 .ftip{display:none;position:fixed;z-index:60;max-width:320px;padding:8px 11px;background:var(--surface);border:1px solid var(--accent);border-radius:8px;box-shadow:0 10px 28px rgba(0,0,0,.45);font-size:.78rem;line-height:1.45;pointer-events:none;text-align:left}
@@ -1077,7 +1094,7 @@ footer input{width:min(100%,260px)}
         : `<span class="tip-row"><b class="tip-${gm.res.toLowerCase()}">${gm.res}</b> Week ${gm.w} · ${gm.pts.toFixed(2)}–${gm.oppPts.toFixed(2)} vs ${esc(team(gm.opp).name)}</span>`;
       const go = gm => `data-goto-match="${gm.w}:${gm.mid}"`;
       const sGames = c.n ? x.gm.slice(-c.n) : [];
-      const streak = c.n ? `<button type="button" class="stk stkbtn ${c.t === 'W' ? 'w' : c.t === 'L' ? 'l' : 't'}" ${go(sGames[sGames.length - 1])} data-tip="${esc(`<span class="tip-h">${c.t === 'W' ? 'Win' : c.t === 'L' ? 'Losing' : 'Tie'} streak: ${c.n}</span>${sGames.slice().reverse().map(gameLine).join('')}<span class="tip-f">Click to open the latest game</span>`)}" aria-label="${c.t}${c.n} streak. Open latest matchup">${c.t}${c.n}</button>` : '–';
+      const streak = c.n ? `<button type="button" class="stk stkbtn ${c.t === 'W' ? 'w' : c.t === 'L' ? 'l' : 't'}" data-streak="${r}" data-tip="${esc(`<span class="tip-h">${c.t === 'W' ? 'Win' : c.t === 'L' ? 'Losing' : 'Tie'} streak: ${c.n}</span>${sGames.slice().reverse().map(gameLine).join('')}<span class="tip-f">Click for the week-by-week matchups</span>`)}" aria-label="${c.t}${c.n} streak. Show week-by-week matchups">${c.t}${c.n}</button>` : '–';
       const last5 = x.gm.slice(-5).map(gm => `<button type="button" class="dot dotbtn ${gm.res.toLowerCase()}" ${go(gm)} data-tip="${esc(gameLine(gm) + '<span class="tip-f">Click to open this matchup</span>')}" aria-label="${gm.res}, week ${gm.w}. Open matchup">${gm.res}</button>`).join('');
       html += `<tr><td>${i + 1}</td><td class="tl"><button type="button" class="tlink" data-build-team="${r}" title="View ${esc(t.name)} in Team Construction">${teamBlock(t, '')}</button></td><td>${record(t)}</td><td>${t.pf.toFixed(2)}</td><td>${x.pa ? x.pa.toFixed(2) : '–'}</td><td>${streak}</td><td class="l5">${last5}</td><td>${sosCell(sos.played, r, sos.lg, 'Played')}</td>${sos.hasRem ? `<td>${sosCell(sos.remaining, r, sos.lg, 'Remaining')}</td>` : ''}</tr>`;
     });
@@ -2914,6 +2931,38 @@ footer input{width:min(100%,260px)}
     return html + '</div>';
   }
 
+  // ---------- Streak breakdown (week-by-week matchups in the current streak) ----------
+  function openStreak(rid){
+    const x = standingsData().get(rid); if (!x) return;
+    const c = x.cur; if (!c.n) return;
+    const games = x.gm.slice(-c.n).reverse(), t = team(rid);
+    const word = c.t === 'W' ? 'win' : c.t === 'L' ? 'losing' : 'tie';
+    const side = (rt, pts, win) => `<div class="sk-side${win ? ' win' : ''}">${teamBlock(rt, '')}<span class="sk-pts">${pts.toFixed(2)}</span></div>`;
+    const rows = games.map(g => {
+      const res = `<span class="sk-res ${g.res.toLowerCase()}">${g.res}</span>`;
+      const body = g.med != null
+        ? `${side(t, g.pts, g.res === 'W')}<div class="sk-side sk-med${g.res === 'L' ? ' win' : ''}"><div class="team"><div class="tx"><div class="tname">League median</div></div></div><span class="sk-pts">${g.med.toFixed(2)}</span></div>`
+        : `${side(t, g.pts, g.pts > g.oppPts)}${side(team(g.opp), g.oppPts, g.oppPts > g.pts)}`;
+      return `<button type="button" class="sk-row" data-goto-match="${g.w}:${g.mid}"><span class="sk-wk">Week ${g.w}</span>${res}<div class="sk-teams">${body}</div><span class="sk-go">›</span></button>`;
+    }).join('');
+    closeStreak();
+    const el = document.createElement('div'); el.className = 'sk-overlay'; el.id = 'skov';
+    el.innerHTML = `<div class="sk-modal" role="dialog" aria-modal="true" aria-label="${esc(t.name)} ${word} streak">
+      <header>${teamBlock(t, `${c.n}-game ${word} streak`)}<button type="button" class="sk-x" data-sk-close aria-label="Close">×</button></header>
+      <div class="sk-list">${rows}</div><p class="sk-note">Tap a week to open the full matchup.</p></div>`;
+    document.body.appendChild(el); document.body.classList.add('sk-lock');
+    el.addEventListener('click', e => {
+      if (e.target === el || e.target.closest('[data-sk-close]')) return closeStreak();
+      const row = e.target.closest('[data-goto-match]'); if (!row) return;
+      closeStreak(); const [w, mid] = row.dataset.gotoMatch.split(':').map(Number);
+      opts.tab = 'match'; opts.week = w; D.openMatch = { w, id: mid }; saveOpts(); render();
+      const card = document.querySelector(`[data-card="${mid}"]`); window.scrollTo(0, card ? Math.max(0, window.scrollY + card.getBoundingClientRect().top - 80) : 0);
+    });
+    el.querySelector('.sk-x').focus();
+  }
+  function closeStreak(){ const el = document.getElementById('skov'); if (el) el.remove(); document.body.classList.remove('sk-lock'); }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeStreak(); });
+
   // ---------- Floating tooltips for [data-tip] (HTML built by the app, escaped at build time) ----------
   let tipEl = null;
   function showTip(el){
@@ -2942,6 +2991,8 @@ footer input{width:min(100%,260px)}
     if (crm) { const it = D.calc[crm.dataset.calcRm].items; it.splice(it.indexOf(crm.dataset.key), 1); render(); return; }
     const grp = e.target.closest('[data-group]');
     if (grp) { const o = grp.parentElement.classList.toggle('open'); grp.setAttribute('aria-expanded', o); return; }
+    const sk = e.target.closest('[data-streak]');
+    if (sk) { hideTip(); openStreak(Number(sk.dataset.streak)); return; }
     const gm = e.target.closest('[data-goto-match]');
     if (gm) { const [w, mid] = gm.dataset.gotoMatch.split(':').map(Number); hideTip();
       opts.tab = 'match'; opts.week = w; D.openMatch = { w, id: mid }; saveOpts(); render();
