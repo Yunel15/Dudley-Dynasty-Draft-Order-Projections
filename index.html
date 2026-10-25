@@ -704,6 +704,15 @@ footer input{width:min(100%,260px)}
 .is-phone .paygrid{grid-template-columns:1fr 1fr;gap:8px}.is-phone .paycard{padding:10px 11px}.is-phone .payamt{font-size:1.7rem}.is-phone .paycard h3{margin:2px 0 8px;font-size:.82rem}
 .is-phone .payhead{flex-direction:column;align-items:flex-start;gap:2px}
 .is-phone .pot{padding:12px 14px;gap:10px}.is-phone .potnum{font-size:2.8rem}
+.wpb{margin:10px 0 4px;font-size:.78rem}
+.wpb-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px;color:var(--muted)}.wpb-top span:first-child,.wpb-top span:last-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:40%}
+.wpb-top b{color:var(--ink);font-size:.95rem}.wpb-lab{font-size:.62rem;text-transform:uppercase;letter-spacing:.08em}
+.wpb-bar{display:flex;height:8px;margin-top:5px;border-radius:999px;overflow:hidden;background:var(--line);gap:2px}
+.wpb-a{background:var(--accent);border-radius:999px 0 0 999px;transition:width .4s}.wpb-b{background:#5AA6FF;border-radius:0 999px 999px 0;transition:width .4s}
+.wpb-proj{display:flex;justify-content:space-between;margin-top:4px;font-size:.7rem;color:var(--muted)}
+.plt .popp{display:block;color:var(--muted);font-size:.68rem;margin-top:1px}.plt .popp.live{color:var(--pylon-ink);font-weight:700}
+.pp .pjt{display:block;font-size:.66rem;color:var(--muted);font-weight:500;margin-top:2px}
+.wpn{font-style:normal}.is-phone .wpn{display:none}.is-phone .wpb-top span{max-width:none}
 </style>
 </head>
 <body>
@@ -2350,6 +2359,60 @@ footer input{width:min(100%,260px)}
     showClips(block, pid, w);
   }
 
+  // ---------- Matchups: NFL opponents, projections and win probability ----------
+  // Per week: each NFL team's game (opponent, home/away, status) and every player's projection in this league's scoring.
+  function weekContext(w){
+    D.wctx = D.wctx || new Map(); D.wctxLoading = D.wctxLoading || new Set();
+    if (D.wctx.has(w)) return D.wctx.get(w);
+    if (!D.wctxLoading.has(w)) {
+      D.wctxLoading.add(w);
+      const myD = D;
+      Promise.all([schedFor(D.season), getJSON(`/projections/nfl/regular/${D.season}/${w}`).catch(() => null)]).then(([sch, pr]) => {
+        const sched = new Map();
+        (Array.isArray(sch) ? sch : []).filter(g => Number(g.week) === w).forEach(g => {
+          sched.set(g.home, { opp: g.away, home: true, status: g.status, date: g.date });
+          sched.set(g.away, { opp: g.home, home: false, status: g.status, date: g.date });
+        });
+        const proj = {};
+        if (pr && typeof pr === 'object') for (const pid in pr) proj[pid] = fpts(pr[pid]);
+        myD.wctx.set(w, { sched, proj, hasSched: sched.size > 0, hasProj: Object.keys(proj).length > 0 });
+        myD.wctxLoading.delete(w);
+        if (D === myD && opts.tab === 'match') render();
+      });
+    }
+    return null;
+  }
+  const gameOf = (pid, ctx) => { const i = pname(pid); const tm = i && i.tm; if (!ctx || !tm) return null; return ctx.sched.get(tm) || (ctx.hasSched ? { bye: true } : null); };
+  const gameTxt = g => {
+    if (!g) return '';
+    if (g.bye) return 'BYE';
+    const when = g.status === 'complete' ? 'Final' : g.status === 'in_game' ? 'Live' : (g.date ? new Date(g.date + 'T12:00:00').toLocaleDateString([], { weekday: 'short' }) : '');
+    return `${g.home ? 'vs' : '@'} ${g.opp}${when ? ` · ${when}` : ''}`;
+  };
+  // Expected final points for one starter: finished games count as scored; live games add half of what is left of
+  // the projection; games not started use the projection. The spread reflects how uncertain each one still is.
+  function expectPts(pid, actual, ctx, final){
+    if (final) return { mu: actual, v: 0 };
+    const p = (ctx && ctx.proj[pid]) || 0, g = gameOf(pid, ctx);
+    if (g && (g.bye || g.status === 'complete')) return { mu: actual, v: 0 };
+    if (g && g.status === 'in_game') { const rem = Math.max(0, p - actual) * 0.5; return { mu: actual + rem, v: Math.pow(0.6 * rem + 1, 2) }; }
+    return { mu: Math.max(p, actual), v: Math.pow(0.45 * p + 1.5, 2) };
+  }
+  const erf = x => { const t = 1 / (1 + 0.3275911 * Math.abs(x)); const y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x); return x >= 0 ? y : -y; };
+  function winProb(a, b, ctx, final){
+    const side = m => (m.starters || []).reduce((acc, id, i) => { if (!id || id === '0') return acc; const e = expectPts(id, ((m.starters_points || [])[i]) || 0, ctx, final); acc.mu += e.mu; acc.v += e.v; return acc; }, { mu: 0, v: 0 });
+    const A = side(a), B = side(b), sd = Math.sqrt(A.v + B.v);
+    const pA = sd < 0.01 ? (A.mu > B.mu ? 1 : A.mu < B.mu ? 0 : 0.5) : 0.5 * (1 + erf((A.mu - B.mu) / (sd * Math.SQRT2)));
+    return { pA, projA: A.mu, projB: B.mu };
+  }
+  function wpBar(wp, ta, tb){
+    const a = Math.round(wp.pA * 100), b = 100 - a;
+    return `<div class="wpb" title="Win probability, from live scores and projections">
+      <div class="wpb-top"><span><b>${a}%</b><em class="wpn"> ${esc(ta.name)}</em></span><span class="wpb-lab">Win probability</span><span><em class="wpn">${esc(tb.name)} </em><b>${b}%</b></span></div>
+      <div class="wpb-bar"><i class="wpb-a" style="width:${Math.max(a, 0)}%"></i><i class="wpb-b" style="width:${Math.max(b, 0)}%"></i></div>
+      <div class="wpb-proj"><span>Proj ${wp.projA.toFixed(1)}</span><span>Proj ${wp.projB.toFixed(1)}</span></div></div>`;
+  }
+
   // ---------- Matchups ----------
   function renderMatchups(){
     const w = opts.week || D.defWeek;
@@ -2374,6 +2437,7 @@ footer input{width:min(100%,260px)}
     }
     const anyPts = list.some(m => (m.points || 0) > 0);
     const done = w < D.firstOpen;
+    const ctx = weekContext(w);
     const open = D.openMatch && D.openMatch.w === w ? pairs.find(g => g.mid === D.openMatch.id) : null;
     if (open) html += `<div class="msingle"><button class="btn ghost mback" type="button" data-close-match>‹ All matchups</button>`;
     else html += `<p class="note">${done ? 'Final scores.' : anyPts ? 'Live scores. Tap Refresh to update.' : 'Upcoming. Scores appear once games start.'} Tap a matchup to open it full screen. Tap a player’s name for his profile, or his points to see how they were scored.</p>`;
@@ -2397,9 +2461,11 @@ footer input{width:min(100%,260px)}
           const pts = ((m.starters_points || [])[i]) || 0;
           if (!id || id === '0') return side === 'l' ? '<td class="pl empty">Empty</td><td class="pp">0.00</td>' : '<td class="pp">0.00</td><td class="pl empty">Empty</td>';
           const info = pname(id);
-          const inner = info ? `${shot(id, info.pos, info.tm, info.nm)}<span class="plt">${esc(info.nm)}<small>${esc([info.pos, info.tm].filter(Boolean).join(', '))}</small></span>` : '<span class="asset-sub">Loading…</span>';
+          const gm = gameOf(id, ctx), gt = gameTxt(gm);
+          const inner = info ? `${shot(id, info.pos, info.tm, info.nm)}<span class="plt">${esc(info.nm)}<small>${esc([info.pos, info.tm].filter(Boolean).join(', '))}</small>${gt ? `<small class="popp${gm.status === 'in_game' ? ' live' : ''}">${esc(gt)}</small>` : ''}</span>` : '<span class="asset-sub">Loading…</span>';
+          const pj = ctx && !done && ctx.proj[id] != null && !(gm && (gm.bye || gm.status === 'complete')) ? `<small class="pjt">${ctx.proj[id].toFixed(1)} proj</small>` : '';
           const label = `<button type="button" class="plbtn${side === 'r' ? ' plr' : ''}" data-player="${esc(id)}" title="Player profile">${inner}</button>`;
-          const ptsB = `<button type="button" class="ppbtn" data-pid="${esc(id)}" data-pts="${pts}" data-w="${w}" title="How these points were scored">${pts.toFixed(2)}</button>`;
+          const ptsB = `<button type="button" class="ppbtn" data-pid="${esc(id)}" data-pts="${pts}" data-w="${w}" title="How these points were scored">${pts.toFixed(2)}</button>${pj}`;
           return side === 'l' ? `<td class="pl">${label}</td><td class="pp">${ptsB}</td>` : `<td class="pp">${ptsB}</td><td class="pl">${label}</td>`;
         };
         lineup += `<tr>${cell(a, 'l')}<td class="slot">${esc(SLOT[slots[i]] || slots[i] || '')}</td>${cell(b, 'r')}</tr><tr class="bk" hidden><td colspan="5"></td></tr>`;
@@ -2410,7 +2476,8 @@ footer input{width:min(100%,260px)}
       const side = (t, pts, win, cls) => `<div class="mside ${cls}${win ? ' win' : ''}">${avatar(t)}<div class="mname">${esc(t.name)}</div><div class="tmeta">${record(t)}</div><div class="mscore">${anyPts ? pts.toFixed(2) : '–'}</div></div>`;
       const bigHead = `<div class="mhead">${side(ta, pa, winA, 'l')}<div class="mvs">vs</div>${side(tb, pb, winB, 'r')}</div>`;
       const tableOpen = `<div class="lwrap"><table class="ltable"><tbody>${lineup}</tbody></table></div>`;
-      html += `<article class="mcard" data-card="${g.mid}">${open ? bigHead : row(a, pa, winA) + row(b, pb, winB)}
+      const wp = ctx && !done && (ctx.hasProj || anyPts) ? wpBar(winProb(a, b, ctx, false), ta, tb) : '';
+      html += `<article class="mcard" data-card="${g.mid}">${open ? bigHead : row(a, pa, winA) + row(b, pb, winB)}${wp}
         ${open ? `<button type="button" class="lutoggle open" data-close-match aria-expanded="true"><span class="lucar">▸</span> Lineups</button>${tableOpen}` : `<button type="button" class="lutoggle" data-open-match="${g.mid}" aria-expanded="false"><span class="lucar">▸</span> Lineups</button>`}</article>`;
     });
     html += open ? '</div></div>' : '</div>';
