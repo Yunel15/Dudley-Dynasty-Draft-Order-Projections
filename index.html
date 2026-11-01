@@ -4051,10 +4051,26 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
     const order = { legendary: 0, epic: 1, rare: 2, common: 3 };
     cards.sort((a, b) => order[a.tier] - order[b.tier] || b.pct - a.pct || b.score - a.score || a.name.localeCompare(b.name));
     cards.forEach((c, i) => { c.no = i + 1; });
+    // Hand-written nicknames, by Sleeper user id (anyone not listed falls back to their team name, then an earned one).
+    const TC_NICKS = {
+      '741175112165928960': 'The Hostile Takeover',   // CEORichPaul
+      '1135087458896564224': 'The Njigba Whisperer',  // NS824
+      '1035829223702884352': 'Alamo Trade Shark',     // Yunel
+      '1135098025145237504': 'Captain Tank-a-Lot',    // captaingust24
+      '1000832029790916608': 'Shough Me the Money',   // RLavalle18
+      '1389721686386933760': 'The Mid-Range Mamba',   // UncMamba2
+      '995507585899974656': 'The Rice Baron',         // weejay2
+      '1143757070744514560': 'Mo Points Mo Issues',   // Moholoka
+      '867629220522782720': 'Snit Happens',           // snit3
+      '999047535752699904': 'Tear Jerker',            // jameysoltesz
+      '1000988341384335360': 'Sensei of Superflex',   // KyleMiyagishima
+      '1000996743628115968': 'Nuclear Variance'       // lukenukes24
+    };
     // Nicknames: the Sleeper team name if set, otherwise earned from stats (each earned nickname used once).
     const taken = new Set(), maxBy = f => cards.reduce((m, c) => !m || f(c) > f(m) ? c : m, null), minBy = f => cards.reduce((m, c) => !m || f(c) < f(m) ? c : m, null);
     const topPpg = maxBy(c => c.ppg), topTrades = maxBy(c => c.trades), topQB = maxBy(c => c.qbTop), worst = minBy(c => c.g ? c.pct : 1);
     cards.forEach(c => {
+      if (TC_NICKS[c.key]) { c.nick = TC_NICKS[c.key]; taken.add(c.nick); return; }
       if (c.setName) { c.nick = c.setName; return; }
       const opts2 = [];
       if (c.tr.champ) opts2.push('The Dynasty');
@@ -4085,7 +4101,7 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
         <div class="tc-face tc-front"><div class="tc-frame">
           <div class="tc-top"><span class="tc-tier">${tier}</span><span class="tc-no">#${String(c.no).padStart(2, '0')} / ${n}</span></div>
           <div class="tc-art"><div class="tc-av">${ini}${c.t.avatar ? `<img src="${esc(c.t.avatar.replace('/avatars/thumbs/', '/avatars/'))}" alt="" onerror="this.remove()">` : ''}</div>${best}</div>
-          <div class="tc-nick">“${esc(c.nick)}”</div>
+          <div class="tc-nick"${c.nick.length > 16 ? ` style="font-size:${Math.max(4.6, 7.6 - (c.nick.length - 16) * 0.55).toFixed(1)}cqw"` : ''}>“${esc(c.nick)}”</div>
           <div class="tc-name">${esc(c.name)}</div>
           <div class="tc-team">${c.setName || c.teamName === c.name ? `${esc(rec3(c))} all-time` : esc(c.teamName)}</div>
           <div class="tc-foot"><span>${D.season} Season</span><span>Dudley Dynasty</span></div>
