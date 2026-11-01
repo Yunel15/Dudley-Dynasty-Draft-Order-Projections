@@ -1436,12 +1436,30 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
     return `<span class="av" aria-hidden="true">${ini}${img}</span>`;
   }
   // Player photos are linked from Sleeper's public image servers (non-commercial fan project).
+  // Headshots: ESPN's 600px photos when we know the player's ESPN id (twice Sleeper's 350px), otherwise Sleeper's.
+  let ESPN = {};
+  try { ESPN = JSON.parse(store.get('espnIds') || '{}').m || {}; } catch (e) {}
+  const sleeperHead = id => `https://sleepercdn.com/content/nfl/players/thumb/${encodeURIComponent(id)}.jpg`;
+  const headUrl = id => ESPN[id] ? `https://a.espncdn.com/i/headshots/nfl/players/full/${ESPN[id]}.png` : sleeperHead(id);
+  window.headErr = function(img){
+    const id = img.dataset.pid;
+    if (id && !img.dataset.fb && img.src.indexOf('sleepercdn') < 0) { img.dataset.fb = 1; img.src = sleeperHead(id); } else img.remove();
+  };
+  async function loadEspnIds(){
+    try {
+      const c = JSON.parse(store.get('espnIds') || 'null');
+      if (c && c.m && Object.keys(c.m).length && Date.now() - c.ts < 7 * 86400000) return;
+      const all = await getJSON('/players/nfl'), m = {};
+      Object.keys(all || {}).forEach(k => { const e = all[k] && all[k].espn_id; if (e) m[k] = e; });
+      if (!Object.keys(m).length) return;
+      ESPN = m; store.set('espnIds', JSON.stringify({ ts: Date.now(), m }));
+      document.querySelectorAll('img[data-pid]').forEach(im => { const u = headUrl(im.dataset.pid); if (im.src !== u && !im.dataset.fb) im.src = u; });
+    } catch (e) {}
+  }
   function shot(id, pos, tm, nm){
     const ini = esc(String(nm || '?').split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase());
-    const src = pos === 'DEF'
-      ? `https://sleepercdn.com/images/team_logos/nfl/${encodeURIComponent(String(id).toLowerCase())}.png`
-      : `https://sleepercdn.com/content/nfl/players/thumb/${encodeURIComponent(id)}.jpg`;
-    return `<span class="hs" aria-hidden="true">${ini}<img src="${src}" alt="" loading="lazy" onerror="this.remove()"></span>`;
+    if (pos === 'DEF') return `<span class="hs" aria-hidden="true">${ini}<img src="https://sleepercdn.com/images/team_logos/nfl/${encodeURIComponent(String(id).toLowerCase())}.png" alt="" loading="lazy" onerror="this.remove()"></span>`;
+    return `<span class="hs" aria-hidden="true">${ini}<img src="${headUrl(id)}" data-pid="${esc(id)}" alt="" loading="lazy" onerror="headErr(this)"></span>`;
   }
   function teamBlock(t, meta){
     return `<div class="team">${avatar(t)}<div class="tx"><div class="tname">${esc(t.name)}</div>${meta ? `<div class="tmeta">${meta}</div>` : ''}</div></div>`;
@@ -4059,7 +4077,7 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
     const n = D.tc.n, pct = c.g ? c.pct.toFixed(3).replace(/^0/, '') : '.000';
     const ini = esc((c.t.name || '?').trim().slice(0, 2).toUpperCase());
     const bi = c.best ? ((D.cm && D.cm.info && D.cm.info[c.best]) || {}) : null;
-    const best = c.best ? `<div class="tc-best"><span class="tc-bimg"><img src="https://sleepercdn.com/content/nfl/players/thumb/${esc(c.best)}.jpg" alt="" onerror="this.remove()"></span><small>${esc(bi && bi.n ? bi.n.split(' ').slice(-1)[0] : 'Top player')}</small></div>` : '';
+    const best = c.best ? `<div class="tc-best"><span class="tc-bimg"><img src="${headUrl(c.best)}" data-pid="${esc(c.best)}" alt="" onerror="headErr(this)"></span><small>${esc(bi && bi.n ? bi.n.split(' ').slice(-1)[0] : 'Top player')}</small></div>` : '';
     const stat = (k, v) => `<div><dt>${k}</dt><dd>${v}</dd></div>`;
     const QN = { jug: 'Juggernaut', con: 'Contender', reb: 'Rebuilder', mid: 'Stuck in the Middle' };
     return `<div class="tc tc-${c.tier}${mini ? ' tc-mini' : ''}" data-tc="${esc(c.key)}">
@@ -4548,7 +4566,7 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
     const owner = D.build && D.build.holder && D.build.holder.get(pid);
     const lu = lineupByWeek(pid), luN = [...lu.values()];
     const ov = document.getElementById('pcov'); if (ov) ov.classList.toggle('m', isPhone());
-    const photo = pos === 'DEF' ? `https://sleepercdn.com/images/team_logos/nfl/${encodeURIComponent(String(pid).toLowerCase())}.png` : `https://sleepercdn.com/content/nfl/players/${encodeURIComponent(pid)}.jpg`;
+    const photo = pos === 'DEF' ? `https://sleepercdn.com/images/team_logos/nfl/${encodeURIComponent(String(pid).toLowerCase())}.png` : headUrl(pid);
     if (isPhone()) {
       const starts = luN.filter(x => x.started).length;
       const tabs = [['log', 'Game log'], ['career', 'Career'], ['news', 'News'], ['hist', 'History']].concat(tm && pos !== 'DEF' ? [['depth', 'Depth']] : []);
@@ -4557,7 +4575,7 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
       box.innerHTML = `<div class="pm-bar"><button type="button" class="pm-back" data-pc-close aria-label="Close">‹</button><div class="pm-bt"><b>${esc(info.n || pid)}</b><span>${esc([pos, tm || 'FA'].join(' · '))}</span></div></div>
         <header class="pm-hero" style="--tc:${color}">
           ${tm ? `<img class="pm-logo" src="https://sleepercdn.com/images/team_logos/nfl/${esc(tm.toLowerCase())}.png" alt="" onerror="this.remove()">` : ''}
-          <div class="pm-id"><div class="pm-photo"><img src="${photo}" alt="" onerror="this.remove()"></div>
+          <div class="pm-id"><div class="pm-photo"><img src="${photo}" data-pid="${pos === 'DEF' ? '' : esc(pid)}" alt="" onerror="headErr(this)"></div>
             <div class="pm-who">${owner ? `<div class="pm-owner">→ ${esc(ownerName(owner.owner))} · ${durTxt(Date.now() - owner.ts)}</div>` : '<div class="pm-owner">Not on a roster in this league</div>'}
               <h2>${esc(info.n || pid)}</h2><div class="pm-chips"><span class="pc-pos pb-${esc(pos || 'X')}">${esc(pos || '–')}</span><span id="pcdepth">${esc(tm ? nm : 'Free agent')}</span></div></div></div>
           <div class="pm-facts" id="pcfacts">
@@ -4575,7 +4593,7 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
     } else
     box.innerHTML = `<header class="pc-hero" style="--tc:${color}">
         ${tm ? `<img class="pc-logo" src="https://sleepercdn.com/images/team_logos/nfl/${esc(tm.toLowerCase())}.png" alt="" onerror="this.remove()">` : ''}
-        <div class="pc-photo"><img src="${photo}" alt="" onerror="this.remove()"><div class="pc-tag"><span class="pc-pos pb-${esc(pos || 'X')}">${esc(pos || '–')}</span><span id="pcdepth">${esc(tm ? nm : 'Free agent')}</span></div></div>
+        <div class="pc-photo"><img src="${photo}" data-pid="${pos === 'DEF' ? '' : esc(pid)}" alt="" onerror="headErr(this)"><div class="pc-tag"><span class="pc-pos pb-${esc(pos || 'X')}">${esc(pos || '–')}</span><span id="pcdepth">${esc(tm ? nm : 'Free agent')}</span></div></div>
         <div class="pc-main">
           ${owner ? `<div class="pc-owner">→ ${esc(ownerName(owner.owner))} <span>· on roster ${durTxt(Date.now() - owner.ts)}</span></div>` : '<div class="pc-owner">Not on a roster in this league</div>'}
           <h2>${esc(info.n || pid)}</h2>
@@ -4927,6 +4945,7 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
   if (tickCountdown()) { const cdTimer = setInterval(() => { if (!tickCountdown()) clearInterval(cdTimer); }, 1000); }
 
   load();
+  setTimeout(loadEspnIds, 1500);
 })();
 </script>
 </body>
