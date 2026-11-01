@@ -614,25 +614,6 @@ footer input{width:min(100%,260px)}
 }
 .brand{display:flex;align-items:center;gap:14px;min-width:0}.logo{width:88px;height:auto;flex:none;filter:drop-shadow(0 4px 10px rgba(0,0,0,.35))}
 @media (max-width:520px){.logo{width:68px}.brand{gap:10px}}
-.xfeed{max-width:900px;margin:0 auto 40px;padding:0 16px}
-.xfeed .xhead{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;background:var(--surface);border:1px solid var(--line);border-bottom:0;border-radius:8px 8px 0 0}
-.xlabel{font-weight:700;font-size:.85rem;text-transform:uppercase;letter-spacing:.06em}.xlabel::before{content:"𝕏";margin-right:8px;color:var(--accent)}
-.xhead a{color:var(--accent);font-size:.8rem;text-decoration:none}.xhead a:hover{text-decoration:underline}
-.xbody{background:var(--surface);border:1px solid var(--line);border-radius:0 0 8px 8px;padding:4px 10px 10px;max-height:640px;overflow-y:auto}
-.xstatus{margin:12px 4px;color:var(--muted);font-size:.85rem}
-.xpost{border-top:1px solid var(--line)}.xpost:first-child{border-top:0}
-.xlink{display:block;padding:11px 4px;color:inherit;text-decoration:none;border-radius:6px}.xlink:hover{background:rgba(255,255,255,.03)}.xlink:hover .xtext{color:#fff}
-.xtext{margin:0;font-size:.86rem;line-height:1.45;white-space:pre-line;color:#E4E8F0;overflow-wrap:anywhere}
-.ximg{display:block;width:100%;max-height:220px;object-fit:cover;margin-top:8px;border-radius:8px;border:1px solid var(--line)}
-.xtime{display:block;margin-top:5px;font-size:.72rem;color:var(--muted)}
-.xquote{margin-top:8px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-size:.8rem}.xquote b{font-weight:600}.xquote span{color:var(--muted)}.xquote p{margin:3px 0 0;color:#C9D0DC;white-space:pre-line;overflow-wrap:anywhere}
-.xfall{margin:8px 4px 2px;font-size:.75rem;color:var(--muted)}.xfall a{color:var(--accent)}
-.xfall{margin:14px 4px;padding:14px;border:1px dashed var(--line);border-radius:8px;font-size:.85rem;line-height:1.5}
-.xfall .xbtn{display:inline-block;margin-top:10px;padding:7px 14px;border-radius:6px;background:var(--accent);color:var(--accent-ink);font-weight:700;text-decoration:none}
-@media (min-width:1380px){
-  .xfeed{position:fixed;top:24px;bottom:24px;left:calc(50% + 466px);width:min(340px,calc(50vw - 490px));margin:0;padding:0;display:flex;flex-direction:column}
-  .xbody{flex:1;max-height:none}
-}
 /* ---------- Phone layout (html.is-phone, set by device detection in <head>) ---------- */
 .mnav,.msheet,.mtabname{display:none}
 .is-phone body{padding-bottom:calc(66px + env(safe-area-inset-bottom,0px))}
@@ -657,7 +638,6 @@ footer input{width:min(100%,260px)}
 .is-phone .note{font-size:.82rem}
 .is-phone .controls{gap:8px}
 .is-phone footer{margin-top:28px}
-.is-phone .xfeed{margin-bottom:16px;padding:0}
 .is-phone #toast{bottom:calc(76px + env(safe-area-inset-bottom,0px))}
 /* Bottom navigation */
 .is-phone .mnav{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;left:0;right:0;bottom:0;z-index:50;padding:4px 4px calc(4px + env(safe-area-inset-bottom,0px));
@@ -756,57 +736,6 @@ footer input{width:min(100%,260px)}
   <div class="msheet-bg" data-sheet-close></div>
   <div class="msheet-panel" role="dialog" aria-modal="true" aria-label="All sections"><div class="msheet-grab"></div><div id="msheetbody"></div></div>
 </div>
-<aside class="xfeed" aria-label="Underdog NFL posts on X">
-  <div class="xhead"><span class="xlabel">Underdog NFL</span><a href="https://x.com/UnderdogNFL" target="_blank" rel="noopener">Open on X ›</a></div>
-  <div class="xbody" id="xbody"><p class="xstatus">Loading posts…</p></div>
-</aside>
-<script>
-  // Underdog NFL posts via an RSS.app JSON feed (read-only). Text is extracted and escaped; nothing from the feed is run as HTML.
-  (function(){
-    const FEED = 'https://rss.app/feeds/v1.1/iV3BdD6U8QVykmeo.json', MAX = 15, EVERY = 5 * 60 * 1000;
-    const box = document.getElementById('xbody');
-    const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-    const safeUrl = u => /^https:\/\/(x\.com|twitter\.com|pbs\.twimg\.com)\//.test(u || '') ? u : null;
-    const ago = d => { const m = Math.max(0, Math.round((Date.now() - d) / 60000));
-      if (m < 1) return 'now'; if (m < 60) return m + 'm'; const h = Math.round(m / 60); if (h < 24) return h + 'h';
-      return new Date(d).toLocaleDateString([], { month: 'short', day: 'numeric' }); };
-    const textOf = it => {
-      try {
-        const doc = new DOMParser().parseFromString(it.content_html || '', 'text/html');
-        const p = doc.querySelector('blockquote p');
-        if (p) { p.querySelectorAll('br').forEach(br => br.replaceWith('\n')); const t = p.textContent.trim(); if (t) return splitQuote(t); }
-      } catch (e) {}
-      return splitQuote((it.content_text || it.title || '').replace(/\s*—\s*Underdog NFL \(@UnderdogNFL\)[\s\S]*$/, '').trim());
-    };
-    // A quote post arrives as "main textQuoted Name (@handle)quoted text— https://x.com/handle/status/…". Split it into the two parts.
-    const splitQuote = t => {
-      const m = t.match(/—\s*https?:\/\/(?:x|twitter)\.com\/(\w{1,15})\/status\/\d+\s*$/);
-      if (!m) return { main: t };
-      const i = t.lastIndexOf(`(@${m[1]})`);
-      if (i < 0) return { main: t.slice(0, m.index).trim() };
-      const head = t.slice(0, i), cut = Math.max(head.search(/[.!?)"”'’][^.!?)"”'’]*$/) + 1, 0);
-      return { main: (cut ? head.slice(0, cut) : head).trim(), qName: (cut ? head.slice(cut) : '').trim(), qHandle: m[1], quote: t.slice(i + m[1].length + 3, m.index).trim() };
-    };
-    const fail = () => { if (!box.querySelector('.xpost')) box.innerHTML = '<p class="xfall">Couldn’t load the latest posts right now.<br><a class="xbtn" href="https://x.com/UnderdogNFL" target="_blank" rel="noopener">See @UnderdogNFL on X</a></p>'; };
-    async function load(){
-      try {
-        const r = await fetch(FEED, { cache: 'no-cache' });
-        if (!r.ok) throw new Error(r.status);
-        const items = ((await r.json()).items || []).slice(0, MAX);
-        if (!items.length) return fail();
-        box.innerHTML = items.map(it => {
-          const url = safeUrl(it.url), img = safeUrl(it.image || (it.attachments && it.attachments[0] && it.attachments[0].url));
-          const d = Date.parse(it.date_published);
-          return `<article class="xpost">${url ? `<a class="xlink" href="${esc(url)}" target="_blank" rel="noopener">` : '<div class="xlink">'}
-            ${(t => `<p class="xtext">${esc(t.main)}</p>${t.quote ? `<div class="xquote"><b>${esc(t.qName || '')}</b> <span>@${esc(t.qHandle)}</span><p>${esc(t.quote)}</p></div>` : ''}`)(textOf(it))}${img ? `<img class="ximg" src="${esc(img)}" alt="" loading="lazy" onerror="this.remove()">` : ''}
-            <span class="xtime">${isNaN(d) ? '' : `<time datetime="${new Date(d).toISOString()}">${ago(d)}</time>`}</span>${url ? '</a>' : '</div>'}</article>`;
-        }).join('');
-      } catch (e) { fail(); }
-    }
-    load();
-    setInterval(() => { if (!document.hidden) load(); }, EVERY);
-  })();
-</script>
 
 <script>
 (() => {
