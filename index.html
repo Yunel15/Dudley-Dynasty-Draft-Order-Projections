@@ -981,6 +981,24 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
 .is-phone .jm-stop{width:auto}
 .is-phone .jm-arrow{transform:rotate(90deg);align-self:center;line-height:1}
 .is-phone .jm-drop{align-self:stretch;max-width:none;flex-direction:row;justify-content:center;gap:8px}
+/* Win probability momentum chart */
+.wpb{cursor:pointer;border-radius:8px}.wpb:hover .wpb-hint,.wpb:focus-visible .wpb-hint{color:var(--accent);text-decoration:underline}.wpb:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.wpb-hint{color:var(--accent);font-weight:600;font-size:.68rem;letter-spacing:.02em}
+.sk-modal.wpc{max-width:700px;width:100%}
+.wpc-body{padding:var(--space-md)}
+.wpc-svg{display:block;width:100%;height:auto;background:var(--bg);border:1px solid var(--line);border-radius:10px}
+.wpc-g{stroke:var(--line);stroke-width:1}.wpc-mid{stroke:var(--muted);stroke-width:1;stroke-dasharray:4 4;opacity:.7}
+.wpc-t{font-size:11px;fill:var(--muted);font-weight:600}.wpc-t.a{fill:#2DE0C9}.wpc-t.b{fill:#8DC1FF}
+.wpc-x{font-size:11px;fill:var(--muted)}.wpc-val{font-size:15px;font-weight:800;fill:var(--ink);paint-order:stroke;stroke:var(--bg);stroke-width:3px}
+.wpc-dot{stroke:var(--bg);stroke-width:2}.wpc-dot.a{fill:#00CEB8}.wpc-dot.b{fill:#5AA6FF}
+.wpc-sum{margin:var(--space-md) 0;font-size:.88rem;line-height:1.4}
+.wpc-tbl{width:100%;border-collapse:collapse;font-size:.82rem}
+.wpc-tbl th,.wpc-tbl td{padding:7px 8px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+.wpc-tbl thead th{white-space:normal;font-size:.66rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.wpc-tbl tbody th{white-space:nowrap}.wpc-tbl small{color:var(--muted)}.wpc-tbl small.up{color:#2DE0C9;font-weight:700}.wpc-tbl small.dn{color:var(--pylon-ink);font-weight:700}
+.wpc-note{margin-top:var(--space-md);font-size:.74rem}
+.wpc-tw{overflow-x:auto}.wpc-tbl td,.wpc-tbl th{overflow-wrap:anywhere}.wpc-tbl tbody th{overflow-wrap:normal}
+.is-phone .wpc-t,.is-phone .wpc-x{font-size:16px}.is-phone .wpc-val{font-size:22px}.is-phone .wpc-body{padding:var(--space-sm) 0 0}.is-phone .wpc-tbl{font-size:.76rem;table-layout:fixed}.is-phone .wpc-tbl th,.is-phone .wpc-tbl td{padding:6px 4px;overflow-wrap:anywhere}.is-phone .wpc-tbl tbody th{white-space:normal}.is-phone .wpc-tbl thead th:first-child{width:27%}.is-phone .wpc-tbl thead th:nth-child(2){width:25%}.is-phone .wpc-tbl td:last-child small{display:block}
 /* Injury/Bye Week Dashboard */
 .ib-hls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--space-md)}
 .ib-card{display:flex;flex-direction:column;gap:var(--space-sm);min-width:0;background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--accent);border-radius:10px;padding:var(--space-md)}
@@ -3016,13 +3034,117 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
     const pA = sd < 0.01 ? (A.mu > B.mu ? 1 : A.mu < B.mu ? 0 : 0.5) : 0.5 * (1 + erf((A.mu - B.mu) / (sd * Math.SQRT2)));
     return { pA, projA: A.mu, projB: B.mu };
   }
-  function wpBar(wp, ta, tb){
+  function wpBar(wp, ta, tb, w, mid){
     const a = Math.round(wp.pA * 100), b = 100 - a;
-    return `<div class="wpb" title="Win probability, from live scores and projections">
+    return `<div class="wpb" role="button" tabindex="0" data-wp-chart data-wp-w="${w}" data-wp-mid="${mid}" title="Win probability, from live scores and projections. Click for the momentum chart.">
       <div class="wpb-top"><span><b>${a}%</b><em class="wpn"> ${esc(ta.name)}</em></span><span class="wpb-lab">Win probability</span><span><em class="wpn">${esc(tb.name)} </em><b>${b}%</b></span></div>
       <div class="wpb-bar"><i class="wpb-a" style="width:${Math.max(a, 0)}%"></i><i class="wpb-b" style="width:${Math.max(b, 0)}%"></i></div>
-      <div class="wpb-proj"><span>Proj ${wp.projA.toFixed(1)}</span><span>Proj ${wp.projB.toFixed(1)}</span></div></div>`;
+      <div class="wpb-proj"><span>Proj ${wp.projA.toFixed(1)}</span><span class="wpb-hint">Momentum chart ›</span><span>Proj ${wp.projB.toFixed(1)}</span></div></div>`;
   }
+
+  // ---------- Win probability momentum chart ----------
+  // Sleeper gives no play-by-play, so the line is rebuilt from the NFL's kickoff windows: it starts from the projections,
+  // then steps each time a whole window of games finishes and those players' final points replace their projections.
+  // The last point is the live win probability.
+  const ESPN_ABBR = { WSH: 'WAS' };
+  async function kickoffsFor(w){
+    D.kick = D.kick || new Map();
+    if (D.kick.has(w)) return D.kick.get(w);
+    let out = null;
+    try {
+      const j = await fetch(`https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&week=${w}&dates=${D.season}`).then(r => r.ok ? r.json() : null);
+      const m = new Map();
+      ((j && j.events) || []).forEach(ev => { const t = Date.parse(ev.date); if (!t) return; ((ev.competitions[0] || {}).competitors || []).forEach(c => { const ab = c.team.abbreviation; m.set(ESPN_ABBR[ab] || ab, t); }); });
+      if (m.size) out = m;
+    } catch (e) {}
+    D.kick.set(w, out);
+    return out;
+  }
+  function momentum(a, b, w, ctx, kick){
+    const starters = m => (m.starters || []).map((id, i) => ({ id, pts: ((m.starters_points || [])[i]) || 0 })).filter(x => x.id && x.id !== '0');
+    const SA = starters(a), SB = starters(b), exact = !!kick;
+    const gm = id => gameOf(id, ctx);
+    const when = id => { const i = pname(id), g = gm(id); if (!g || g.bye || !i) return null; const k = kick && kick.get(i.tm); if (k) return k; return g.date ? Date.parse(g.date + 'T17:00:00Z') : null; };
+    const times = [...new Set([...SA, ...SB].map(x => when(x.id)).filter(t => t != null))].sort((x, y) => x - y);
+    const slots = [];
+    times.forEach(t => { const sl = slots[slots.length - 1]; if (sl && t - sl.t0 < 3600000) sl.ts.push(t); else slots.push({ t0: t, ts: [t] }); });
+    const slotOf = id => { const t = when(id); return t == null ? -1 : slots.findIndex(sl => sl.ts.includes(t)); };
+    const lab = sl => { const d = new Date(sl.t0), day = d.toLocaleDateString([], { weekday: 'short' }); return exact ? `${day} ${d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }).replace(':00', '').replace(/\s/g, '').toLowerCase()}` : day; };
+    const players = [...SA.map(x => ({ ...x, side: 'A' })), ...SB.map(x => ({ ...x, side: 'B' }))];
+    const slotDone = slots.map((sl, k) => players.every(x => slotOf(x.id) !== k || (gm(x.id) || {}).status === 'complete'));
+    const wpAt = k => {
+      const acc = { A: { mu: 0, v: 0 }, B: { mu: 0, v: 0 } };
+      players.forEach(x => {
+        const g = gm(x.id), s2 = slotOf(x.id), p = ctx.proj[x.id] || 0;
+        const fin = !g || g.bye || (s2 >= 0 && s2 <= k && g.status === 'complete');
+        acc[x.side].mu += fin ? x.pts : p; acc[x.side].v += fin ? 0 : Math.pow(0.45 * p + 1.5, 2);
+      });
+      const sd = Math.sqrt(acc.A.v + acc.B.v), d = acc.A.mu - acc.B.mu;
+      return sd < 0.01 ? (d > 0 ? 1 : d < 0 ? 0 : 0.5) : 0.5 * (1 + erf(d / (sd * Math.SQRT2)));
+    };
+    const pts = [{ label: 'Start', p: wpAt(-1), note: 'Projections only' }];
+    let lastDone = -1;
+    slots.forEach((sl, k) => {
+      if (k !== lastDone + 1 || !slotDone[k]) return;
+      lastDone = k;
+      const inSlot = players.filter(x => slotOf(x.id) === k).sort((x, y) => y.pts - x.pts)[0];
+      const info = inSlot && pname(inSlot.id);
+      pts.push({ label: lab(sl), p: wpAt(k), top: inSlot && info ? { nm: info.nm, pts: inSlot.pts, side: inSlot.side } : null });
+    });
+    const allDone = slots.length > 0 && lastDone === slots.length - 1;
+    const now = winProb(a, b, ctx, false).pA;
+    const started = slots.some((sl, k) => k > lastDone && players.some(x => slotOf(x.id) === k && ['in_game', 'complete'].includes((gm(x.id) || {}).status)));
+    if (allDone) pts[pts.length - 1] = { ...pts[pts.length - 1], label: 'Final', p: now };
+    else if (started) pts.push({ label: 'Now', p: now, note: 'Live scores plus remaining projections' });
+    return { pts, exact };
+  }
+  function wpChartSvg(pts, ta, tb){
+    const W = 640, H = 250, L = 16, R = 16, T = 14, B = 34, n = pts.length;
+    const x = i => n === 1 ? W / 2 : L + (W - L - R) * i / (n - 1), y = p => T + (1 - p) * (H - T - B), ym = y(0.5);
+    const xy = pts.map((q, i) => [x(i), y(q.p)]);
+    const line = xy.map((c, i) => `${i ? 'L' : 'M'}${c[0].toFixed(1)},${c[1].toFixed(1)}`).join('');
+    const area = `M${xy[0][0].toFixed(1)},${ym}${xy.map(c => `L${c[0].toFixed(1)},${c[1].toFixed(1)}`).join('')}L${xy[n - 1][0].toFixed(1)},${ym}Z`;
+    const shape = col => `<path d="${area}" fill="${col}" opacity=".22"/><path d="${line}" fill="none" stroke="${col}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>`;
+    const nm = t => esc(t.name.length > 26 ? t.name.slice(0, 25) + '…' : t.name);
+    return `<svg class="wpc-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Win probability over the week">
+      <defs><clipPath id="wpcUp"><rect x="0" y="0" width="${W}" height="${ym}"/></clipPath><clipPath id="wpcDn"><rect x="0" y="${ym}" width="${W}" height="${H - ym}"/></clipPath></defs>
+      <line x1="${L}" x2="${W - R}" y1="${y(1)}" y2="${y(1)}" class="wpc-g"/><line x1="${L}" x2="${W - R}" y1="${y(0)}" y2="${y(0)}" class="wpc-g"/><line x1="${L}" x2="${W - R}" y1="${ym}" y2="${ym}" class="wpc-mid"/>
+      <g clip-path="url(#wpcUp)">${shape('#00CEB8')}</g><g clip-path="url(#wpcDn)">${shape('#5AA6FF')}</g>
+      <text x="${L + 2}" y="${y(1) + 12}" class="wpc-t a">${nm(ta)} 100%</text><text x="${L + 2}" y="${y(0) - 5}" class="wpc-t b">${nm(tb)} 100%</text><text x="${W - R - 2}" y="${ym - 5}" text-anchor="end" class="wpc-t">50%</text>
+      ${xy.map((c, i) => `<circle cx="${c[0].toFixed(1)}" cy="${c[1].toFixed(1)}" r="${i === n - 1 ? 5.5 : 4}" class="wpc-dot ${pts[i].p >= .5 ? 'a' : 'b'}"><title>${esc(pts[i].label)}: ${esc(ta.name)} ${Math.round(pts[i].p * 100)}%</title></circle>
+        <text x="${c[0].toFixed(1)}" y="${H - 14}" text-anchor="middle" class="wpc-x">${esc(pts[i].label)}</text>`).join('')}
+      <text x="${xy[n - 1][0].toFixed(1)}" y="${Math.max(T + 10, xy[n - 1][1] - 11).toFixed(1)}" text-anchor="${n === 1 ? 'middle' : 'end'}" class="wpc-val">${Math.round(pts[n - 1].p * 100)}%</text></svg>`;
+  }
+  async function openWpChart(w, mid){
+    const list = (D.weekData.get(w) || []).filter(m => m.matchup_id === mid), ctx = D.wctx && D.wctx.get(w);
+    if (list.length !== 2 || !ctx) return;
+    const [a, b] = list, ta = team(a.roster_id), tb = team(b.roster_id);
+    closeWpChart();
+    const el = document.createElement('div'); el.className = 'sk-overlay'; el.id = 'wpov';
+    el.innerHTML = `<div class="sk-modal wpc" role="dialog" aria-modal="true" aria-label="Win probability momentum">
+      <header><div class="tx"><div class="tname">Win Probability Momentum</div><div class="tmeta">${esc(ta.name)} vs ${esc(tb.name)} · Week ${w}</div></div><button type="button" class="sk-x" data-wp-close aria-label="Close">×</button></header>
+      <div class="wpc-body"><p class="status">Loading kickoff times…</p></div></div>`;
+    document.body.appendChild(el); document.body.classList.add('sk-lock');
+    el.addEventListener('click', e => { if (e.target === el || e.target.closest('[data-wp-close]')) closeWpChart(); });
+    el.querySelector('.sk-x').focus();
+    const kick = await kickoffsFor(w);
+    const body = document.querySelector('#wpov .wpc-body'); if (!body) return;
+    const { pts, exact } = momentum(a, b, w, ctx, kick);
+    const pct = q => Math.round(q.p * 100);
+    let swing = null;
+    pts.forEach((q, i) => { if (!i) return; const d = q.p - pts[i - 1].p; if (!swing || Math.abs(d) > Math.abs(swing.d)) swing = { d, q }; });
+    const rows = pts.map((q, i) => { const d = i ? pct(q) - pct(pts[i - 1]) : null;
+      const top = q.top ? `${esc(q.top.nm)} <small>${q.top.pts.toFixed(1)} pts · ${esc((q.top.side === 'A' ? ta : tb).name)}</small>` : `<small>${esc(q.note || '')}</small>`;
+      return `<tr><th scope="row">${esc(q.label)}</th><td>${pct(q)}%${d == null ? '' : ` <small class="${d > 0 ? 'up' : d < 0 ? 'dn' : ''}">${d > 0 ? '+' : ''}${d}</small>`}</td><td>${top}</td></tr>`; }).join('');
+    body.innerHTML = `${wpChartSvg(pts, ta, tb)}
+      <p class="wpc-sum">${pts.length === 1 ? 'No games have finished yet, so this is the projected win probability.' : swing && Math.abs(swing.d) >= 0.01 ? `Biggest swing: <b>${esc(swing.q.label)}</b>, ${swing.d > 0 ? esc(ta.name) : esc(tb.name)} gained ${Math.abs(Math.round(swing.d * 100))} percentage points of win probability.` : 'The win probability has barely moved.'}</p>
+      <div class="wpc-tw"><table class="wpc-tbl"><thead><tr><th>After</th><th>${esc(ta.name)}</th><th>Top scorer in that window</th></tr></thead><tbody>${rows}</tbody></table></div>
+      <p class="note wpc-note">Sleeper has no play-by-play, so each step is a kickoff window (${exact ? 'times from ESPN’s schedule' : 'grouped by day'}) that has finished; games still in progress count only in the last point. Win probability is for ${esc(ta.name)}.</p>`;
+  }
+  function closeWpChart(){ const el = document.getElementById('wpov'); if (el) el.remove(); if (!document.getElementById('pcov') && !document.getElementById('skov')) document.body.classList.remove('sk-lock'); }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeWpChart(); });
+  document.addEventListener('click', e => { const el = e.target.closest && e.target.closest('[data-wp-chart]'); if (el) { e.stopPropagation(); openWpChart(Number(el.dataset.wpW), Number(el.dataset.wpMid)); } }, true);
+  document.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches('[data-wp-chart]')) { e.preventDefault(); openWpChart(Number(e.target.dataset.wpW), Number(e.target.dataset.wpMid)); } });
 
   // Date range of each NFL week ("Oct. 29 - Nov. 2"), from Sleeper's schedule.
   const MON = ['Jan.', 'Feb.', 'Mar.', 'Apr.', 'May', 'June', 'July', 'Aug.', 'Sept.', 'Oct.', 'Nov.', 'Dec.'];
@@ -3160,7 +3282,7 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
       const side = (t, pts, win, cls) => `<div class="mside ${cls}${win ? ' win' : ''}">${avatar(t)}<div class="mname">${esc(t.name)}</div><div class="tmeta">${record(t)}</div><div class="mscore">${anyPts ? pts.toFixed(2) : '–'}</div></div>`;
       const bigHead = `<div class="mhead">${side(ta, pa, winA, 'l')}<div class="mvs">vs</div>${side(tb, pb, winB, 'r')}</div>`;
       const tableOpen = `<div class="lwrap"><table class="ltable"><tbody>${lineup}</tbody></table></div>`;
-      const wp = ctx && !done && (ctx.hasProj || anyPts) ? wpBar(winProb(a, b, ctx, false), ta, tb) : '';
+      const wp = ctx && !done && (ctx.hasProj || anyPts) ? wpBar(winProb(a, b, ctx, false), ta, tb, w, g.mid) : '';
       html += `<article class="mcard" data-card="${g.mid}">${open ? bigHead : row(a, pa, winA) + row(b, pb, winB)}${wp}
         ${open ? `<button type="button" class="lutoggle open" data-close-match aria-expanded="true"><span class="lucar">▸</span> Lineups</button>${tableOpen}` : `<button type="button" class="lutoggle" data-open-match="${g.mid}" aria-expanded="false"><span class="lucar">▸</span> Lineups</button>`}</article>`;
     });
