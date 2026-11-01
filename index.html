@@ -716,6 +716,33 @@ footer input{width:min(100%,260px)}
 .is-phone .wktitle{font-size:1.7rem}.is-phone .wkhead{margin:4px 0 6px}
 .is-phone .wk{flex-basis:96px}.is-phone .wk-n{font-size:1.15rem}.is-phone .wk-d{font-size:.64rem}
 .is-phone .wkarrow{width:28px;height:28px;font-size:1rem}.is-phone .wkstrip{gap:2px;margin-bottom:10px}
+.mseg{display:flex;padding:3px;margin:0 0 14px;background:var(--surface);border:1px solid var(--line);border-radius:10px;max-width:420px}
+.mseg button{flex:1;padding:9px 10px;border:0;border-radius:8px;background:none;color:var(--muted);font-weight:700;font-size:.88rem;cursor:pointer}
+.mseg button[aria-selected="true"]{background:linear-gradient(90deg,#2C364B,#141B2B);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}
+.mseg button:hover{color:var(--ink)}
+.ts-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin:12px 0;padding:12px 14px;background:var(--surface);border:1px solid var(--line);border-radius:10px}
+.ts-stats{display:flex;gap:6px;flex-wrap:wrap}.ts-stats div{min-width:64px;padding:5px 9px;border-radius:8px;background:var(--bg);text-align:center}
+.ts-stats span{display:block;font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}.ts-stats b{font-size:1rem}
+.ts-stats .tsw{color:var(--accent)}.ts-stats .tsl{color:var(--pylon-ink)}.ts-stats .sos{font-size:.75rem}
+.ts-list{display:flex;flex-direction:column;gap:6px}
+.ts-row{all:unset;box-sizing:border-box;display:grid;grid-template-columns:118px 42px minmax(0,1fr) auto 14px;align-items:center;gap:10px;padding:9px 12px;
+  background:var(--surface);border:1px solid var(--line);border-radius:10px;cursor:pointer}
+.ts-row:hover,.ts-row:focus-visible{border-color:var(--accent)}
+.ts-row.bye{cursor:default;background:none;border-style:dashed}.ts-row.po{border-left:3px solid var(--accent)}
+.ts-wk b{display:block;font:italic 800 1.15rem/1 "Barlow Condensed","Arial Narrow",sans-serif;text-transform:uppercase}.ts-wk small{display:block;margin-top:3px;font-size:.66rem;color:var(--muted);white-space:nowrap}
+.ts-res{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--line);color:var(--muted);font-weight:800;font-size:.72rem}
+.ts-res.w{background:var(--accent);color:var(--accent-ink)}.ts-res.l{background:var(--pylon-soft);color:var(--pylon-ink)}.ts-res.t{background:var(--line);color:var(--ink)}
+.ts-res.live{width:auto;padding:0 7px;border-radius:999px;background:var(--pylon-soft);color:var(--pylon-ink)}.ts-res.po{background:none;border:1px solid var(--accent);color:var(--accent)}
+.ts-opp{min-width:0}.ts-opp .tname{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ts-opp>b{display:block}.ts-opp>small{color:var(--muted);font-size:.75rem}
+.ts-sc{text-align:right;font-variant-numeric:tabular-nums}.ts-sc b{display:block;font-size:1.05rem}.ts-sc small{display:block;color:var(--muted);font-size:.75rem}.ts-sc.w b{color:var(--accent)}
+.ts-go{color:var(--muted);font-size:1.2rem}
+.is-phone .mseg{max-width:none;margin-bottom:10px}
+.is-phone .ts-row{grid-template-columns:64px 30px minmax(0,1fr) auto;gap:8px;padding:9px 10px}.is-phone .ts-go{display:none}
+.is-phone .ts-wk b{font-size:1rem}.is-phone .ts-wk small{font-size:.58rem;white-space:normal}
+.is-phone .ts-res{width:26px;height:26px;font-size:.62rem}.is-phone .ts-opp .av{display:none}
+.is-phone .ts-wk b{white-space:nowrap}.is-phone .ts-wk small{display:none}.is-phone .ts-row{grid-template-columns:58px 30px minmax(0,1fr) auto}
+.is-phone .ts-sc small{font-size:.68rem}
+.is-phone .ts-head{padding:10px}.is-phone .ts-stats{width:100%;display:grid;grid-template-columns:repeat(5,1fr)}.is-phone .ts-stats div{min-width:0;padding:5px 2px}.is-phone .ts-stats b{font-size:.88rem}
 </style>
 </head>
 <body>
@@ -800,8 +827,8 @@ footer input{width:min(100%,260px)}
     opts = Object.assign({ tab:'stand', basis:'standings', type:'linear', tiebreak:'pf-low', rounds:null, season:null }, saved);
   }
   function saveOpts(){
-    const { tab, basis, type, tiebreak, rounds, week, buildTeam, tradeTeam, tfTeam, tfTol, tfStrat, tfPos, tfPicks } = opts;
-    store.set('opts:' + leagueId, JSON.stringify({ tab, basis, type, tiebreak, rounds, week, buildTeam, tradeTeam, tfTeam, tfTol, tfStrat, tfPos, tfPicks }));
+    const { tab, basis, type, tiebreak, rounds, week, buildTeam, tradeTeam, tfTeam, tfTol, tfStrat, tfPos, tfPicks, mview, mteam } = opts;
+    store.set('opts:' + leagueId, JSON.stringify({ tab, basis, type, tiebreak, rounds, week, buildTeam, tradeTeam, tfTeam, tfTol, tfStrat, tfPos, tfPicks, mview, mteam }));
   }
 
   let D = null;
@@ -2391,6 +2418,48 @@ footer input{width:min(100%,260px)}
     if (smooth && sc.scrollTo) sc.scrollTo({ left, behavior: 'smooth' }); else sc.scrollLeft = left;
   }
 
+  // ---------- Matchups: one team's full season ----------
+  function renderTeamSched(ranges){
+    const ids = D.ids.slice().sort((a, b) => team(a).name.localeCompare(team(b).name));
+    const rid = ids.includes(opts.mteam) ? opts.mteam : ids[0];
+    const t = team(rid), info = standingsData(), x = info.get(rid) || { pa: 0, cur: { n: 0 } }, sos = sosData(info);
+    const { start, lastWeek } = D.playoff;
+    const comp = new Map(D.completedWeeks.map(c => [c.week, c.list]));
+    const ppg = r => { const h = D.hist.get(r) || []; return h.length ? h.reduce((a, b) => a + b, 0) / h.length : null; };
+    const rows = [];
+    for (let w = D.startWeek; w <= lastWeek; w++) {
+      const list = comp.get(w) || D.weekData.get(w);
+      let opp = null, me = null, them = null;
+      if (list) { me = list.find(m => m.roster_id === rid); if (me && me.matchup_id != null) { them = list.find(m => m.matchup_id === me.matchup_id && m.roster_id !== rid) || null; opp = them ? them.roster_id : null; } }
+      if (opp == null && w < start) { const rem = D.remaining.find(r => r.week === w); const pr = rem && rem.pairs.find(p => p.includes(rid)); if (pr) opp = pr[0] === rid ? pr[1] : pr[0]; }
+      const done = w < D.firstOpen, a = me ? me.points || 0 : 0, b = them ? them.points || 0 : 0, live = !done && (a > 0 || b > 0);
+      rows.push({ w, opp, done, live, a, b, res: done && them ? (a > b ? 'W' : a < b ? 'L' : 'T') : null, po: w >= start });
+    }
+    const played = rows.filter(r => r.res);
+    const wl = played.reduce((c, r) => { c[r.res]++; return c; }, { W: 0, L: 0, T: 0 });
+    const remS = sos.hasRem ? sosCell(sos.remaining, rid, sos.lg, 'Remaining') : '–';
+    const c = x.cur;
+    const head = `<div class="ts-head">${teamBlock(t, `${esc(t.manager)}${t.manager ? ' · ' : ''}${record(t)}`)}
+      <div class="ts-stats"><div><span>Record</span><b>${record(t)}</b></div><div><span>PF</span><b>${t.pf.toFixed(1)}</b></div><div><span>PA</span><b>${x.pa ? x.pa.toFixed(1) : '–'}</b></div>
+        <div><span>Streak</span><b class="${c.t === 'W' ? 'tsw' : c.t === 'L' ? 'tsl' : ''}">${c.n ? c.t + c.n : '–'}</b></div><div><span>Rem. SOS</span><b>${remS.replace(/<small class="sosd">[^<]*<\/small>/, '')}</b></div></div></div>`;
+    const teamOpts = ids.map(r => `<option value="${r}" ${r === rid ? 'selected' : ''}>${esc(team(r).name)}</option>`).join('');
+    const body = rows.map(r => {
+      const wk = `<span class="ts-wk"><b>Week ${r.w}</b><small>${ranges && ranges[r.w] ? esc(ranges[r.w]) : ''}</small></span>`;
+      if (r.opp == null) {
+        if (r.po) return `<button type="button" class="ts-row po" data-tab="bracket">${wk}<span class="ts-res po">P</span><span class="ts-opp"><b>${r.w === lastWeek ? 'Championship week' : 'Playoffs'}</b><small>Opponent set by the bracket</small></span><span class="ts-sc"><small>View bracket</small></span><span class="ts-go">›</span></button>`;
+        return `<div class="ts-row bye">${wk}<span class="ts-res">–</span><span class="ts-opp"><b>No game</b></span><span class="ts-sc"></span><span class="ts-go"></span></div>`;
+      }
+      const o = team(r.opp), op = ppg(r.opp);
+      const res = r.res ? `<span class="ts-res ${r.res.toLowerCase()}">${r.res}</span>` : r.live ? '<span class="ts-res live">Live</span>' : `<span class="ts-res">${r.w === D.defWeek ? 'Next' : '–'}</span>`;
+      const sc = r.res || r.live ? `<span class="ts-sc${r.res === 'W' ? ' w' : ''}"><b>${r.a.toFixed(2)}</b><small>${r.b.toFixed(2)}</small></span>`
+        : `<span class="ts-sc"><small>${op != null ? `Opp ${op.toFixed(1)} PPG` : ''}</small></span>`;
+      return `<button type="button" class="ts-row${r.res ? ' done' : ''}${r.po ? ' po' : ''}" data-team-match="${r.w}:${rid}">${wk}${res}<span class="ts-opp">${teamBlock(o, `${r.po ? 'Playoffs · ' : ''}${record(o)}`)}</span>${sc}<span class="ts-go">›</span></button>`;
+    }).join('');
+    const rec = played.length ? `${wl.W}-${wl.L}${wl.T ? `-${wl.T}` : ''} in ${played.length} game${played.length === 1 ? '' : 's'}` : 'No games played yet';
+    return `<div class="controls"><label class="field">Team<select data-opt="mteam">${teamOpts}</select></label></div>${head}
+      <div class="ts-list">${body}</div><p class="note">${rec}. Tap a week to open that matchup. Upcoming games show the opponent’s points per game this season.</p>`;
+  }
+
   // ---------- Matchups ----------
   function renderMatchups(){
     const w = opts.week || D.defWeek;
@@ -2402,7 +2471,9 @@ footer input{width:min(100%,260px)}
       items.push(`<button type="button" class="wk${i === w ? ' on' : ''}${i >= start ? ' po' : ''}" data-week-go="${i}" aria-current="${i === w}" aria-label="Week ${i}${ranges && ranges[i] ? `, ${ranges[i]}` : ''}${tag ? `, ${tag}` : ''}">
         <span class="wk-n">Week ${i}</span><span class="wk-d">${ranges && ranges[i] ? esc(ranges[i]) : '&nbsp;'}</span>${tag ? `<span class="wk-t">${tag}</span>` : ''}</button>`);
     }
-    let html = `<div class="wkhead"><h2 class="wktitle">Matchups <u>${D.season}</u></h2></div>
+    const seg = `<div class="mseg" role="tablist" aria-label="Matchups view"><button type="button" role="tab" data-mview="week" aria-selected="${opts.mview !== 'team'}">By week</button><button type="button" role="tab" data-mview="team" aria-selected="${opts.mview === 'team'}">Team schedule</button></div>`;
+    if (opts.mview === 'team') return `<div class="wkhead"><h2 class="wktitle">Schedule <u>${D.season}</u></h2></div>${seg}` + renderTeamSched(ranges);
+    let html = `<div class="wkhead"><h2 class="wktitle">Matchups <u>${D.season}</u></h2></div>${seg}
       <div class="wkstrip"><button class="wkarrow" type="button" data-week-step="-1" ${w <= D.startWeek ? 'disabled' : ''} aria-label="Previous week">‹</button>
         <div class="wkscroll" id="wkscroll" role="tablist" aria-label="Weeks">${items.join('')}</div>
         <button class="wkarrow" type="button" data-week-step="1" ${w >= lastWeek ? 'disabled' : ''} aria-label="Next week">›</button></div>`;
@@ -2420,6 +2491,7 @@ footer input{width:min(100%,260px)}
     const anyPts = list.some(m => (m.points || 0) > 0);
     const done = w < D.firstOpen;
     const ctx = weekContext(w);
+    if (D.openMatch && D.openMatch.rid != null && D.openMatch.w === w) { const pr = pairs.find(g => g.some(m => m.roster_id === D.openMatch.rid)); D.openMatch = pr ? { w, id: pr.mid } : null; }
     const open = D.openMatch && D.openMatch.w === w ? pairs.find(g => g.mid === D.openMatch.id) : null;
     if (open) html += `<div class="msingle"><button class="btn ghost mback" type="button" data-close-match>‹ All matchups</button>`;
     else html += `<p class="note">${done ? 'Final scores.' : anyPts ? 'Live scores. Tap Refresh to update.' : 'Upcoming. Scores appear once games start.'} Tap a matchup to open it full screen. Tap a player’s name for his profile, or his points to see how they were scored.</p>`;
@@ -3670,6 +3742,10 @@ footer input{width:min(100%,260px)}
     if (e.target.closest('[data-close-match]')) { morphMatch(D.openMatch && D.openMatch.id, false); return; }
     const plb = e.target.closest('[data-pid]');
     if (plb) { toggleBreakdown(plb); return; }
+    const mv = e.target.closest('[data-mview]');
+    if (mv) { opts.mview = mv.dataset.mview; D.openMatch = null; saveOpts(); render(); return; }
+    const tm = e.target.closest('[data-team-match]');
+    if (tm) { const [w, rid] = tm.dataset.teamMatch.split(':').map(Number); opts.mview = 'week'; opts.week = w; D.openMatch = { w, rid }; saveOpts(); render(); window.scrollTo(0, 0); return; }
     const wg = e.target.closest('[data-week-go]');
     if (wg) { const w = Number(wg.dataset.weekGo); if (w !== (opts.week || D.defWeek)) { opts.week = w; D.openMatch = null; saveOpts(); render(); } return; }
     const wk = e.target.closest('[data-week-step]');
@@ -3689,7 +3765,7 @@ footer input{width:min(100%,260px)}
     if (!el) return;
     const k = el.dataset.opt;
     const openDetails = !!e.target.closest('details[open]');
-    opts[k] = (k === 'rounds' || k === 'season' || k === 'tradeTeam' || k === 'week' || k === 'buildTeam' || k === 'tfTeam' || k === 'tfTol') ? Number(el.value) : el.value;
+    opts[k] = (k === 'rounds' || k === 'season' || k === 'tradeTeam' || k === 'week' || k === 'buildTeam' || k === 'tfTeam' || k === 'tfTol' || k === 'mteam') ? Number(el.value) : el.value;
     saveOpts();
     if (k === 'tiebreak') runSim();
     if (k === 'buildTeam') { opts.nflFilter = null; opts.posFilter = null; }
