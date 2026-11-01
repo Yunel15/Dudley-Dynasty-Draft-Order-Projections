@@ -1329,7 +1329,7 @@ footer input{width:min(100%,260px)}
       }
       html += `<tr><td>${i + 1}</td><td class="tl"><button type="button" class="tlink" data-build-team="${r}" title="View ${esc(t.name)} in Team Construction">${teamBlock(t, '')}</button></td><td>${record(t)}</td><td>${t.pf.toFixed(2)}</td><td>${x.pa ? x.pa.toFixed(2) : '–'}</td><td>${streak}</td><td class="l5">${last5}</td><td>${sosCell(sos.played, r, sos.lg, 'Played')}</td>${sos.hasRem ? `<td>${sosCell(sos.remaining, r, sos.lg, 'Remaining')}</td>` : ''}</tr>`;
     });
-    html += (phone ? `<div class="mst">${mrows}</div>` : '</tbody></table></div>') + '<details class="stnotes"><summary>How these are calculated</summary><p class="note">Ranked by record, then points for. Streaks count regular-season games' + (D.median ? ', including the weekly median game' : '') + '.</p><p class="note"><b>SOS</b> ranks each schedule by the average points per game of the opponents faced, 1st being the hardest. <span class="sos hard">Red</span> is the toughest third, <span class="sos easy">teal</span> the easiest.' + (sos.hasRem ? ' <b>Rem. SOS</b> does the same for the rest of the regular season.' : '') + ' The small number under each rating is how many points per game those opponents score above or below the league average.</p></details>';
+    html += (phone ? `<div class="mst">${mrows}</div>` : '</tbody></table></div>') + '';
     return html;
   }
 
@@ -1509,7 +1509,7 @@ footer input{width:min(100%,260px)}
         <label class="field">Strategy<select data-opt="tfStrat">${[['balanced', 'Balanced'], ['contend', 'Contend now'], ['rebuild', 'Rebuild']].map(([v, l]) => `<option value="${v}" ${(opts.tfStrat || 'balanced') === v ? 'selected' : ''}>${l}</option>`).join('')}</select></label>
         <label class="field">Target position<select data-opt="tfPos">${[['', 'Any'], ...model.POS.map(x => [x, x])].map(([v, l]) => `<option value="${v}" ${(opts.tfPos || '') === v ? 'selected' : ''}>${l}</option>`).join('')}</select></label>
         <label class="field">Picks<select data-opt="tfPicks"><option value="yes" ${opts.tfPicks !== 'no' ? 'selected' : ''}>Include</option><option value="no" ${opts.tfPicks === 'no' ? 'selected' : ''}>Players only</option></select></label></div>
-      <p class="note">Values from <a href="https://www.fantasycalc.com" target="_blank" rel="noopener noreferrer">FantasyCalc</a>, tuned to this league: ${f.sf ? 'superflex' : '1 QB'}, ${f.numTeams} teams, ${f.ppr === 1 ? 'full' : f.ppr === 0.5 ? 'half' : 'no'} PPR, dynasty. Suggestions pair teams that each fill a position of need and stay within the fairness range. ${({ contend: 'Contend now favors proven veterans and values picks less.', rebuild: 'Rebuild favors young players and picks and values older players less.', balanced: '' })[opts.tfStrat || 'balanced']} They are estimates, not verdicts.</p>`;
+      `;
     const mt = model.teams.get(me);
     html += `<div class="tfneeds">${model.POS.map(pos => { const n = mt.need[pos]; const lab = n > 0.12 ? 'Need' : n < -0.12 ? 'Surplus' : 'Balanced'; return `<span class="tfn ${lab.toLowerCase()}"><b>${pos}</b> ${lab}</span>`; }).join('')}</div>`;
     const trades = findTrades(model, me, tol);
@@ -1546,7 +1546,7 @@ footer input{width:min(100%,260px)}
         <ul class="clist">${items}</ul><div class="tfsum">Raw value <b>${Math.round(list.reduce((x, a) => x + a.v, 0)).toLocaleString()}</b></div></div>`;
     };
     let html = `<h2 class="sech">Trade Calculator</h2>
-      <p class="note">Pick two teams, add what each side sends, and see who wins. Values from <a href="https://www.fantasycalc.com" target="_blank" rel="noopener noreferrer">FantasyCalc</a>, tuned to this league (${f.sf ? 'superflex' : '1 QB'}, ${f.numTeams} teams, ${f.ppr === 1 ? 'full' : f.ppr === 0.5 ? 'half' : 'no'} PPR, dynasty). Extra players in a package count for less than their full value, since they cost a roster spot.</p>
+      
       <div class="ccols">${sideHtml('a', A)}${sideHtml('b', B)}</div>`;
     if (D.calcFocus) { const k = D.calcFocus; D.calcFocus = null; setTimeout(() => { const i = document.querySelector(`[data-calc-search="${k}"]`); if (i) i.focus(); }, 0); }
     if (!A.length && !B.length) return html + '<p class="note">Add players or picks to either side to see the verdict.</p>';
@@ -1575,7 +1575,7 @@ footer input{width:min(100%,260px)}
       const basisNote = seasonDone() ? 'Final regular-season standings, worst record picks first.'
         : opts.basis === 'projected' ? `Ordered by average finish across ${D.sim.sims.toLocaleString()} simulated seasons. See Projections for the odds.`
         : 'If the season ended today: worst record picks first.';
-      html += `<p class="note">${basisNote} <span class="key"></span>Highlighted picks are owned by another team.</p>`;
+      html += ``;
       const order = currentOrder();
       const idx = new Map(D.ids.map((r, i) => [r, i]));
       for (let r = 1; r <= opts.rounds; r++) {
@@ -1592,7 +1592,7 @@ footer input{width:min(100%,260px)}
         html += '</ol></section>';
       }
     } else {
-      html += `<p class="note">The ${y} order is set by the ${y - 1} standings, so these picks are listed by original team. <span class="key"></span>Highlighted picks are owned by another team.</p>`;
+      html += ``;
       const byName = D.ids.slice().sort((a, b) => team(a).name.localeCompare(team(b).name));
       for (let r = 1; r <= opts.rounds; r++) {
         const tradedCount = byName.filter(o => ownerOf(y, r, o) !== o).length;
@@ -1615,9 +1615,7 @@ footer input{width:min(100%,260px)}
     if (seasonDone()) {
       html += `<p class="note">The regular season is over, so the ${D.draftSeason} order is locked.</p>`;
     } else {
-      html += `<p class="note">Odds of landing each ${D.draftSeason} pick, from ${D.sim.sims.toLocaleString()} simulations of the remaining ${D.remaining.length} weeks.
-        Each team’s weekly score is modeled from its scoring so far, pulled slightly toward the league average${D.median ? ', and the league’s median-win game is included' : ''}.
-        ${D.schedUnknown ? ' Sleeper hasn’t published every remaining matchup, so those weeks use random pairings.' : ''}</p>`;
+      html += ``;
     }
     const rows = projectedOrderSafe();
     html += `<div class="tablewrap"><table><thead><tr><th class="tl" scope="col">Team</th><th scope="col">Record</th><th scope="col">PF</th><th scope="col">Avg pick</th>
@@ -1657,8 +1655,7 @@ footer input{width:min(100%,260px)}
     });
     const per = opts.rounds * D.seasons.length;
     let html = `<div class="controls">${D.seasons.length ? basisToggle() : ''}</div>${settingsBlock()}
-      <p class="note">Every pick each team holds across the next ${D.seasons.length} drafts. ${D.draftSeason} picks show their ${seasonDone() ? 'final' : opts.basis === 'projected' ? 'projected' : 'current'} slot; later years show the round.
-      <span class="key"></span>Highlighted picks were acquired in a trade.</p><div class="owners">`;
+      <div class="owners">`;
     const cards = D.ids.slice().sort((a, b) => team(a).name.localeCompare(team(b).name));
     cards.forEach(rid => {
       const items = (own.get(rid) || []).sort((a, b) => a.y - b.y || a.r - b.r || (a.slot ?? 0) - (b.slot ?? 0) || team(a.orig).name.localeCompare(team(b.orig).name));
@@ -1683,7 +1680,7 @@ footer input{width:min(100%,260px)}
     });
     html += '</div>';
     if (per && cards.some(r => (own.get(r) || []).length !== per)) {
-      html += `<p class="note">A full set is ${per} picks (${opts.rounds} rounds × ${D.seasons.length} years).</p>`;
+      html += ``;
     }
     return html;
   }
@@ -1768,7 +1765,7 @@ footer input{width:min(100%,260px)}
     const { seasons, cards } = D.records;
     if (!seasons.length) return '<p class="note">No games have been played yet. Records fill in after week 1 is final.</p>';
     const span = seasons.length > 1 ? `${seasons.length} seasons (${seasons[0]} to ${seasons[seasons.length - 1]})` : `the ${seasons[0]} season`;
-    let html = `<p class="note">All-time records from completed regular-season games across ${span}. Each card shows the current record holder.</p><div class="rgrid">`;
+    let html = `<div class="rgrid">`;
     cards.forEach(c => {
       if (!c.rows.length) return;
       const first = c.rows[0];
@@ -1789,9 +1786,9 @@ footer input{width:min(100%,260px)}
     const playoffsStarted = seasonDone() && (D.firstOpen > D.lastReg);
     let html = '';
     if (!seasonDone()) {
-      html += `<p class="note">Odds from ${S.sims.toLocaleString()} simulations of the remaining ${D.remaining.length} weeks and a ${k}-team playoff. Each team’s weekly score is modeled from its scoring so far, pulled slightly toward the league average. Seeds go by record, then points for${D.median ? ', and the median-win game is included' : ''}. Division winners aren’t accounted for.${D.schedUnknown ? ' Some remaining matchups aren’t published yet, so those weeks use random pairings.' : ''}</p>`;
+      html += ``;
     } else {
-      html += `<p class="note">The regular season is over, so the seeds are set. Title odds come from ${S.sims.toLocaleString()} simulations of the bracket${playoffsStarted ? ' and don’t account for playoff games already played; see Playoff Bracket for results' : ''}.</p>`;
+      html += ``;
     }
     if (!S.bracketOK) html += `<p class="note">Title odds aren’t available for a ${k}-team playoff yet, so only playoff and seed odds are shown.</p>`;
     const rows = D.ids.slice().sort((a, b) => {
@@ -1812,7 +1809,7 @@ footer input{width:min(100%,260px)}
         ${S.seedProbs[i].slice(0, k).map(p => `<td class="heat" style="${heat(p)}">${p > 0 ? fmt(p) : ''}</td>`).join('')}</tr>`;
     });
     html += '</tbody></table></div>';
-    html += `<p class="note">Teams above the line are in the top ${k} by playoff odds. Percentages are simulation estimates, so 100% means every simulated season, not a mathematical clinch.</p>`;
+    html += ``;
     return html;
   }
 
@@ -2457,7 +2454,7 @@ footer input{width:min(100%,260px)}
     }).join('');
     const rec = played.length ? `${wl.W}-${wl.L}${wl.T ? `-${wl.T}` : ''} in ${played.length} game${played.length === 1 ? '' : 's'}` : 'No games played yet';
     return `<div class="controls"><label class="field">Team<select data-opt="mteam">${teamOpts}</select></label></div>${head}
-      <div class="ts-list">${body}</div><p class="note">${rec}. Tap a week to open that matchup. Upcoming games show the opponent’s points per game this season.</p>`;
+      <div class="ts-list">${body}</div>`;
   }
 
   // ---------- Matchups ----------
@@ -2494,7 +2491,7 @@ footer input{width:min(100%,260px)}
     if (D.openMatch && D.openMatch.rid != null && D.openMatch.w === w) { const pr = pairs.find(g => g.some(m => m.roster_id === D.openMatch.rid)); D.openMatch = pr ? { w, id: pr.mid } : null; }
     const open = D.openMatch && D.openMatch.w === w ? pairs.find(g => g.mid === D.openMatch.id) : null;
     if (open) html += `<div class="msingle"><button class="btn ghost mback" type="button" data-close-match>‹ All matchups</button>`;
-    else html += `<p class="note">${done ? 'Final scores.' : anyPts ? 'Live scores. Tap Refresh to update.' : 'Upcoming. Scores appear once games start.'} Tap a matchup to open it full screen. Tap a player’s name for his profile, or his points to see how they were scored.</p>`;
+    else html += ``;
     html += open ? '<div class="mlist single">' : '<div class="mlist">';
     const slots = (D.league.roster_positions || []).filter(p => !['BN', 'IR', 'TAXI'].includes(p));
     const ids = [];
@@ -2634,14 +2631,14 @@ footer input{width:min(100%,260px)}
       games = projectedBracket(seeds, D.playoff.teams) || [];
       projected = true;
       const n = D.playoff.teams;
-      html += `<p class="note">The playoffs haven’t started, so this is the bracket if the season ended today: the top ${n} teams by record, with points for as the tiebreaker. Division winners aren’t accounted for.</p>`;
+      html += ``;
       if (!games.length) {
         return html + `<ol class="seedlist">${seeds.slice(0, n).map(r => `<li>${teamBlock(team(r), record(team(r)))}</li>`).join('')}</ol>`;
       }
       const out = seeds[n];
       if (out) html += `<p class="note">First team out: ${esc(team(out).name)} (${record(team(out))}).</p>`;
     } else if (side === 'winners') {
-      html += '<p class="note">Seeds are based on final regular-season standings.</p>';
+      html += '';
     }
     const finalR = Math.max(...games.map(g => g.r));
     const sc = D.bracket.scores;
@@ -2780,7 +2777,7 @@ footer input{width:min(100%,260px)}
         return { rid, e, cash: Math.min(1, cash) };
       }).sort((a, b) => b.e - a.e);
       html += `<h2 class="sech">Projected ${D.season} winnings</h2>
-        <p class="note">Each team’s expected payout, based on the Playoff Odds simulations. Net subtracts the ${usd(BUY_IN)} buy-in.</p>
+        
         <div class="tablewrap"><table><thead><tr><th class="tl" scope="col">Team</th><th scope="col">Record</th><th scope="col">Chance to cash</th><th scope="col">Expected payout</th><th scope="col">Expected net</th></tr></thead><tbody>
         ${ev.map(x => `<tr><td class="tl">${teamBlock(team(x.rid), '')}</td><td>${record(team(x.rid))}</td><td>${pct(x.cash)}</td>
           <td class="avgp">${usd(x.e, true)}</td><td class="${x.e - BUY_IN >= 0 ? 'pos' : 'neg'}">${usd(x.e - BUY_IN, true)}</td></tr>`).join('')}
@@ -2791,7 +2788,7 @@ footer input{width:min(100%,260px)}
     html += `<h2 class="sech">All-time money list</h2>`;
     if (!D.money) return html + '<p class="status">Loading league history…</p>';
     if (D.money.error) return html + `<div class="error"><strong>${esc(D.money.error)}</strong><br>Try Refresh.</div>`;
-    html += `<p class="note">Winnings from payouts that have been decided, across ${money.seasons} season${money.seasons === 1 ? '' : 's'}. Buy-ins paid counts ${usd(BUY_IN)} for every season a manager has played, including this one. Uses the current payout structure for every season.</p>
+    html += `
       <div class="tablewrap"><table><thead><tr><th class="tl" scope="col">Manager</th><th scope="col">Seasons</th><th scope="col">Won</th><th scope="col">Buy-ins paid</th><th scope="col">Net</th><th scope="col">Payouts</th></tr></thead><tbody>`;
     money.list.forEach(m => {
       const net = m.won - m.paid;
@@ -2983,7 +2980,7 @@ footer input{width:min(100%,260px)}
       return `<span class="pp-yr">${y}</span><span class="pp-chips">${yi.length ? yi.map(p => `<span class="chip${p.orig !== sel ? ' acq' : ''}"><b>${p.slot ? pickLabel(p.r, p.slot) : ordinal(p.r)}</b>${p.orig !== sel ? `from ${esc(team(p.orig).name)}` : ''}</span>`).join('') : '<span class="asset-sub">No picks</span>'}</span>`; }).join('');
     const teamOpts = teams.map(x => `<option value="${x.rid}" ${x.rid === sel ? 'selected' : ''}>${esc(team(x.rid).name)}</option>`).join('');
     let html = `<div class="controls"><label class="field">Team<select data-opt="buildTeam">${teamOpts}</select></label></div>
-      <p class="note">Ages come from Sleeper’s player database. Age rank compares this team’s average age at a position to the rest of the league: #1 is the youngest, and the three youngest and oldest teams are colored. The time on the right of each player is how long they’ve been on this roster, from draft and transaction history.</p>
+      
       <div class="bsplit">
       <article class="bcard"><header>${teamBlock(tm, `${esc(tm.manager)}${tm.manager ? ', ' : ''}${record(tm)}`)}<span class="count">${t.players.length}<small>players</small></span></header>
         <table class="btable"><thead><tr><th scope="col">Pos</th><th scope="col">Players</th><th scope="col">Avg age</th><th scope="col">Age rank</th></tr></thead><tbody>
@@ -2992,7 +2989,7 @@ footer input{width:min(100%,260px)}
           return `<tr><td>${pos}</td><td>${ps.length ? `<button type="button" class="pickbtn posbtn" data-pos-filter="${pos}" aria-pressed="${posF === pos}" aria-label="Show only ${pos}s on the roster"><b>${ps.length}</b>${pop}</button>` : 0}</td>${cell(posAvg(t, pos), cmp[pos])}</tr>`; }).join('')}
         <tr class="all"><td>All</td><td>${t.players.filter(p => p.pos !== 'DEF').length}</td>${cell(t.avg, allVals)}</tr>
         <tr class="prow"><td>Picks</td><td colspan="3"><button type="button" class="pickbtn" data-own-team="${sel}" aria-label="${myPicks.length} draft picks. Open Pick Ownership"><span><b>${myPicks.length}</b> draft pick${myPicks.length === 1 ? '' : 's'}${acqN ? ` <span class="asset-sub">(${acqN} acquired)</span>` : ''}</span><span class="pp-go">View ›</span><span class="pickpop" role="tooltip">${pickPop}</span></button></td></tr></tbody></table>
-        <div class="yr">Players per NFL team <span class="asset-sub">(tap one to filter the roster)</span></div><div class="chips">
+        <div class="yr">Players per NFL team</div><div class="chips">
         ${Object.entries(t.nfl).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).map(([k, n]) =>
           `<button type="button" class="chip chipbtn${n >= 3 ? ' stack' : ''}" data-nfl="${esc(k)}" aria-pressed="${nflF === k}"><b>${esc(k)}</b>${n} player${n === 1 ? '' : 's'}</button>`).join('') || '<span class="tempty">No players</span>'}</div>
         <div class="yr">Longest tenured</div>
@@ -3188,7 +3185,7 @@ footer input{width:min(100%,260px)}
       return '<p class="status">Loading league history from Sleeper…</p>';
     }
     if (D.profiles.error) return `<div class="error"><strong>${esc(D.profiles.error)}</strong><br>Try Refresh.</div>`;
-    let html = `<p class="note">All-time records are regular-season games${seasonDone() ? '' : ', including this season so far'}. Playoff records count winners-bracket games. Season awards are given once a regular season ends, and playoff trophies once the bracket is decided. League record trophies belong to whoever holds that record right now, and they move when a record is broken.</p><div class="pgrid">`;
+    let html = `<div class="pgrid">`;
     D.profiles.list.forEach(m => {
       const n = m.seasons.size;
       const g = m.w + m.l + m.t;
@@ -3283,7 +3280,7 @@ footer input{width:min(100%,260px)}
     if (!list.length) {
       return html + `<p class="note">${sel ? `${esc(team(sel).name)} hasn’t made any trades yet.` : 'No trades have been made in this league yet.'}</p>`;
     }
-    html += `<p class="note">${list.length} trade${list.length === 1 ? '' : 's'}, newest first.</p><div class="tlist">`;
+    html += `<div class="tlist">`;
     const order = currentOrder();
     const { players } = D.trades;
     list.forEach(({ t, L }) => {
@@ -3623,11 +3620,11 @@ footer input{width:min(100%,260px)}
         return `<div class="pm-g"><button type="button" class="pm-gh" data-pm-exp aria-expanded="false"><span class="pm-wk">W${r.w}</span><span class="pm-opp">${esc(r.opp || '-')}</span>${luB}<span class="pm-line">${esc(statLine(pos, r.st))}</span><span class="pm-pt${tone(r.pts)}"><b>${r.pts.toFixed(1)}</b><small>${r.proj != null ? `proj ${r.proj.toFixed(1)}` : ''}</small></span></button><div class="pm-det" hidden>${det}</div></div>`;
       };
       const items = past.map(item).join('') + (next.length ? `<h4 class="pm-sub">Upcoming</h4>${next.map(item).join('')}` : '');
-      box.innerHTML = (wk || pj) ? `${sumM}<div class="pm-glist">${items}</div><p class="pc-note">Tap a game for the full stat line. Points use this league’s scoring.</p>` : '<p class="pc-empty">Couldn’t load stats from Sleeper. Try again in a moment.</p>';
+      box.innerHTML = (wk || pj) ? `${sumM}<div class="pm-glist">${items}</div>` : '<p class="pc-empty">Couldn’t load stats from Sleeper. Try again in a moment.</p>';
       return;
     }
     const sum = played.length ? `<div class="pc-sum"><div><b>${tot.toFixed(1)}</b><span>Fantasy pts</span></div><div><b>${(tot / played.length).toFixed(1)}</b><span>Per game</span></div><div><b>${played.length}</b><span>Games</span></div><div><b>${Math.max(...played.map(r => r.pts)).toFixed(1)}</b><span>Best game</span></div></div>` : '';
-    box.innerHTML = (wk || pj) ? `${sum}<div class="pc-tblwrap"><table class="pc-log"><thead>${head1}${head2}</thead><tbody>${body}</tbody></table></div><p class="pc-note">Fantasy points and projections use this league’s scoring.${cur ? ' Lineup shows whether his league team started him.' : ''}</p>`
+    box.innerHTML = (wk || pj) ? `${sum}<div class="pc-tblwrap"><table class="pc-log"><thead>${head1}${head2}</thead><tbody>${body}</tbody></table></div>`
       : '<p class="pc-empty">Couldn’t load stats from Sleeper. Try again in a moment.</p>';
   }
 
@@ -3648,7 +3645,7 @@ footer input{width:min(100%,260px)}
     box.innerHTML = have.length ? `<div class="pc-tblwrap"><table class="pc-log"><thead><tr class="pc-gh"><th colspan="2"></th><th colspan="4">Fantasy</th>${groups.map(g => `<th colspan="${g[1].length}">${g[0]}</th>`).join('')}</tr>
       <tr><th>Season</th><th>Team</th><th>GP</th><th class="pc-fp">FPts</th><th>PPG</th><th>Rank</th>${cols.map(c => `<th>${c[0]}</th>`).join('')}</tr></thead><tbody>
       ${have.map(r => { const gp = r.st.gp || r.st.gms_active || 0, f = fpts(r.st); return `<tr><td><button type="button" class="linkbtn" data-pc-season="${r.y}">${r.y}</button></td><td>${esc(r.tm || '–')}</td><td>${gp}</td><td class="pc-fp"><b>${f.toFixed(1)}</b></td><td>${gp ? (f / gp).toFixed(1) : '–'}</td><td>${r.st.pos_rank_ppr ? `${esc(pos)}${r.st.pos_rank_ppr}` : '–'}</td>${cols.map(c => `<td>${dash(c[1](r.st))}</td>`).join('')}</tr>`; }).join('')}
-      </tbody></table></div><p class="pc-note">Tap a season to load its game log above.</p>`
+      </tbody></table></div>`
       : '<p class="pc-empty">No NFL regular-season stats yet.</p>';
   }
 
@@ -3670,7 +3667,7 @@ footer input{width:min(100%,260px)}
     const el = document.createElement('div'); el.className = 'sk-overlay'; el.id = 'skov';
     el.innerHTML = `<div class="sk-modal" role="dialog" aria-modal="true" aria-label="${esc(t.name)} ${word} streak">
       <header>${teamBlock(t, `${c.n}-game ${word} streak`)}<button type="button" class="sk-x" data-sk-close aria-label="Close">×</button></header>
-      <div class="sk-list">${rows}</div><p class="sk-note">Tap a week to open the full matchup.</p></div>`;
+      <div class="sk-list">${rows}</div></div>`;
     document.body.appendChild(el); document.body.classList.add('sk-lock');
     el.addEventListener('click', e => {
       if (e.target === el || e.target.closest('[data-sk-close]')) return closeStreak();
