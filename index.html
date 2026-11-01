@@ -693,6 +693,29 @@ footer input{width:min(100%,260px)}
 .plt .popp{display:block;color:var(--muted);font-size:.68rem;margin-top:1px}.plt .popp.live{color:var(--pylon-ink);font-weight:700}
 .pp .pjt{display:block;font-size:.66rem;color:var(--muted);font-weight:500;margin-top:2px}
 .wpn{font-style:normal}.is-phone .wpn{display:none}.is-phone .wpb-top span{max-width:none}
+.wkhead{display:flex;align-items:center;justify-content:space-between;margin:2px 0 12px}
+.wktitle{margin:0;font:italic 800 2.1rem/1 "Barlow Condensed","Arial Narrow",sans-serif;text-transform:uppercase;letter-spacing:-.005em}
+.wktitle u{text-decoration:none;border-bottom:3px solid var(--ink);padding-bottom:1px}
+.wkstrip{position:relative;display:flex;align-items:stretch;gap:6px;margin:0 0 16px}
+.wkscroll{flex:1;display:flex;overflow-x:auto;scroll-snap-type:x proximity;scrollbar-width:none;-webkit-overflow-scrolling:touch;
+  mask-image:linear-gradient(90deg,transparent 0,#000 18px,#000 calc(100% - 18px),transparent 100%);-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 18px,#000 calc(100% - 18px),transparent 100%)}
+.wkscroll::-webkit-scrollbar{display:none}
+.wk{position:relative;flex:0 0 118px;scroll-snap-align:center;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:3px;padding:8px 4px 16px;
+  background:none;border:0;cursor:pointer;color:var(--muted);text-align:center}
+.wk + .wk::before{content:"";position:absolute;left:0;top:12px;height:30px;border-left:1px solid var(--line)}
+.wk-n{font:italic 800 1.4rem/1 "Barlow Condensed","Arial Narrow",sans-serif;text-transform:uppercase;letter-spacing:-.005em;white-space:nowrap}
+.wk-d{font-size:.72rem;font-weight:600;white-space:nowrap}
+.wk-t{font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);opacity:.8}
+.wk.po .wk-t{color:var(--accent);opacity:1}
+.wk:hover{color:var(--ink)}
+.wk.on{color:var(--ink)}.wk.on .wk-d{color:var(--ink)}
+.wk.on::after{content:"";position:absolute;left:50%;bottom:4px;width:6px;height:6px;margin-left:-3px;border-radius:50%;background:var(--accent)}
+.wk:focus-visible{outline:2px solid var(--accent);outline-offset:-2px;border-radius:8px}
+.wkarrow{flex:none;align-self:center;width:32px;height:32px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-size:1.2rem;line-height:1;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.wkarrow:hover{border-color:var(--accent);color:var(--accent)}.wkarrow:disabled{opacity:.35;cursor:default;border-color:var(--line);color:var(--muted)}
+.is-phone .wktitle{font-size:1.7rem}.is-phone .wkhead{margin:4px 0 6px}
+.is-phone .wk{flex-basis:96px}.is-phone .wk-n{font-size:1.15rem}.is-phone .wk-d{font-size:.64rem}
+.is-phone .wkarrow{width:28px;height:28px;font-size:1rem}.is-phone .wkstrip{gap:2px;margin-bottom:10px}
 </style>
 </head>
 <body>
@@ -1123,8 +1146,10 @@ footer input{width:min(100%,260px)}
       return `<div class="tabgroup"><button class="tab" type="button" data-group aria-haspopup="menu" aria-expanded="false" aria-selected="${g.keys.includes(opts.tab)}">${g.label} ▾</button><div class="tabmenu" role="menu">${tabs.filter(x => g.keys.includes(x[0])).map(menuBtn).join('')}</div></div>`;
     }).join('')}</nav>`;
     html += opts.tab === 'stand' ? renderStandings() : opts.tab === 'proj' ? renderProj() : opts.tab === 'odds' ? renderOdds() : opts.tab === 'match' ? renderMatchups() : opts.tab === 'news' ? renderNews() : opts.tab === 'bracket' ? renderBracket() : opts.tab === 'pay' ? renderPayouts() : opts.tab === 'rec' ? renderRecords() : opts.tab === 'mgr' ? renderProfiles() : opts.tab === 'build' ? renderBuild() : opts.tab === 'own' ? renderOwn() : opts.tab === 'trades' ? renderTrades() : opts.tab === 'laws' ? renderBylaws() : opts.tab === 'finder' ? renderFinder() : opts.tab === 'calc' ? renderCalc() : renderOrder();
+    const prevScroll = document.getElementById('wkscroll'), keep = prevScroll ? prevScroll.scrollLeft : null;
     $('#app').innerHTML = html;
     updatePhoneChrome(tabs);
+    if (opts.tab === 'match') { const sc = document.getElementById('wkscroll'); if (sc && keep != null) sc.scrollLeft = keep; centerWeek(keep != null); }
   }
 
   // ---------- Phone navigation: bottom bar, "More" sheet, current-section label ----------
@@ -2342,17 +2367,45 @@ footer input{width:min(100%,260px)}
       <div class="wpb-proj"><span>Proj ${wp.projA.toFixed(1)}</span><span>Proj ${wp.projB.toFixed(1)}</span></div></div>`;
   }
 
+  // Date range of each NFL week ("Oct. 29 - Nov. 2"), from Sleeper's schedule.
+  const MON = ['Jan.', 'Feb.', 'Mar.', 'Apr.', 'May', 'June', 'July', 'Aug.', 'Sept.', 'Oct.', 'Nov.', 'Dec.'];
+  function weekRanges(){
+    if (D.wkRanges) return D.wkRanges;
+    if (!D.wkRangesLoading) {
+      D.wkRangesLoading = true; const myD = D;
+      schedFor(D.season).then(sch => {
+        const by = {};
+        (Array.isArray(sch) ? sch : []).forEach(g => { const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(g.date || ''); if (!m) return;
+          const t = new Date(+m[1], +m[2] - 1, +m[3]).getTime(), k = Number(g.week); const r = by[k] || (by[k] = [t, t]); r[0] = Math.min(r[0], t); r[1] = Math.max(r[1], t); });
+        const f = t => { const d = new Date(t); return `${MON[d.getMonth()]} ${d.getDate()}`; };
+        myD.wkRanges = {}; for (const k in by) myD.wkRanges[k] = by[k][0] === by[k][1] ? f(by[k][0]) : `${f(by[k][0])} - ${f(by[k][1])}`;
+        if (D === myD && opts.tab === 'match') render();
+      });
+    }
+    return null;
+  }
+  // Keep the selected week in the middle of the strip.
+  function centerWeek(smooth){
+    const sc = document.getElementById('wkscroll'), on = sc && sc.querySelector('.wk.on'); if (!sc || !on) return;
+    const left = on.offsetLeft - (sc.clientWidth - on.offsetWidth) / 2;
+    if (smooth && sc.scrollTo) sc.scrollTo({ left, behavior: 'smooth' }); else sc.scrollLeft = left;
+  }
+
   // ---------- Matchups ----------
   function renderMatchups(){
     const w = opts.week || D.defWeek;
     const { start, lastWeek } = D.playoff;
-    const weekOpts = [];
-    for (let i = D.startWeek; i <= lastWeek; i++) weekOpts.push(`<option value="${i}" ${i === w ? 'selected' : ''}>Week ${i}${i >= start ? ' (playoffs)' : ''}</option>`);
-    let html = `<div class="controls">
-      <button class="btn ghost" type="button" data-week-step="-1" ${w <= D.startWeek ? 'disabled' : ''} aria-label="Previous week">‹</button>
-      <label class="field">Week<select data-opt="week">${weekOpts.join('')}</select></label>
-      <button class="btn ghost" type="button" data-week-step="1" ${w >= lastWeek ? 'disabled' : ''} aria-label="Next week">›</button>
-    </div>`;
+    const ranges = weekRanges();
+    const items = [];
+    for (let i = D.startWeek; i <= lastWeek; i++) {
+      const tag = i >= start ? (i === lastWeek ? 'Championship' : 'Playoffs') : i === D.defWeek ? 'This week' : '';
+      items.push(`<button type="button" class="wk${i === w ? ' on' : ''}${i >= start ? ' po' : ''}" data-week-go="${i}" aria-current="${i === w}" aria-label="Week ${i}${ranges && ranges[i] ? `, ${ranges[i]}` : ''}${tag ? `, ${tag}` : ''}">
+        <span class="wk-n">Week ${i}</span><span class="wk-d">${ranges && ranges[i] ? esc(ranges[i]) : '&nbsp;'}</span>${tag ? `<span class="wk-t">${tag}</span>` : ''}</button>`);
+    }
+    let html = `<div class="wkhead"><h2 class="wktitle">Matchups <u>${D.season}</u></h2></div>
+      <div class="wkstrip"><button class="wkarrow" type="button" data-week-step="-1" ${w <= D.startWeek ? 'disabled' : ''} aria-label="Previous week">‹</button>
+        <div class="wkscroll" id="wkscroll" role="tablist" aria-label="Weeks">${items.join('')}</div>
+        <button class="wkarrow" type="button" data-week-step="1" ${w >= lastWeek ? 'disabled' : ''} aria-label="Next week">›</button></div>`;
     if (!D.weekData.has(w)) {
       if (!D.weekLoading.has(w)) fetchWeek(w).then(() => { if (opts.tab === 'match') render(); });
       return html + '<p class="status">Loading matchups…</p>';
@@ -3617,6 +3670,8 @@ footer input{width:min(100%,260px)}
     if (e.target.closest('[data-close-match]')) { morphMatch(D.openMatch && D.openMatch.id, false); return; }
     const plb = e.target.closest('[data-pid]');
     if (plb) { toggleBreakdown(plb); return; }
+    const wg = e.target.closest('[data-week-go]');
+    if (wg) { const w = Number(wg.dataset.weekGo); if (w !== (opts.week || D.defWeek)) { opts.week = w; D.openMatch = null; saveOpts(); render(); } return; }
     const wk = e.target.closest('[data-week-step]');
     if (wk) {
       const w = (opts.week || D.defWeek) + Number(wk.dataset.weekStep);
