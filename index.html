@@ -743,6 +743,61 @@ footer input{width:min(100%,260px)}
 .is-phone .ts-wk b{white-space:nowrap}.is-phone .ts-wk small{display:none}.is-phone .ts-row{grid-template-columns:58px 30px minmax(0,1fr) auto}
 .is-phone .ts-sc small{font-size:.68rem}
 .is-phone .ts-head{padding:10px}.is-phone .ts-stats{width:100%;display:grid;grid-template-columns:repeat(5,1fr)}.is-phone .ts-stats div{min-width:0;padding:5px 2px}.is-phone .ts-stats b{font-size:.88rem}
+/* ---------- Contender Map ---------- */
+.cm-chart{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 8px 6px;margin-top:6px}
+.cm-svg{display:block;width:100%;height:auto;font-family:inherit;touch-action:manipulation}
+.cm-q{opacity:.07}.cm-q.jug{fill:#00CEB8}.cm-q.con{fill:#5AA6FF}.cm-q.reb{fill:#FFA94D}.cm-q.mid{fill:#FF6F7E}
+.cm-grid{stroke:var(--line);stroke-width:1;opacity:.6}
+.cm-med{stroke:#8C97AD;stroke-width:1.2;stroke-dasharray:5 4;opacity:.75}
+.cm-tick{fill:var(--muted);font-size:10px}
+.cm-axis{fill:var(--muted);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.cm-ql{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;opacity:.9}
+.cm-ql.jug{fill:#00CEB8}.cm-ql.con{fill:#5AA6FF}.cm-ql.reb{fill:#FFA94D}.cm-ql.mid{fill:#FF8A96}
+.cm-trail polyline{fill:none;stroke:#C9D0DC;stroke-width:1.2;stroke-dasharray:3 3;opacity:.25}
+.cm-trail circle{fill:var(--surface);stroke:#C9D0DC;stroke-width:1.2;opacity:.5}
+.cm-trail.on polyline{stroke:var(--accent);opacity:.9}.cm-trail.on circle{stroke:var(--accent);opacity:1}
+.cm-dot{cursor:pointer;outline:none}
+.cm-dot .cm-bg{fill:#26304A;stroke-width:2.2}
+.cm-dot.q-jug .cm-bg{stroke:#00CEB8}.cm-dot.q-con .cm-bg{stroke:#5AA6FF}.cm-dot.q-reb .cm-bg{stroke:#FFA94D}.cm-dot.q-mid .cm-bg{stroke:#FF8A96}
+.cm-dot .cm-ring{fill:none;stroke:var(--accent);stroke-width:2.5;opacity:0}
+.cm-dot.on .cm-ring,.cm-dot:focus-visible .cm-ring{opacity:1}.cm-dot:hover .cm-ring{opacity:.5}
+.cm-ini{fill:var(--accent);font-size:10px;font-weight:700;pointer-events:none}
+.cm-name{fill:var(--ink);font-size:11px;font-weight:600;paint-order:stroke;stroke:#141B2B;stroke-width:3px;stroke-linejoin:round;pointer-events:none}
+.cm-legend{display:flex;align-items:center;gap:8px;margin:4px 6px 2px;font-size:.72rem;color:var(--muted)}
+.cm-lt{display:inline-block;width:22px;border-top:1.5px dashed #C9D0DC;opacity:.6}
+.cm-chip{display:inline-block;padding:2px 9px;border-radius:999px;font-size:.72rem;font-weight:700;white-space:nowrap}
+.cm-chip.q-jug{background:rgba(0,206,184,.16);color:#2DE0C9}.cm-chip.q-con{background:rgba(90,166,255,.16);color:#8DC1FF}
+.cm-chip.q-reb{background:rgba(255,169,77,.16);color:#FFC283}.cm-chip.q-mid{background:rgba(255,111,126,.16);color:#FF9EA8}
+.cm-panel{margin-top:12px;background:var(--surface);border:1px solid var(--accent);border-radius:10px;padding:12px 14px;scroll-margin-top:90px}
+.cm-panel header{display:flex;align-items:center;gap:10px;padding-bottom:10px;border-bottom:1px solid var(--line)}
+.cm-panel header .team{flex:1;min-width:0}.cm-panel header .sk-x{flex:none}
+.cm-moves{display:flex;flex-direction:column;gap:2px;margin-top:8px;font-size:.8rem;color:var(--muted)}
+.cm-move b.up{color:var(--accent)}.cm-move b.down{color:var(--pylon-ink)}
+.cm-cols{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:6px}
+.cm-cols h3{display:flex;align-items:baseline;gap:8px;margin:8px 0 2px;font-size:.78rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.cm-cols h3 b{font-size:1.25rem;color:var(--ink);letter-spacing:0}.cm-cols h3 small{font-size:.75rem;color:var(--accent);text-transform:none;letter-spacing:0}
+.cm-sub{margin:8px 0 2px;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.cm-list{list-style:none;margin:0;padding:0}
+.cm-list li{display:grid;grid-template-columns:44px minmax(0,1fr) auto;align-items:center;gap:8px;padding:6px 0;border-top:1px solid var(--line);font-size:.86rem}
+.cm-list li:first-child{border-top:0}.cm-list li.asset-sub{display:block}
+.cm-slot{font-size:.68rem;font-weight:700;color:var(--muted);text-transform:uppercase}
+.cm-pl{min-width:0}.cm-pl .plink{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cm-pl small{display:block;font-size:.7rem;color:var(--muted)}
+.cm-list b{font-variant-numeric:tabular-nums}
+.cm-tbl{margin-top:14px}.cm-tbl table{table-layout:fixed}
+.cm-tbl th:nth-child(1){width:44%}.cm-tbl th:nth-child(2){width:22%}
+.cm-tbl td b{display:block}.cm-tbl td small{color:var(--muted);font-size:.7rem}
+.cm-tbl tr.on td{background:rgba(0,206,184,.07)}
+.cm-tbl .tlink .tname{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cm-tbl .tlink .team,.cm-tbl .tlink .tx{min-width:0}
+.cm-sort{background:none;border:0;padding:0;color:inherit;font:inherit;font-weight:700;cursor:pointer;text-transform:inherit;letter-spacing:inherit}
+.cm-sort.on,.cm-sort:hover{color:var(--accent)}
+.is-phone .cm-chart{padding:4px 2px 4px}
+.is-phone .cm-tick{font-size:9px}.is-phone .cm-axis{font-size:9.5px}.is-phone .cm-ql{font-size:9.5px}.is-phone .cm-name{font-size:9.5px}.is-phone .cm-ini{font-size:8.5px}
+.is-phone .cm-cols{grid-template-columns:1fr;gap:4px}
+.is-phone .cm-panel{padding:10px 11px}
+.is-phone .cm-tbl th,.is-phone .cm-tbl td{padding:7px 4px;white-space:normal}
+.is-phone .cm-tbl th:nth-child(1){width:40%}.is-phone .cm-tbl th:nth-child(2){width:26%}
+.is-phone .cm-tbl td.tl,.is-phone .cm-tbl th.tl{max-width:none;padding-left:8px}
+.is-phone .cm-tbl .av{display:none}.is-phone .cm-chip{font-size:.62rem;padding:2px 6px;white-space:normal;line-height:1.2}
 </style>
 </head>
 <body>
@@ -827,8 +882,8 @@ footer input{width:min(100%,260px)}
     opts = Object.assign({ tab:'stand', basis:'standings', type:'linear', tiebreak:'pf-low', rounds:null, season:null }, saved);
   }
   function saveOpts(){
-    const { tab, basis, type, tiebreak, rounds, week, buildTeam, tradeTeam, tfTeam, tfTol, tfStrat, tfPos, tfPicks, mview, mteam } = opts;
-    store.set('opts:' + leagueId, JSON.stringify({ tab, basis, type, tiebreak, rounds, week, buildTeam, tradeTeam, tfTeam, tfTol, tfStrat, tfPos, tfPicks, mview, mteam }));
+    const { tab, basis, type, tiebreak, rounds, week, buildTeam, tradeTeam, tfTeam, tfTol, tfStrat, tfPos, tfPicks, mview, mteam, cmSort, cmDir } = opts;
+    store.set('opts:' + leagueId, JSON.stringify({ tab, basis, type, tiebreak, rounds, week, buildTeam, tradeTeam, tfTeam, tfTol, tfStrat, tfPos, tfPicks, mview, mteam, cmSort, cmDir }));
   }
 
   let D = null;
@@ -1162,7 +1217,7 @@ footer input{width:min(100%,260px)}
         ? `${season} season hasn’t started. ${D.ids.length} teams.`
         : `${season} season, ${playedWeeks} of ${totalWeeks} weeks played. ${D.ids.length} teams.`;
 
-    const tabs = [['stand', 'Standings'], ['match', 'Matchups'], ['odds', 'Playoff Odds'], ['bracket', 'Playoff Bracket'], ['order', 'Tankathon'], ['proj', 'Tankathon Projections'], ['news', 'News Feed'], ['pay', 'Payouts'], ['rec', 'League Records'], ['mgr', 'Manager Profiles'], ['build', 'Team Construction'], ['own', 'Pick Ownership'], ['trades', 'Trade History'], ['finder', 'Trade Finder'], ['calc', 'Trade Calculator'], ['laws', 'League Bylaws']];
+    const tabs = [['stand', 'Standings'], ['match', 'Matchups'], ['odds', 'Playoff Odds'], ['bracket', 'Playoff Bracket'], ['order', 'Tankathon'], ['proj', 'Tankathon Projections'], ['news', 'News Feed'], ['pay', 'Payouts'], ['rec', 'League Records'], ['mgr', 'Manager Profiles'], ['build', 'Team Construction'], ['cmap', 'Contender Map'], ['own', 'Pick Ownership'], ['trades', 'Trade History'], ['finder', 'Trade Finder'], ['calc', 'Trade Calculator'], ['laws', 'League Bylaws']];
     const GROUPS = [{ label: 'Tankathon', keys: ['order', 'proj'] }, { label: 'Playoffs', keys: ['odds', 'bracket'] }, { label: 'Trades', keys: ['trades', 'finder', 'calc'] }];
     const tabBtn = ([k, l]) => `<button class="tab" role="tab" type="button" data-tab="${k}" aria-selected="${opts.tab === k}">${l}</button>`;
     const menuBtn = ([k, l]) => `<button class="tabopt" role="menuitem" type="button" data-tab="${k}" aria-current="${opts.tab === k}">${l}</button>`;
@@ -1172,7 +1227,7 @@ footer input{width:min(100%,260px)}
       if (g.keys[0] !== t[0]) return '';
       return `<div class="tabgroup"><button class="tab" type="button" data-group aria-haspopup="menu" aria-expanded="false" aria-selected="${g.keys.includes(opts.tab)}">${g.label} ▾</button><div class="tabmenu" role="menu">${tabs.filter(x => g.keys.includes(x[0])).map(menuBtn).join('')}</div></div>`;
     }).join('')}</nav>`;
-    html += opts.tab === 'stand' ? renderStandings() : opts.tab === 'proj' ? renderProj() : opts.tab === 'odds' ? renderOdds() : opts.tab === 'match' ? renderMatchups() : opts.tab === 'news' ? renderNews() : opts.tab === 'bracket' ? renderBracket() : opts.tab === 'pay' ? renderPayouts() : opts.tab === 'rec' ? renderRecords() : opts.tab === 'mgr' ? renderProfiles() : opts.tab === 'build' ? renderBuild() : opts.tab === 'own' ? renderOwn() : opts.tab === 'trades' ? renderTrades() : opts.tab === 'laws' ? renderBylaws() : opts.tab === 'finder' ? renderFinder() : opts.tab === 'calc' ? renderCalc() : renderOrder();
+    html += opts.tab === 'cmap' ? renderCmap() : opts.tab === 'stand' ? renderStandings() : opts.tab === 'proj' ? renderProj() : opts.tab === 'odds' ? renderOdds() : opts.tab === 'match' ? renderMatchups() : opts.tab === 'news' ? renderNews() : opts.tab === 'bracket' ? renderBracket() : opts.tab === 'pay' ? renderPayouts() : opts.tab === 'rec' ? renderRecords() : opts.tab === 'mgr' ? renderProfiles() : opts.tab === 'build' ? renderBuild() : opts.tab === 'own' ? renderOwn() : opts.tab === 'trades' ? renderTrades() : opts.tab === 'laws' ? renderBylaws() : opts.tab === 'finder' ? renderFinder() : opts.tab === 'calc' ? renderCalc() : renderOrder();
     const prevScroll = document.getElementById('wkscroll'), keep = prevScroll ? prevScroll.scrollLeft : null;
     $('#app').innerHTML = html;
     updatePhoneChrome(tabs);
@@ -1181,7 +1236,7 @@ footer input{width:min(100%,260px)}
 
   // ---------- Phone navigation: bottom bar, "More" sheet, current-section label ----------
   const MORE_GROUPS = [['League', ['stand', 'match', 'news', 'pay', 'rec', 'mgr', 'laws']], ['Playoffs', ['odds', 'bracket']], ['Tankathon', ['order', 'proj']],
-    ['Teams', ['build', 'own']], ['Trades', ['trades', 'finder', 'calc']]];
+    ['Teams', ['build', 'cmap', 'own']], ['Trades', ['trades', 'finder', 'calc']]];
   let TABS_ALL = [];
   function updatePhoneChrome(tabs){
     TABS_ALL = tabs;
@@ -1390,6 +1445,219 @@ footer input{width:min(100%,260px)}
     html += BYLAWS.map(a => `<details class="law"><summary><span class="lawn">Article ${a.n}</span> ${esc(a.t)}</summary><ol>${a.r.map(([k, v]) => `<li><b>${esc(k)}:</b> ${esc(v)}</li>`).join('')}</ol></details>`).join('');
     html += '<p class="note">By joining or remaining in Dudley Dynasty each owner agrees to abide by these bylaws.</p>';
     return html;
+  }
+
+  // ---------- Contender Map: win-now value vs future value ----------
+  // Win-now = FantasyCalc value of each team's best legal starting lineup (league roster_positions, FLEX and SUPER_FLEX respected).
+  // Future  = value of players aged 25 or younger + value of the draft picks the team currently owns.
+  const CM_SLOTS = {
+    QB: ['QB'], RB: ['RB'], WR: ['WR'], TE: ['TE'], K: ['K'], DEF: ['DEF'],
+    FLEX: ['RB', 'WR', 'TE'], WRRB_FLEX: ['RB', 'WR'], REC_FLEX: ['WR', 'TE'], SUPER_FLEX: ['QB', 'RB', 'WR', 'TE'],
+    DL: ['DL', 'DE', 'DT'], LB: ['LB'], DB: ['DB', 'CB', 'S'], IDP_FLEX: ['DL', 'DE', 'DT', 'LB', 'DB', 'CB', 'S']
+  };
+  const CM_QUAD = { jug: 'Juggernaut', con: 'Contender', reb: 'Rebuilder', mid: 'Stuck in the Middle' };
+  const cmK = v => Math.abs(v) >= 1000 ? `${(v / 1000).toFixed(v >= 100000 ? 0 : 1)}k` : String(Math.round(v));
+  const cmN = v => Math.round(v).toLocaleString();
+  const cmDate = d => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(d || ''); return m ? new Date(+m[1], +m[2] - 1, +m[3]) : null; };
+  const cmShort = d => { const t = cmDate(d); return t ? t.toLocaleDateString([], { month: 'short', day: 'numeric' }) : d; };
+  // Age on a given day, from Sleeper's birth date (falls back to FantasyCalc's age, then Sleeper's age field).
+  function cmAge(info, fcAge, asOf){
+    const at = asOf ? asOf.getTime() : Date.now();
+    if (info && info.b) { const t = Date.parse(info.b); if (!isNaN(t)) return (at - t) / 31557600000; }
+    if (typeof fcAge === 'number') return fcAge - (Date.now() - at) / 31557600000;
+    if (info && typeof info.a === 'number') return info.a - (Date.now() - at) / 31557600000;
+    return null;
+  }
+  // FantasyCalc only prices the next few drafts; a later year uses the same round's value from the furthest year it has.
+  function cmPickVal(picks, season, round){
+    if (picks[`${season}-${round}`] != null) return picks[`${season}-${round}`];
+    const ys = Object.keys(picks).filter(k => k.endsWith(`-${round}`)).map(k => Number(k.split('-')[0])).sort((a, b) => b - a);
+    return ys.length ? picks[`${ys[0]}-${round}`] : 0;
+  }
+  // Best lineup: fill single-position slots first, then the narrowest flex slots, each with the highest-valued eligible player left.
+  function cmLineup(pool){
+    const slots = (D.league.roster_positions || []).filter(s => !['BN', 'IR', 'TAXI'].includes(s));
+    const order = slots.map((s, i) => ({ s, i, elig: CM_SLOTS[s] || [s] })).sort((a, b) => a.elig.length - b.elig.length || a.i - b.i);
+    const left = pool.slice().sort((a, b) => b.v - a.v), out = new Array(slots.length).fill(null);
+    order.forEach(o => { const k = left.findIndex(p => o.elig.includes(p.pos)); if (k >= 0) out[o.i] = { slot: o.s, p: left.splice(k, 1)[0] }; else out[o.i] = { slot: o.s, p: null }; });
+    return out;
+  }
+  // One team's numbers from a roster, its picks, a value table and the date the values are from.
+  function cmTeam(rid, roster, picksOwned, vals, asOf){
+    const info = (D.cm && D.cm.info) || {};
+    const ir = new Set(roster.ir || []);
+    const all = (roster.players || []).map(id => {
+      const fc = vals.fc && vals.fc.get(id), i = info[id] || {};
+      return { id, v: vals.players[id] || 0, pos: i.pos || (fc && fc.pos) || '', nm: i.n || (fc && fc.name) || id, tm: i.t || (fc && fc.tm) || '', age: cmAge(info[id], fc && fc.age, asOf), ir: ir.has(id) };
+    });
+    const lineup = cmLineup(all.filter(p => !p.ir));
+    const win = lineup.reduce((t, x) => t + (x.p ? x.p.v : 0), 0);
+    const young = all.filter(p => p.age != null && Math.floor(p.age) <= 25).sort((a, b) => b.v - a.v);
+    const pk = picksOwned.map(p => ({ ...p, v: cmPickVal(vals.picks, p.season, p.round) })).sort((a, b) => a.season - b.season || a.round - b.round || b.v - a.v);
+    const fut = young.reduce((t, p) => t + p.v, 0) + pk.reduce((t, p) => t + p.v, 0);
+    return { rid, x: win, y: fut, lineup, young, picks: pk, noAge: all.filter(p => p.age == null).length, noVal: all.filter(p => !p.v).length };
+  }
+  // Medians, quadrants and ranks for a set of teams.
+  function cmPlace(teams){
+    const med = a => { const s = a.slice().sort((p, q) => p - q), n = s.length; return n ? (s[(n - 1) >> 1] + s[n >> 1]) / 2 : 0; };
+    const mx = med(teams.map(t => t.x)), my = med(teams.map(t => t.y));
+    const rank = (k, t) => 1 + teams.filter(o => o[k] > t[k]).length;
+    teams.forEach(t => { t.q = t.x >= mx ? (t.y >= my ? 'jug' : 'con') : (t.y >= my ? 'reb' : 'mid'); t.rx = rank('x', t); t.ry = rank('y', t); });
+    return { teams, mx, my };
+  }
+  // Current map: live Sleeper rosters, pick ownership exactly as on Pick Ownership, live FantasyCalc values.
+  function cmCurrent(){
+    const vals = D.cm.live;
+    const order = currentOrder();
+    const teams = D.ids.map(rid => {
+      const r = (D.rosters || []).find(x => x.roster_id === rid) || {};
+      const picks = [];
+      D.seasons.forEach(y => { for (let rd = 1; rd <= opts.rounds; rd++) D.ids.forEach(orig => { if (ownerOf(y, rd, orig) === rid) picks.push({ season: y, round: rd, from: orig, slot: y === D.draftSeason ? slotOf(order, rd, orig) : null }); }); });
+      return cmTeam(rid, { players: (r.players || []).map(String), ir: (r.reserve || []).map(String) }, picks, vals, null);
+    });
+    return cmPlace(teams);
+  }
+  // A past map from a nightly snapshot file (data/snapshots/YYYY-MM-DD.json).
+  function cmFromSnap(snap){
+    const vals = { players: snap.values.players || {}, picks: snap.values.picks || {}, fc: null };
+    const asOf = cmDate(snap.date);
+    const teams = (snap.teams || []).filter(t => D.ids.includes(t.rid)).map(t => cmTeam(t.rid, { players: t.players || [], ir: t.ir || [] }, (t.picks || []).map(p => ({ season: p.season, round: p.round, from: p.from })), vals, asOf));
+    return cmPlace(teams);
+  }
+  async function cmJSON(path){ try { const r = await fetch(path, { cache: 'no-cache' }); return r.ok ? await r.json() : null; } catch (e) { return null; } }
+  async function loadCmap(){
+    if (!D || D.cm || D.cmLoading) return;
+    const myD = D; myD.cmLoading = true;
+    try {
+      if (!myD.tf) await loadFinder();
+      const index = await cmJSON('data/snapshots/index.json');
+      const dates = index && Array.isArray(index.dates) ? index.dates.slice().sort() : [];
+      // Movement trail points: the latest snapshot from at least 7 and 30 days before the newest one (or the oldest there is).
+      const pick = days => {
+        if (dates.length < 2) return null;
+        const newest = cmDate(dates[dates.length - 1]), cut = new Date(newest.getTime() - days * 86400000);
+        const older = dates.slice(0, -1).filter(d => cmDate(d) <= cut);
+        return older.length ? older[older.length - 1] : dates[0];
+      };
+      const want = [...new Set([pick(30), pick(7)].filter(Boolean))];
+      const latest = dates.length ? dates[dates.length - 1] : null;
+      const files = await Promise.all([...new Set([...want, latest].filter(Boolean))].map(d => cmJSON(`data/snapshots/${d}.json`).then(j => [d, j])));
+      const snaps = new Map(files.filter(f => f[1] && f[1].teams && f[1].values));
+      // Live values; if FantasyCalc is unreachable, fall back to the newest snapshot's values.
+      let live = null, liveNote = '';
+      if (myD.tf && myD.tf.players) {
+        const players = {}; myD.tf.players.forEach((p, id) => { players[id] = p.v; });
+        const picks = {}; myD.tf.picks.forEach((v, k) => { picks[k] = v; });
+        live = { players, picks, fc: myD.tf.players };
+      } else if (latest && snaps.get(latest)) { const s = snaps.get(latest); live = { players: s.values.players, picks: s.values.picks, fc: null }; liveNote = `FantasyCalc couldn’t be reached, so values are from the ${cmShort(latest)} snapshot.`; }
+      if (!live) throw new Error('Couldn’t load player values from FantasyCalc. Try Refresh in a minute.');
+      const ids = new Set((myD.rosters || []).flatMap(r => (r.players || []).map(String)));
+      snaps.forEach(s => s.teams.forEach(t => (t.players || []).forEach(id => ids.add(id))));
+      const info = await playerInfoFor([...ids]);
+      myD.cm = { live, info, liveNote, dates, trail: want.map(d => ({ date: d, snap: snaps.get(d) })).filter(x => x.snap) };
+    } catch (e) {
+      myD.cm = { error: e.message || 'Couldn’t build the Contender Map.' };
+    } finally {
+      myD.cmLoading = false;
+      if (D === myD && opts.tab === 'cmap') render();
+    }
+  }
+
+  function renderCmap(){
+    let html = '<h2 class="sech">Contender Map</h2>';
+    if (!D.cm) { loadCmap(); return html + '<p class="status">Loading values and rosters…</p>'; }
+    if (D.cm.error) return html + `<div class="error"><strong>${esc(D.cm.error)}</strong></div>`;
+    const cur = cmCurrent();
+    const past = D.cm.trail.map(t => ({ date: t.date, map: cmFromSnap(t.snap) }));
+    const phone = isPhoneUI();
+    // ---- chart geometry
+    const W = phone ? 360 : 680, H = phone ? 380 : 470, L = phone ? 40 : 56, R = 12, T = 14, B = phone ? 34 : 40;
+    const xs = cur.teams.map(t => t.x).concat(...past.map(p => p.map.teams.map(t => t.x)));
+    const ys = cur.teams.map(t => t.y).concat(...past.map(p => p.map.teams.map(t => t.y)));
+    const span = (a) => { let lo = Math.min(...a), hi = Math.max(...a); if (hi - lo < 1) { lo -= 500; hi += 500; } const pad = (hi - lo) * 0.12; return [lo - pad, hi + pad]; };
+    const [x0, x1] = span(xs), [y0, y1] = span(ys);
+    const px = v => L + (v - x0) / (x1 - x0) * (W - L - R), py = v => H - B - (v - y0) / (y1 - y0) * (H - T - B);
+    const ticks = (lo, hi) => { const raw = (hi - lo) / 4, mag = Math.pow(10, Math.floor(Math.log10(raw))), st = [1, 2, 2.5, 5, 10].map(m => m * mag).find(s => s >= raw) || raw; const out = []; for (let v = Math.ceil(lo / st) * st; v <= hi; v += st) out.push(v); return out; };
+    const mxp = px(cur.mx), myp = py(cur.my);
+    const fs = phone ? 9.5 : 11, r = phone ? 12 : 16;
+    let svg = `<svg class="cm-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Contender Map: win-now value across, future value up">`;
+    // quadrant tints and labels
+    const qbox = (x, y, w, h, cls) => `<rect class="cm-q ${cls}" x="${x}" y="${y}" width="${Math.max(0, w)}" height="${Math.max(0, h)}"/>`;
+    svg += qbox(mxp, T, W - R - mxp, myp - T, 'jug') + qbox(L, T, mxp - L, myp - T, 'reb') + qbox(mxp, myp, W - R - mxp, H - B - myp, 'con') + qbox(L, myp, mxp - L, H - B - myp, 'mid');
+    ticks(x0, x1).forEach(v => { const x = px(v); svg += `<line class="cm-grid" x1="${x}" x2="${x}" y1="${T}" y2="${H - B}"/><text class="cm-tick" x="${x}" y="${H - B + 14}" text-anchor="middle">${cmK(v)}</text>`; });
+    ticks(y0, y1).forEach(v => { const y = py(v); svg += `<line class="cm-grid" x1="${L}" x2="${W - R}" y1="${y}" y2="${y}"/><text class="cm-tick" x="${L - 6}" y="${y + 3.5}" text-anchor="end">${cmK(v)}</text>`; });
+    svg += `<line class="cm-med" x1="${mxp}" x2="${mxp}" y1="${T}" y2="${H - B}"/><line class="cm-med" x1="${L}" x2="${W - R}" y1="${myp}" y2="${myp}"/>`;
+    const ql = (x, y, anchor, cls, txt) => `<text class="cm-ql ${cls}" x="${x}" y="${y}" text-anchor="${anchor}">${txt}</text>`;
+    svg += ql(W - R - 6, T + 15, 'end', 'jug', 'Juggernaut') + ql(L + 6, T + 15, 'start', 'reb', 'Rebuilder') + ql(W - R - 6, H - B - 8, 'end', 'con', 'Contender') + ql(L + 6, H - B - 8, 'start', 'mid', 'Stuck in the Middle');
+    svg += `<text class="cm-axis" x="${(L + W - R) / 2}" y="${H - 4}" text-anchor="middle">Win-Now Value →</text><text class="cm-axis" transform="translate(${phone ? 10 : 13} ${(T + H - B) / 2}) rotate(-90)" text-anchor="middle">Future Value →</text>`;
+    // movement trails (oldest → newest → now)
+    const byRid = m => new Map(m.teams.map(t => [t.rid, t]));
+    const pastMaps = past.map(p => ({ date: p.date, m: byRid(p.map) }));
+    cur.teams.forEach(t => {
+      const pts = pastMaps.map(p => p.m.get(t.rid) && { x: px(p.m.get(t.rid).x), y: py(p.m.get(t.rid).y), d: p.date }).filter(Boolean);
+      if (!pts.length) return;
+      const all = pts.concat([{ x: px(t.x), y: py(t.y) }]);
+      svg += `<g class="cm-trail${D.cmSel === t.rid ? ' on' : ''}"><polyline points="${all.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ')}"/>${pts.map(p => `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="3"><title>${esc(team(t.rid).name)} on ${esc(cmShort(p.d))}</title></circle>`).join('')}</g>`;
+    });
+    // dots with avatar/initials and manager name; each label tries below, above, right, then left of its dot and is
+    // left off (still in the tooltip and table) when every spot would cover another label or dot
+    const placed = [], circles = cur.teams.map(t => ({ rid: t.rid, x: px(t.x), y: py(t.y) }));
+    const labelAt = (t, cx, cy, lw) => {
+      const cand = [[cx, cy + r + fs + 1, 'middle'], [cx, cy - r - 4, 'middle'], [cx + r + 4, cy + fs * 0.35, 'start'], [cx - r - 4, cy + fs * 0.35, 'end']];
+      const box = ([x, y, a]) => ({ x0: a === 'start' ? x : a === 'end' ? x - lw : x - lw / 2, x1: a === 'start' ? x + lw : a === 'end' ? x : x + lw / 2, y0: y - fs, y1: y + 2 });
+      const free = c => { const b = box(c);
+        if (b.x0 < L - 30 || b.x1 > W - 2 || b.y0 < 2 || b.y1 > H - B) return false;
+        if (placed.some(o => b.x0 < o.x1 + 2 && b.x1 > o.x0 - 2 && b.y0 < o.y1 && b.y1 > o.y0)) return false;
+        return !circles.some(o => o.rid !== t.rid && o.x + r > b.x0 && o.x - r < b.x1 && o.y + r > b.y0 && o.y - r < b.y1); };
+      const c = cand.find(free) || (D.cmSel === t.rid ? cand[0] : null);
+      if (c) placed.push(box(c));
+      return c;
+    };
+    const order = cur.teams.slice().sort((a, b) => (b.rid === D.cmSel) - (a.rid === D.cmSel) || b.y - a.y);
+    const labels = new Map(order.map(t => { const tm = team(t.rid), nm = tm.manager || tm.name, lab = nm.length > 14 ? nm.slice(0, 13) + '…' : nm;
+      return [t.rid, { lab, c: labelAt(t, px(t.x), py(t.y), lab.length * fs * 0.56) }]; }));
+    const dots = cur.teams.slice().sort((a, b) => (a.rid === D.cmSel) - (b.rid === D.cmSel)).map(t => {
+      const tm = team(t.rid), cx = px(t.x), cy = py(t.y), nm = tm.manager || tm.name;
+      const { lab, c } = labels.get(t.rid);
+      const ini = esc((tm.name || '?').trim().slice(0, 2).toUpperCase());
+      return `<g class="cm-dot q-${t.q}${D.cmSel === t.rid ? ' on' : ''}" data-cm-team="${t.rid}" role="button" tabindex="0" aria-label="${esc(tm.name)}: ${CM_QUAD[t.q]}, win-now ${cmN(t.x)}, future ${cmN(t.y)}">
+        <circle class="cm-ring" cx="${cx}" cy="${cy}" r="${r + 3}"/><circle class="cm-bg" cx="${cx}" cy="${cy}" r="${r}"/>
+        <text class="cm-ini" x="${cx}" y="${cy + 3.5}" text-anchor="middle">${ini}</text>
+        ${tm.avatar ? `<clipPath id="cmc${t.rid}"><circle cx="${cx}" cy="${cy}" r="${r}"/></clipPath><image href="${esc(tm.avatar)}" x="${cx - r}" y="${cy - r}" width="${2 * r}" height="${2 * r}" clip-path="url(#cmc${t.rid})" preserveAspectRatio="xMidYMid slice"/>` : ''}
+        ${c ? `<text class="cm-name" x="${c[0].toFixed(1)}" y="${c[1].toFixed(1)}" text-anchor="${c[2]}">${esc(lab)}</text>` : ''}<title>${esc(tm.name)} (${esc(nm)})</title></g>`;
+    }).join('');
+    svg += dots + '</svg>';
+    const legend = past.length ? `<div class="cm-legend"><span class="cm-lt"></span>Trail: ${past.map(p => esc(cmShort(p.date))).join(' → ')} → now</div>` : '';
+    html += `${D.cm.liveNote ? `<p class="note">${esc(D.cm.liveNote)}</p>` : ''}<div class="cm-chart">${svg}${legend}</div>`;
+    // ---- breakdown panel for the selected team
+    const sel = cur.teams.find(t => t.rid === D.cmSel);
+    if (sel) html += cmPanel(sel, cur, pastMaps);
+    // ---- sortable table
+    const sk = opts.cmSort || 'x', dir = (opts.cmDir || (sk === 'name' ? 'asc' : 'desc')) === 'asc' ? 1 : -1;
+    const rows = cur.teams.slice().sort((a, b) => (sk === 'name' ? dir * team(a.rid).name.localeCompare(team(b.rid).name) : dir * (a[sk] - b[sk])) || a.rid - b.rid);
+    const th = (k, l) => `<th scope="col"${k === 'name' ? ' class="tl"' : ''}><button type="button" class="cm-sort${sk === k ? ' on' : ''}" data-cm-sort="${k}">${l}${sk === k ? (dir < 0 ? ' ▼' : ' ▲') : ''}</button></th>`;
+    html += `<div class="tablewrap cm-tbl"><table><thead><tr>${th('name', 'Team')}<th scope="col">Quadrant</th>${th('x', 'Win-Now')}${th('y', 'Future')}</tr></thead><tbody>
+      ${rows.map(t => { const tm = team(t.rid); return `<tr class="${D.cmSel === t.rid ? 'on' : ''}"><td class="tl"><button type="button" class="tlink" data-cm-team="${t.rid}">${teamBlock(tm, esc(tm.manager || ''))}</button></td>
+        <td><span class="cm-chip q-${t.q}">${CM_QUAD[t.q]}</span></td><td><b>${cmK(t.x)}</b><small>#${t.rx}</small></td><td><b>${cmK(t.y)}</b><small>#${t.ry}</small></td></tr>`; }).join('')}
+      </tbody></table></div>`;
+    return html;
+  }
+  function cmPanel(t, cur, pastMaps){
+    const tm = team(t.rid), n = cur.teams.length;
+    const lineup = t.lineup.map(x => `<li><span class="cm-slot">${esc(SLOT[x.slot] || x.slot)}</span>${x.p ? `<span class="cm-pl">${PL(x.p.id, x.p.nm, 'span')}<small>${esc([x.p.pos, x.p.tm].filter(Boolean).join(' · '))}</small></span><b>${x.p.v ? cmN(x.p.v) : '—'}</b>` : '<span class="cm-pl asset-sub">Empty</span><b>0</b>'}</li>`).join('');
+    const young = t.young.map(p => `<li><span class="cm-slot">${Math.floor(p.age)}</span><span class="cm-pl">${PL(p.id, p.nm, 'span')}<small>${esc([p.pos, p.tm].filter(Boolean).join(' · '))}</small></span><b>${p.v ? cmN(p.v) : '—'}</b></li>`).join('');
+    const picks = t.picks.map(p => `<li><span class="cm-slot">${p.season}</span><span class="cm-pl">${p.slot ? pickLabel(p.round, p.slot) : `${ordinal(p.round)} round`}<small>${p.from !== t.rid ? `from ${esc(team(p.from).name)}` : 'Own pick'}</small></span><b>${cmN(p.v)}</b></li>`).join('');
+    const youngV = t.young.reduce((s, p) => s + p.v, 0), pickV = t.picks.reduce((s, p) => s + p.v, 0);
+    const moves = pastMaps.map(p => { const o = p.m.get(t.rid); if (!o) return ''; const dx = t.x - o.x, dy = t.y - o.y, sg = v => (v >= 0 ? '+' : '−') + cmN(Math.abs(v));
+      return `<span class="cm-move">Since ${esc(cmShort(p.date))}: win-now <b class="${dx >= 0 ? 'up' : 'down'}">${sg(dx)}</b>, future <b class="${dy >= 0 ? 'up' : 'down'}">${sg(dy)}</b>${o.q !== t.q ? ` (was ${CM_QUAD[o.q]})` : ''}</span>`; }).join('');
+    return `<section class="cm-panel" id="cmpanel"><header>${teamBlock(tm, esc(tm.manager || ''))}<span class="cm-chip q-${t.q}">${CM_QUAD[t.q]}</span><button type="button" class="sk-x" data-cm-close aria-label="Close">×</button></header>
+      ${moves ? `<div class="cm-moves">${moves}</div>` : ''}
+      <div class="cm-cols">
+        <div><h3>Win-Now <b>${cmN(t.x)}</b><small>#${t.rx} of ${n}</small></h3><p class="cm-sub">Best starting lineup</p><ul class="cm-list">${lineup}</ul></div>
+        <div><h3>Future <b>${cmN(t.y)}</b><small>#${t.ry} of ${n}</small></h3>
+          <p class="cm-sub">Players 25 and under · ${cmN(youngV)}</p><ul class="cm-list">${young || '<li class="asset-sub">None</li>'}</ul>
+          <p class="cm-sub">Draft picks · ${cmN(pickV)}</p><ul class="cm-list">${picks || '<li class="asset-sub">None</li>'}</ul></div>
+      </div></section>`;
   }
 
   // ---------- Trade Finder (FantasyCalc dynasty values) ----------
@@ -3699,7 +3967,7 @@ footer input{width:min(100%,260px)}
   window.addEventListener('scroll', hideTip, { passive: true });
 
   // ---------- Events ----------
-  $('#app').addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('[data-open-match], [data-player]')) { e.preventDefault(); e.target.click(); } });
+  $('#app').addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('[data-open-match], [data-player], [data-cm-team]')) { e.preventDefault(); e.target.click(); } });
   $('#app').addEventListener('click', e => {
     document.querySelectorAll('.tabgroup.open').forEach(g => { if (!g.contains(e.target)) g.classList.remove('open'); });
     const cpick = e.target.closest('[data-calc-pick]');
@@ -3739,6 +4007,13 @@ footer input{width:min(100%,260px)}
     if (e.target.closest('[data-close-match]')) { morphMatch(D.openMatch && D.openMatch.id, false); return; }
     const plb = e.target.closest('[data-pid]');
     if (plb) { toggleBreakdown(plb); return; }
+    const cmt = e.target.closest('[data-cm-team]');
+    if (cmt) { const rid = Number(cmt.dataset.cmTeam); D.cmSel = D.cmSel === rid && !cmt.closest('.cm-tbl') ? null : rid; render();
+      const pnl = document.getElementById('cmpanel'); if (pnl && (cmt.closest('.cm-tbl') || isPhoneUI())) pnl.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+    if (e.target.closest('[data-cm-close]')) { D.cmSel = null; render(); return; }
+    const cms = e.target.closest('[data-cm-sort]');
+    if (cms) { const k = cms.dataset.cmSort, cur = opts.cmSort || 'x', curDir = opts.cmDir || (cur === 'name' ? 'asc' : 'desc');
+      opts.cmDir = k === cur ? (curDir === 'asc' ? 'desc' : 'asc') : (k === 'name' ? 'asc' : 'desc'); opts.cmSort = k; saveOpts(); render(); return; }
     const mv = e.target.closest('[data-mview]');
     if (mv) { opts.mview = mv.dataset.mview; D.openMatch = null; saveOpts(); render(); return; }
     const tm = e.target.closest('[data-team-match]');
