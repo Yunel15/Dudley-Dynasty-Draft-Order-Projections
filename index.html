@@ -798,6 +798,23 @@ footer input{width:min(100%,260px)}
 .is-phone .cm-tbl th:nth-child(1){width:40%}.is-phone .cm-tbl th:nth-child(2){width:26%}
 .is-phone .cm-tbl td.tl,.is-phone .cm-tbl th.tl{max-width:none;padding-left:8px}
 .is-phone .cm-tbl .av{display:none}.is-phone .cm-chip{font-size:.62rem;padding:2px 6px;white-space:normal;line-height:1.2}
+.cm-key{margin-top:12px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.cm-key h3{margin:0 0 8px;font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.cm-axes{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 12px}.cm-axes div{background:var(--bg);border-radius:8px;padding:8px 10px}
+.cm-axes dt{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em}.cm-axes dd{margin:3px 0 0;font-size:.8rem;color:#C9D0DC;line-height:1.4}
+.cm-keygrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cm-kq{background:var(--bg);border:1px solid var(--line);border-top:3px solid var(--qc);border-radius:8px;padding:10px 12px}
+.cm-kq.q-jug{--qc:#00CEB8}.cm-kq.q-con{--qc:#5AA6FF}.cm-kq.q-reb{--qc:#FFA94D}.cm-kq.q-mid{--qc:#FF8A96}
+.cm-kq header{display:flex;align-items:center;gap:8px}.cm-kq header b{color:var(--qc);font-size:1rem}.cm-kq header small{margin-left:auto;color:var(--muted);font-size:.72rem}
+.cm-sw{width:10px;height:10px;border-radius:50%;background:var(--qc);flex:none}
+.cm-kq .cm-rule{margin:4px 0 4px;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.cm-kq p{margin:0;font-size:.84rem;line-height:1.45;color:#C9D0DC}
+.cm-kteams{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.cm-kteams button{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:3px 9px;font-size:.74rem;font-weight:600;cursor:pointer}
+.cm-kteams button:hover,.cm-kteams button[aria-pressed="true"]{border-color:var(--qc);color:var(--qc)}
+.is-phone .cm-axes{grid-template-columns:1fr;gap:6px}.is-phone .cm-keygrid{grid-template-columns:1fr;gap:8px}
+.is-phone .cm-kq.q-jug{order:1}.is-phone .cm-kq.q-con{order:2}.is-phone .cm-kq.q-reb{order:3}.is-phone .cm-kq.q-mid{order:4}
+.is-phone .cm-key{padding:10px}
 </style>
 </head>
 <body>
@@ -1456,6 +1473,13 @@ footer input{width:min(100%,260px)}
     DL: ['DL', 'DE', 'DT'], LB: ['LB'], DB: ['DB', 'CB', 'S'], IDP_FLEX: ['DL', 'DE', 'DT', 'LB', 'DB', 'CB', 'S']
   };
   const CM_QUAD = { jug: 'Juggernaut', con: 'Contender', reb: 'Rebuilder', mid: 'Stuck in the Middle' };
+  // Key text. Laid out in the same 2×2 positions as the chart: future on top, win-now on the right.
+  const CM_KEY = [
+    ['reb', 'Low win-now · High future', 'Building for later. The starting lineup is below the league median, but young talent and draft capital are above it. Usually a team that sold veterans for youth and picks, and is aiming to peak in a season or two.'],
+    ['jug', 'High win-now · High future', 'Strong now and set up for later. An above-median starting lineup plus above-median youth and picks. The team to beat, this year and in the years ahead.'],
+    ['mid', 'Low win-now · Low future', 'Below the median on both. Not built to win now and short on young players and picks. Usually the team with the clearest reason to pick a direction: buy to compete or sell to rebuild.'],
+    ['con', 'High win-now · Low future', 'Built to win now. An above-median starting lineup, but below-median youth and picks, often after trading future assets for veterans. The window is open, but it may not stay open long.']
+  ];
   const cmK = v => Math.abs(v) >= 1000 ? `${(v / 1000).toFixed(v >= 100000 ? 0 : 1)}k` : String(Math.round(v));
   const cmN = v => Math.round(v).toLocaleString();
   const cmDate = d => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(d || ''); return m ? new Date(+m[1], +m[2] - 1, +m[3]) : null; };
@@ -1629,9 +1653,16 @@ footer input{width:min(100%,260px)}
     svg += dots + '</svg>';
     const legend = past.length ? `<div class="cm-legend"><span class="cm-lt"></span>Trail: ${past.map(p => esc(cmShort(p.date))).join(' → ')} → now</div>` : '';
     html += `${D.cm.liveNote ? `<p class="note">${esc(D.cm.liveNote)}</p>` : ''}<div class="cm-chart">${svg}${legend}</div>`;
+    const keyHtml = `<section class="cm-key" aria-label="Quadrant key"><h3>Key</h3>
+      <dl class="cm-axes"><div><dt>Win-Now Value</dt><dd>Total FantasyCalc value of the team’s best starting lineup.</dd></div><div><dt>Future Value</dt><dd>Total value of players 25 and under, plus every draft pick the team owns.</dd></div>
+        <div><dt>Dashed lines</dt><dd>League median on each axis: ${cmK(cur.mx)} win-now, ${cmK(cur.my)} future.</dd></div></dl>
+      <div class="cm-keygrid">${CM_KEY.map(([q, rule, def]) => { const tms = cur.teams.filter(t => t.q === q).sort((a, b) => (b.x + b.y) - (a.x + a.y));
+        return `<article class="cm-kq q-${q}"><header><span class="cm-sw"></span><b>${CM_QUAD[q]}</b><small>${tms.length} team${tms.length === 1 ? '' : 's'}</small></header><p class="cm-rule">${rule}</p><p>${def}</p>
+          ${tms.length ? `<div class="cm-kteams">${tms.map(t => `<button type="button" data-cm-team="${t.rid}"${D.cmSel === t.rid ? ' aria-pressed="true"' : ''}>${esc(team(t.rid).name)}</button>`).join('')}</div>` : ''}</article>`; }).join('')}</div></section>`;
     // ---- breakdown panel for the selected team
     const sel = cur.teams.find(t => t.rid === D.cmSel);
     if (sel) html += cmPanel(sel, cur, pastMaps);
+    html += keyHtml;
     // ---- sortable table
     const sk = opts.cmSort || 'x', dir = (opts.cmDir || (sk === 'name' ? 'asc' : 'desc')) === 'asc' ? 1 : -1;
     const rows = cur.teams.slice().sort((a, b) => (sk === 'name' ? dir * team(a.rid).name.localeCompare(team(b.rid).name) : dir * (a[sk] - b[sk])) || a.rid - b.rid);
@@ -4008,8 +4039,8 @@ footer input{width:min(100%,260px)}
     const plb = e.target.closest('[data-pid]');
     if (plb) { toggleBreakdown(plb); return; }
     const cmt = e.target.closest('[data-cm-team]');
-    if (cmt) { const rid = Number(cmt.dataset.cmTeam); D.cmSel = D.cmSel === rid && !cmt.closest('.cm-tbl') ? null : rid; render();
-      const pnl = document.getElementById('cmpanel'); if (pnl && (cmt.closest('.cm-tbl') || isPhoneUI())) pnl.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+    if (cmt) { const rid = Number(cmt.dataset.cmTeam); const fromList = !!cmt.closest('.cm-tbl, .cm-key'); D.cmSel = D.cmSel === rid && !fromList ? null : rid; render();
+      const pnl = document.getElementById('cmpanel'); if (pnl && (fromList || isPhoneUI())) pnl.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
     if (e.target.closest('[data-cm-close]')) { D.cmSel = null; render(); return; }
     const cms = e.target.closest('[data-cm-sort]');
     if (cms) { const k = cms.dataset.cmSort, cur = opts.cmSort || 'x', curDir = opts.cmDir || (cur === 'name' ? 'asc' : 'desc');
