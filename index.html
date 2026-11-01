@@ -88,9 +88,9 @@ details.more .controls{margin-top:10px}
 .key{display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--pylon);margin-right:6px;vertical-align:0}
 
 /* Draft board */
-.round h2{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin:26px 0 8px;
+.round h2-old{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin:26px 0 8px;
   font:700 1.55rem/1 "Barlow Condensed","Arial Narrow",sans-serif}
-.round h2 small{font:500 .85rem "Barlow",sans-serif;color:var(--muted)}
+.round h2-old small{font:500 .85rem "Barlow",sans-serif;color:var(--muted)}
 ol.picks{list-style:none;margin:0;padding:0;background:var(--surface);border:1px solid var(--line);border-radius:8px;overflow:hidden}
 .pick{display:grid;grid-template-columns:4.4rem minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 14px;border-top:1px solid var(--line)}
 .pick:first-child{border-top:0}
@@ -875,6 +875,172 @@ footer input{width:min(100%,260px)}
 .is-phone .rv-log th:nth-child(1){width:27%}.is-phone .rv-log th:nth-child(2){width:37%}.is-phone .rv-log th:nth-child(3){width:15%}
 .is-phone .rv-log td.tl,.is-phone .rv-log th.tl{max-width:none;padding-left:8px}
 .is-phone .rv-log td b{display:block}.is-phone .rv-log td span{display:none}
+/* ---------- Page header system (every tab) ----------
+   Spacing scale lives on :root so every tab uses the same rhythm:
+   more space between sections (--space-section) than inside them (--space-stack). */
+:root{
+  --space-xs:4px; --space-sm:8px; --space-md:12px; --space-lg:16px; --space-xl:24px;
+  --space-header:16px;   /* below the page header, before the first section */
+  --space-section:20px;  /* between section cards */
+  --space-stack:12px;    /* between blocks inside a section card */
+  --space-card:16px;     /* padding inside a section card */
+  --radius-card:12px;
+  --section-bg:#19212F;  /* a step lighter than the page, a step darker than item cards */
+}
+.is-phone{ --space-header:12px; --space-section:14px; --space-stack:10px; --space-card:12px; }
+.tabs{margin:var(--space-lg) 0 var(--space-xl)}
+.phead{position:relative;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:var(--space-md) var(--space-lg);
+  padding-bottom:var(--space-md);margin-bottom:var(--space-md);border-bottom:1px solid rgba(0,206,184,.28)}
+.phead::after{content:"";position:absolute;left:0;bottom:-2px;width:56px;height:3px;border-radius:2px;background:var(--accent)}
+.phead-t{min-width:0;flex:1 1 280px}
+.ptitle{margin:0;font-size:24px;line-height:1.2;font-weight:700;color:var(--ink);letter-spacing:-.005em}
+.psub{margin:var(--space-xs) 0 0;font-size:14px;line-height:1.4;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pactions{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:flex-end;gap:var(--space-sm) var(--space-md);flex:0 1 auto;max-width:100%}
+.pactions .controls{margin:0;gap:var(--space-sm) var(--space-md)}
+.pactions details.more{margin:0;flex-basis:100%;text-align:right}.pactions details.more summary{margin-left:auto}
+.pactions details.more[open]{text-align:left}.pactions .mseg{margin:0;min-width:280px}
+.phow{margin:0 0 var(--space-header)}
+.phow summary{cursor:pointer;width:max-content;font-size:.85rem;font-weight:600;color:var(--accent);list-style:none}
+.phow summary::-webkit-details-marker{display:none}
+.phow summary::before{content:"ⓘ";margin-right:6px}
+.phow[open] summary{margin-bottom:var(--space-sm)}
+.phow-b{background:var(--section-bg);border:1px solid var(--line);border-radius:var(--radius-card);padding:var(--space-md) var(--space-lg);max-width:80ch}
+.phow-b p{margin:0;font-size:.86rem;line-height:1.5;color:#C9D0DC}.phow-b p + p{margin-top:var(--space-sm)}.phow-b a{color:var(--accent)}
+.pbody{margin-top:var(--space-header)}
+.sect{background:var(--section-bg);border:1px solid var(--line);border-radius:var(--radius-card);padding:var(--space-card);min-width:0}
+.sect + .sect{margin-top:var(--space-section)}
+.sect > *{margin-top:0}
+.sect > * + *{margin-top:var(--space-stack)}
+.sect > .status{padding:var(--space-xl) 0}
+/* Sub-section headings: one style everywhere (left teal accent) */
+.sh3,.lawh,.feedwk,.tch,.rhead,.rv-sub,.round > h3,.rtitle{font-family:inherit;font-size:18px;line-height:1.25;font-weight:600;color:var(--ink);text-transform:none;letter-spacing:0;
+  border-left:3px solid var(--accent);padding-left:10px}
+.sect > .sh3,.sect > .lawh,.sect > .feedwk{margin:0 0 var(--space-stack)}
+.tch{margin:var(--space-lg) 0 var(--space-sm)}.rhead{margin:var(--space-lg) 0 var(--space-xs)}.rv-sub{margin:var(--space-lg) 0 var(--space-sm)}
+.rhead small{margin-left:6px;font-size:.8rem;font-weight:500;color:var(--muted)}
+.rtitle{margin:0 0 var(--space-xs)}
+.round > h3{display:flex;justify-content:space-between;align-items:baseline;gap:var(--space-md);margin:var(--space-xl) 0 var(--space-sm)}
+.round:first-of-type > h3{margin-top:var(--space-sm)}
+.round > h3 small{font-size:.85rem;font-weight:500;color:var(--muted)}
+.feedwk.livewk{color:var(--ink)}
+.is-phone .phead{flex-direction:column;align-items:stretch}
+.is-phone .phead-t{flex-basis:auto}
+.is-phone .ptitle{font-size:20px}
+.is-phone .pactions{justify-content:flex-start}
+.is-phone .pactions > *{max-width:100%}
+.is-phone .pactions details.more{text-align:left}.is-phone .pactions details.more summary{margin-left:0}
+.is-phone .pactions .mseg{min-width:0;width:100%}
+.is-phone .sh3,.is-phone .lawh,.is-phone .feedwk,.is-phone .tch,.is-phone .rhead,.is-phone .rv-sub,.is-phone .round > h3,.is-phone .rtitle{font-size:16px}
+/* ---------- Journeymen ---------- */
+.flabel{display:block;font-size:.85rem;color:var(--muted);margin-bottom:4px}
+.jm-hls{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-md)}
+.jm-hl{display:flex;flex-direction:column;gap:var(--space-sm);min-width:0;text-align:left;background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--accent);border-radius:10px;padding:var(--space-md);color:var(--ink);font:inherit}
+button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
+.jm-hl .slabel{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--accent)}
+.jm-hlp{display:flex;align-items:center;gap:10px;min-width:0}.jm-hlp b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.jm-hlp small{display:block;color:var(--muted);font-size:.75rem}.jm-hlp > span{min-width:0}
+.jm-hlpair{display:flex;align-items:center;gap:6px;min-width:0}.jm-hlpair .av{width:28px;height:28px;font-size:.62rem}.jm-hlpair b{font-size:.86rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}.jm-hlpair em{font-style:normal;color:var(--muted)}
+.jm-hlv{font-size:.8rem;color:var(--muted);line-height:1.35}
+.jm-head{display:grid;grid-template-columns:32px 36px minmax(0,1fr) 64px 64px 190px;gap:var(--space-md);padding:0 var(--space-md);font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.jm-head span:nth-child(2){grid-column:span 2}.jm-head span:nth-child(3),.jm-head span:nth-child(4){text-align:center}
+.jm-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.jm-row{all:unset;box-sizing:border-box;width:100%;display:grid;grid-template-columns:32px 36px minmax(0,1fr) 64px 64px 190px;align-items:center;gap:var(--space-md);padding:9px var(--space-md);
+  background:var(--surface);border:1px solid var(--line);border-radius:10px;cursor:pointer}
+.jm-row:hover,.jm-row:focus-visible{border-color:var(--accent)}
+.jm-item.open .jm-row{border-color:var(--accent);border-bottom-left-radius:0;border-bottom-right-radius:0}
+.jm-row .hs{width:36px;height:36px}
+.jm-rk{font-weight:800;color:var(--muted);text-align:center}
+.jm-who{min-width:0}.jm-who b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.jm-who small{color:var(--muted);font-size:.75rem}
+.jm-badges{display:inline-flex;flex-wrap:wrap;gap:4px;margin-left:8px;vertical-align:1px}
+.jm-badge{display:inline-block;padding:1px 7px;border-radius:999px;font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
+.jm-badge.never{background:rgba(0,206,184,.15);color:#2DE0C9}.jm-badge.boom{background:rgba(255,169,77,.16);color:#FFC283}
+.jm-num{text-align:center}.jm-num b{display:block;font-size:1.2rem;line-height:1;font-variant-numeric:tabular-nums}.jm-num small{font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.jm-own{display:flex;align-items:center;gap:8px;min-width:0;font-size:.85rem}.jm-own .av{width:26px;height:26px;font-size:.58rem}.jm-own span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.jm-more{margin-top:var(--space-md)}
+.jm-tl{border:1px solid var(--accent);border-top:0;border-radius:0 0 10px 10px;background:var(--bg);padding:var(--space-md)}
+.jm-tl-h{display:flex;justify-content:space-between;align-items:center;gap:var(--space-md);margin-bottom:var(--space-md);font-size:.8rem;color:var(--muted)}
+.jm-path{display:flex;flex-wrap:wrap;align-items:stretch;gap:var(--space-sm)}
+.jm-arrow{align-self:center;color:var(--accent);font-size:1.2rem;font-weight:700}
+.jm-stop{display:flex;flex-direction:column;gap:4px;width:200px;padding:10px;background:var(--surface);border:1px solid var(--line);border-radius:10px}
+.jm-stop.here{border-color:var(--accent);box-shadow:0 0 0 1px rgba(0,206,184,.35)}
+.jm-stop-h{display:flex;align-items:center;gap:8px;min-width:0}.jm-stop-h > div{min-width:0}.jm-stop-h b{display:block;font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.jm-stop-h small{display:block;font-size:.7rem;color:var(--muted)}
+.jm-how{align-self:flex-start;margin-top:2px;padding:2px 8px;border-radius:999px;font-size:.68rem;font-weight:700;background:var(--line);color:var(--ink)}
+.jm-how.h-draft{background:rgba(90,166,255,.18);color:#8DC1FF}.jm-how.h-trade{background:rgba(0,206,184,.16);color:#2DE0C9}.jm-how.h-waiver{background:rgba(255,169,77,.16);color:#FFC283}.jm-how.h-fa{background:rgba(201,208,220,.14);color:#E4E8F0}
+.jm-when{font-size:.75rem;color:#C9D0DC}.jm-stay{font-size:.72rem;color:var(--muted)}
+.jm-ret{margin-top:4px;padding-top:6px;border-top:1px solid var(--line);font-size:.75rem;line-height:1.4;color:#C9D0DC}.jm-retl{display:block;font-style:normal;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.jm-drop{align-self:center;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 10px;border:1px dashed var(--line);border-radius:10px;font-size:.72rem;color:var(--muted);text-align:center;max-width:150px}
+.jm-drop small{font-size:.66rem}
+.is-phone .jm-hls{grid-template-columns:1fr;gap:var(--space-sm)}
+.is-phone .jm-head{display:none}
+.is-phone .jm-row{grid-template-columns:22px 34px minmax(0,1fr) 44px 44px;grid-template-areas:"rk ph who tm mv" "rk ph own own own";row-gap:4px;gap:8px;padding:9px 10px}
+.is-phone .jm-rk{grid-area:rk}.is-phone .jm-row .hs{grid-area:ph;width:34px;height:34px}.is-phone .jm-who{grid-area:who}
+.is-phone .jm-tm{grid-area:tm}.is-phone .jm-mv{grid-area:mv}.is-phone .jm-own{grid-area:own;font-size:.75rem;color:var(--muted)}
+.is-phone .jm-own .av{width:20px;height:20px}
+.is-phone .jm-badges{display:flex;margin:3px 0 0}
+.is-phone .jm-path{flex-direction:column;align-items:stretch}
+.is-phone .jm-stop{width:auto}
+.is-phone .jm-arrow{transform:rotate(90deg);align-self:center;line-height:1}
+.is-phone .jm-drop{align-self:stretch;max-width:none;flex-direction:row;justify-content:center;gap:8px}
+/* ---------- Trading Cards ---------- */
+.tc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:var(--space-lg)}
+.tc{--fc:#8C97AD;--fc2:#5B6478;--glow:rgba(140,151,173,.25);container-type:inline-size;display:flex;flex-direction:column;gap:var(--space-sm);min-width:0}
+.tc-rare{--fc:#00CEB8;--fc2:#0A7F73;--glow:rgba(0,206,184,.35)}
+.tc-epic{--fc:#B37BFF;--fc2:#6A3FC0;--glow:rgba(179,123,255,.38)}
+.tc-legendary{--fc:#F5C451;--fc2:#B8862B;--glow:rgba(245,196,81,.45)}
+.tc-flip{all:unset;display:block;cursor:pointer;perspective:1200px;aspect-ratio:5 / 7;width:100%;border-radius:6cqw}
+.tc-flip:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.tc-inner{position:relative;width:100%;height:100%;transition:transform .55s cubic-bezier(.2,.7,.2,1);transform-style:preserve-3d}
+.tc.flipped .tc-inner{transform:rotateY(180deg)}
+.tc-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:6cqw;padding:3.2cqw;
+  background:linear-gradient(145deg,var(--fc) 0%,var(--fc2) 45%,var(--fc) 100%);box-shadow:0 10px 28px rgba(0,0,0,.45),0 0 0 1px rgba(255,255,255,.08) inset,0 0 26px var(--glow)}
+.tc-back{transform:rotateY(180deg)}
+.tc-frame{position:relative;height:100%;border-radius:4cqw;overflow:hidden;display:flex;flex-direction:column;
+  background:radial-gradient(120% 70% at 50% 0%,#2A3550 0%,#1A2234 55%,#121828 100%);box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+.tc-frame::before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(125deg,rgba(255,255,255,.16) 0%,rgba(255,255,255,0) 32%,rgba(255,255,255,0) 68%,rgba(255,255,255,.07) 100%);z-index:2}
+.tc-top{display:flex;justify-content:space-between;align-items:center;gap:2cqw;padding:3.5cqw 4.5cqw 2cqw;position:relative;z-index:1}
+.tc-tier{font-size:max(5cqw,10px);font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--fc);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tc-no{font-size:max(4.6cqw,10px);font-weight:700;color:#C9D0DC;font-variant-numeric:tabular-nums;white-space:nowrap}
+.tc-art{position:relative;margin:0 4.5cqw;height:46%;border-radius:3cqw;background:linear-gradient(160deg,rgba(255,255,255,.07),rgba(255,255,255,0)),repeating-linear-gradient(45deg,rgba(255,255,255,.025) 0 6px,transparent 6px 12px),#141B2B;
+  border:1px solid rgba(255,255,255,.1);display:grid;place-items:center}
+.tc-av{position:relative;width:52cqw;height:52cqw;border-radius:50%;overflow:hidden;display:grid;place-items:center;background:#1E2638;color:var(--accent);font-size:14cqw;font-weight:800;
+  border:1.4cqw solid var(--fc);box-shadow:0 8px 20px rgba(0,0,0,.5)}
+.tc-av img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.tc-best{position:absolute;right:2.5cqw;bottom:2.5cqw;display:flex;flex-direction:column;align-items:center;gap:.6cqw}
+.tc-bimg{position:relative;width:19cqw;height:19cqw;border-radius:50%;overflow:hidden;background:#26304A;border:.9cqw solid var(--fc)}
+.tc-bimg img{position:absolute;left:-12%;top:2%;width:124%;height:auto}
+.tc-best small{font-size:max(3.4cqw,8px);font-weight:700;color:#fff;background:rgba(0,0,0,.55);padding:.3cqw 1.6cqw;border-radius:999px;max-width:26cqw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tc-nick{margin:4cqw 4.5cqw 0;font-size:7.6cqw;line-height:1.1;font-weight:800;font-style:italic;color:#fff;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;position:relative;z-index:1}
+.tc-name{margin:1.6cqw 4.5cqw 0;font-size:5.6cqw;font-weight:700;color:var(--fc);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tc-team{margin:.8cqw 4.5cqw 0;font-size:max(4.4cqw,10px);color:#C9D0DC;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tc-foot{margin-top:auto;display:flex;justify-content:space-between;gap:2cqw;padding:2.6cqw 4.5cqw;font-size:max(3.6cqw,8.5px);white-space:nowrap;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--fc);
+  background:rgba(0,0,0,.28);border-top:1px solid rgba(255,255,255,.08)}
+.tc-stats{display:grid;grid-template-columns:1fr 1fr;gap:1.4cqw 2.4cqw;margin:0 4cqw;position:relative;z-index:1}
+.tc-stats div{min-width:0;padding:1.4cqw 2cqw;border-radius:2cqw;background:rgba(255,255,255,.05)}
+.tc-stats dt{font-size:max(3.3cqw,8.5px);font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--fc)}
+.tc-stats dd{margin:.4cqw 0 0;font-size:max(4.8cqw,11px);font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tc-report{margin:2.4cqw 4.5cqw 0;font-size:max(4.2cqw,10px);line-height:1.35;font-style:italic;color:#E4E8F0;position:relative;z-index:1}
+.tc-dl{align-self:center;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:7px 14px;font-weight:600;font-size:.82rem;cursor:pointer}
+.tc-dl:hover{border-color:var(--accent);color:var(--accent)}.tc-dl:disabled{opacity:.7;cursor:progress}
+/* Legendary: gold foil shimmer */
+.tc-legendary .tc-face{background:linear-gradient(120deg,#B8862B 0%,#F5C451 22%,#FFF1B8 38%,#E0A93A 52%,#F5C451 70%,#B8862B 100%);background-size:220% 220%;animation:tcFoil 6s ease-in-out infinite}
+.tc-legendary .tc-frame::after{content:"";position:absolute;inset:-40%;pointer-events:none;z-index:3;background:linear-gradient(115deg,transparent 40%,rgba(255,236,170,.22) 48%,rgba(255,255,255,.35) 50%,rgba(255,236,170,.22) 52%,transparent 60%);
+  transform:translateX(-60%);animation:tcShine 4.5s ease-in-out infinite}
+@keyframes tcFoil{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+@keyframes tcShine{0%{transform:translateX(-60%)}55%,100%{transform:translateX(60%)}}
+@media (prefers-reduced-motion:reduce){.tc-legendary .tc-face,.tc-legendary .tc-frame::after{animation:none}.tc-inner{transition:none}}
+.tc-epic .tc-face{background:linear-gradient(145deg,#B37BFF 0%,#6A3FC0 45%,#D2B0FF 100%)}
+/* On Manager Profiles */
+.tc-pwrap{display:flex;justify-content:center;margin:0 0 var(--space-lg)}
+.tc-mini{width:min(230px,100%)}
+/* Phones: one card per row */
+.is-phone .tc-grid{grid-template-columns:minmax(0,340px);justify-content:center}
+/* Export canvas (off screen) */
+.tc-export{position:fixed;left:-12000px;top:0;width:1080px;height:1350px;background:radial-gradient(80% 60% at 50% 30%,#22304A 0%,#141B2B 70%);display:flex;flex-direction:column;align-items:center;padding-top:72px;box-sizing:border-box}
+.tc-exp-card{width:760px}
+.tc-exp{display:block}
+.tc-exp .tc-face{position:relative;inset:auto;transform:none;backface-visibility:visible;width:760px;height:1064px;animation:none}
+.tc-exp .tc-frame::after{display:none}
+.tc-exp-foot{position:absolute;right:44px;bottom:40px;display:flex;align-items:center;gap:16px;font-size:30px;font-weight:700;color:#E4E8F0;letter-spacing:.02em}
+.tc-exp-foot img{width:92px;height:auto}
 </style>
 </head>
 <body>
@@ -959,8 +1125,8 @@ footer input{width:min(100%,260px)}
     opts = Object.assign({ tab:'stand', basis:'standings', type:'linear', tiebreak:'pf-low', rounds:null, season:null }, saved);
   }
   function saveOpts(){
-    const { tab, basis, type, tiebreak, rounds, week, buildTeam, tradeTeam, tfTeam, tfTol, tfStrat, tfPos, tfPicks, mview, mteam, cmSort, cmDir } = opts;
-    store.set('opts:' + leagueId, JSON.stringify({ tab, basis, type, tiebreak, rounds, week, buildTeam, tradeTeam, tfTeam, tfTol, tfStrat, tfPos, tfPicks, mview, mteam, cmSort, cmDir }));
+    const { tab, basis, type, tiebreak, rounds, week, buildTeam, tradeTeam, tfTeam, tfTol, tfStrat, tfPos, tfPicks, mview, mteam, cmSort, cmDir, jmPos, jmType } = opts;
+    store.set('opts:' + leagueId, JSON.stringify({ tab, basis, type, tiebreak, rounds, week, buildTeam, tradeTeam, tfTeam, tfTol, tfStrat, tfPos, tfPicks, mview, mteam, cmSort, cmDir, jmPos, jmType }));
   }
 
   let D = null;
@@ -1294,8 +1460,8 @@ footer input{width:min(100%,260px)}
         ? `${season} season hasn’t started. ${D.ids.length} teams.`
         : `${season} season, ${playedWeeks} of ${totalWeeks} weeks played. ${D.ids.length} teams.`;
 
-    const tabs = [['stand', 'Standings'], ['match', 'Matchups'], ['odds', 'Playoff Odds'], ['bracket', 'Playoff Bracket'], ['order', 'Tankathon'], ['proj', 'Tankathon Projections'], ['news', 'News Feed'], ['pay', 'Payouts'], ['rec', 'League Records'], ['mgr', 'Manager Profiles'], ['rivals', 'Rivalries'], ['build', 'Team Construction'], ['cmap', 'Contender Map'], ['own', 'Pick Ownership'], ['trades', 'Trade History'], ['finder', 'Trade Finder'], ['calc', 'Trade Calculator'], ['laws', 'League Bylaws']];
-    const GROUPS = [{ label: 'Tankathon', keys: ['order', 'proj'] }, { label: 'Playoffs', keys: ['odds', 'bracket'] }, { label: 'Trades', keys: ['trades', 'finder', 'calc'] }];
+    const tabs = [['stand', 'Standings'], ['match', 'Matchups'], ['odds', 'Playoff Odds'], ['bracket', 'Playoff Bracket'], ['order', 'Tankathon'], ['proj', 'Tankathon Projections'], ['news', 'News Feed'], ['pay', 'Payouts'], ['rec', 'League Records'], ['mgr', 'Manager Profiles'], ['cards', 'Trading Cards'], ['rivals', 'Rivalries'], ['build', 'Team Construction'], ['cmap', 'Contender Map'], ['own', 'Pick Ownership'], ['trades', 'Trade History'], ['journey', 'Journeymen'], ['finder', 'Trade Finder'], ['calc', 'Trade Calculator'], ['laws', 'League Bylaws']];
+    const GROUPS = [{ label: 'Tankathon', keys: ['order', 'proj'] }, { label: 'Playoffs', keys: ['odds', 'bracket'] }, { label: 'Trades', keys: ['trades', 'journey', 'finder', 'calc'] }];
     const tabBtn = ([k, l]) => `<button class="tab" role="tab" type="button" data-tab="${k}" aria-selected="${opts.tab === k}">${l}</button>`;
     const menuBtn = ([k, l]) => `<button class="tabopt" role="menuitem" type="button" data-tab="${k}" aria-current="${opts.tab === k}">${l}</button>`;
     let html = `<nav class="tabs" role="tablist">${tabs.map(t => {
@@ -1304,16 +1470,74 @@ footer input{width:min(100%,260px)}
       if (g.keys[0] !== t[0]) return '';
       return `<div class="tabgroup"><button class="tab" type="button" data-group aria-haspopup="menu" aria-expanded="false" aria-selected="${g.keys.includes(opts.tab)}">${g.label} ▾</button><div class="tabmenu" role="menu">${tabs.filter(x => g.keys.includes(x[0])).map(menuBtn).join('')}</div></div>`;
     }).join('')}</nav>`;
-    html += opts.tab === 'rivals' ? renderRivals() : opts.tab === 'cmap' ? renderCmap() : opts.tab === 'stand' ? renderStandings() : opts.tab === 'proj' ? renderProj() : opts.tab === 'odds' ? renderOdds() : opts.tab === 'match' ? renderMatchups() : opts.tab === 'news' ? renderNews() : opts.tab === 'bracket' ? renderBracket() : opts.tab === 'pay' ? renderPayouts() : opts.tab === 'rec' ? renderRecords() : opts.tab === 'mgr' ? renderProfiles() : opts.tab === 'build' ? renderBuild() : opts.tab === 'own' ? renderOwn() : opts.tab === 'trades' ? renderTrades() : opts.tab === 'laws' ? renderBylaws() : opts.tab === 'finder' ? renderFinder() : opts.tab === 'calc' ? renderCalc() : renderOrder();
+    const label = (tabs.find(t => t[0] === opts.tab) || [, ''])[1];
+    html += pageHeader(opts.tab, label) + '<div class="pbody" id="pbody">';
+    html += opts.tab === 'cards' ? renderCards() : opts.tab === 'journey' ? renderJourney() : opts.tab === 'rivals' ? renderRivals() : opts.tab === 'cmap' ? renderCmap() : opts.tab === 'stand' ? renderStandings() : opts.tab === 'proj' ? renderProj() : opts.tab === 'odds' ? renderOdds() : opts.tab === 'match' ? renderMatchups() : opts.tab === 'news' ? renderNews() : opts.tab === 'bracket' ? renderBracket() : opts.tab === 'pay' ? renderPayouts() : opts.tab === 'rec' ? renderRecords() : opts.tab === 'mgr' ? renderProfiles() : opts.tab === 'build' ? renderBuild() : opts.tab === 'own' ? renderOwn() : opts.tab === 'trades' ? renderTrades() : opts.tab === 'laws' ? renderBylaws() : opts.tab === 'finder' ? renderFinder() : opts.tab === 'calc' ? renderCalc() : renderOrder();
     const prevScroll = document.getElementById('wkscroll'), keep = prevScroll ? prevScroll.scrollLeft : null;
+    html += '</div>';
     $('#app').innerHTML = html;
+    tidyPage();
     updatePhoneChrome(tabs);
     if (opts.tab === 'match') { const sc = document.getElementById('wkscroll'); if (sc && keep != null) sc.scrollLeft = keep; centerWeek(keep != null); }
   }
 
+  // ---------- Page headers: one pattern for every tab ----------
+  // Each tab gets: title (h2, matches the tab name) · one-line subtitle · actions row (filters/toggles) · optional "How this works".
+  // Anything a tab renders inside <div class="controls"> at the very top is moved into the actions row automatically.
+  const KEY = '<span class="key"></span>';
+  const TAB_META = {
+    stand: { sub: () => 'Records, streaks and strength of schedule', how: () => `<p>Teams are ranked by record, then points for. Streaks and Last 5 count regular-season games${D.median ? ', including the weekly median game' : ''}. Tap a streak for the week-by-week games, or a result for that matchup.</p><p><b>SOS</b> ranks each schedule by the average points per game of the opponents faced, 1st being the hardest. <span class="sos hard">Red</span> is the toughest third and <span class="sos easy">teal</span> the easiest. <b>Rem. SOS</b> does the same for the rest of the regular season. The small number under each rating is how far above or below the league average those opponents score.</p>` },
+    match: { sub: () => 'Weekly scores, lineups and win odds', how: () => '<p>Tap a matchup to open it full screen. Tap a player’s name for his profile, or his points to see how they were scored.</p><p>Win probability starts from each starter’s projection in this league’s scoring. Finished games count what was scored, live games count current points plus half of what is left of the projection, and the more players still to play, the less certain the odds. It is an estimate, not Sleeper’s own number.</p>' },
+    odds: { sub: () => 'Each team’s chances from simulated seasons', how: () => `<p>Odds come from ${D.sim ? D.sim.sims.toLocaleString() : 'thousands of'} simulations of the rest of the regular season and the playoffs. Each team’s weekly score is modeled from its scoring so far, pulled slightly toward the league average. Seeds go by record, then points for.</p><p>Teams above the line are in the playoff field by odds. 100% means every simulated season, not a mathematical clinch.</p>` },
+    bracket: { sub: () => 'Who plays whom on the way to the title', how: () => '<p>Before the playoffs start, this is the bracket if the season ended today: the top teams by record, with points for as the tiebreaker. Seeds lock when the regular season ends.</p>' },
+    order: { sub: () => `The ${D.draftSeason} rookie draft order`, how: () => `<p>Rookie draft order follows record, lowest first, with points for breaking ties. <b>Standings today</b> uses the current standings; <b>Projected finish</b> uses the average finish from the season simulations.</p><p>${KEY}Highlighted picks are owned by another team.</p>` },
+    proj: { sub: () => `Odds of landing each ${D.draftSeason} pick`, how: () => '<p>Each row shows how often a team lands each pick across the season simulations. Weeks without a set schedule use random pairings.</p>' },
+    news: { sub: () => 'League news, roasts and transaction alerts', how: null },
+    pay: { sub: () => 'Where this season’s prize pool is headed', how: () => '<p>Projected winnings use the Playoff Odds simulations. Net subtracts the buy-in. The all-time money list counts payouts already decided and a buy-in for every season a manager has played, using the current payout structure for every season.</p>' },
+    rec: { sub: () => 'All-time bests and worsts', how: () => '<p>Records use completed regular-season games across every season. Each card shows the current record holder.</p>' },
+    mgr: { sub: () => 'Records, trophies and rivalries for every manager', how: () => '<p>All-time records are regular-season games, including this season so far. Playoff records count winners-bracket games. Season awards are given once a regular season ends, and league-record trophies move when a record is broken.</p>' },
+    cards: { sub: () => 'A collectible card for every manager', how: () => cardsHow() },
+    rivals: { sub: () => 'All-time head-to-head records', how: () => '<p>Records follow each manager across seasons, not the roster slot. Each cell is the row manager’s record against the column manager: teal is winning, red is losing. 🏆 marks pairs that met in the playoffs. Playoff games count the winners bracket only; placement and consolation games are skipped.</p>' },
+    build: { sub: () => 'Roster ages, depth and how players arrived', how: () => '<p>Ages come from Sleeper’s player database. Age rank compares a team’s average age at a position with the rest of the league: #1 is the youngest, and the three youngest and oldest teams are colored. The time beside each player is how long he has been on the roster, from draft and transaction history. Tap a player for his profile.</p>' },
+    cmap: { sub: () => 'Win-now value vs future value', how: () => '<p><b>Win-Now</b> is the FantasyCalc value of each team’s best legal starting lineup (players on IR are left out). <b>Future</b> is the value of players 25 and under plus every draft pick the team owns. The dashed lines are the league medians. Trails show where each team was in earlier nightly snapshots.</p>' },
+    own: { sub: () => `Who owns every pick through ${D.seasons[D.seasons.length - 1] || ''}`, how: () => `<p>${D.draftSeason} picks show their ${seasonDone() ? 'final' : 'current'} slot; later years show the round.</p><p>${KEY}Highlighted picks were acquired in a trade.</p>` },
+    trades: { sub: () => 'Every trade in league history', how: null },
+    journey: { sub: () => 'Players who’ve moved between the most rosters', how: () => journeyHow() },
+    finder: { sub: () => 'Fair trade ideas from dynasty values', how: () => { const f = D.tf && D.tf.f; return `<p>Values from <a href="https://www.fantasycalc.com" target="_blank" rel="noopener noreferrer">FantasyCalc</a>${f ? `, tuned to this league: ${f.sf ? 'superflex' : '1 QB'}, ${f.numTeams} teams, ${f.ppr === 1 ? 'full' : f.ppr === 0.5 ? 'half' : 'no'} PPR, dynasty` : ''}. Suggestions pair teams that each fill a position of need and stay within the fairness range. They are estimates, not verdicts.</p>`; } },
+    calc: { sub: () => 'Compare any two trade packages', how: () => '<p>Pick two teams, add what each side sends, and see who comes out ahead. Values from <a href="https://www.fantasycalc.com" target="_blank" rel="noopener noreferrer">FantasyCalc</a>, tuned to this league. Extra players in a package count for less than their full value, since they cost a roster spot.</p>' },
+    laws: { sub: () => 'The rules every owner agrees to', how: null }
+  };
+  function pageHeader(key, title){
+    const m = TAB_META[key] || {};
+    let sub = '', how = '';
+    try { sub = m.sub ? m.sub() : ''; } catch (e) {}
+    try { how = m.how ? m.how() : ''; } catch (e) {}
+    return `<header class="phead"><div class="phead-t"><h2 class="ptitle">${esc(title)}</h2>${sub ? `<p class="psub">${esc(sub)}</p>` : ''}</div><div class="pactions" id="pactions"></div></header>
+      ${how ? `<details class="phow"${opts.howOpen === key ? ' open' : ''} data-how="${key}"><summary>How this works</summary><div class="phow-b">${how}</div></details>` : ''}`;
+  }
+  // After a tab renders: move its top-level filters into the header's actions row, and group the page into section cards
+  // (a new card starts at each sub-section heading).
+  const SECTION_HEADS = 'h3.sh3, h3.lawh, h3.feedwk';
+  function tidyPage(){
+    const body = document.getElementById('pbody'), act = document.getElementById('pactions');
+    if (!body || !act) return;
+    let el = body.firstElementChild;
+    while (el && el.matches('.controls, .mseg, details.more')) { const next = el.nextElementSibling; act.appendChild(el); el = next; }
+    if (!act.children.length) act.remove();
+    const kids = [...body.children];
+    if (!kids.length) return;
+    const groups = [];
+    kids.forEach(k => { if (!groups.length || k.matches(SECTION_HEADS)) groups.push([]); groups[groups.length - 1].push(k); });
+    body.innerHTML = '';
+    groups.forEach(g => { const s = document.createElement('section'); s.className = 'sect'; g.forEach(k => s.appendChild(k)); body.appendChild(s); });
+  }
+  // Title case for headings: capitalize each word except short joining words (keeps hyphenated words like Single-Week).
+  const SMALL_WORDS = new Set(['a', 'an', 'and', 'as', 'at', 'by', 'for', 'in', 'of', 'on', 'or', 'the', 'to', 'vs']);
+  const titleCase = s => String(s).split(' ').map((w, i) => w.split('-').map(p => (i > 0 && SMALL_WORDS.has(p.toLowerCase())) ? p.toLowerCase() : p.charAt(0).toUpperCase() + p.slice(1)).join('-')).join(' ');
+
   // ---------- Phone navigation: bottom bar, "More" sheet, current-section label ----------
-  const MORE_GROUPS = [['League', ['stand', 'match', 'news', 'pay', 'rec', 'mgr', 'rivals', 'laws']], ['Playoffs', ['odds', 'bracket']], ['Tankathon', ['order', 'proj']],
-    ['Teams', ['build', 'cmap', 'own']], ['Trades', ['trades', 'finder', 'calc']]];
+  const MORE_GROUPS = [['League', ['stand', 'match', 'news', 'pay', 'rec', 'mgr', 'cards', 'rivals', 'laws']], ['Playoffs', ['odds', 'bracket']], ['Tankathon', ['order', 'proj']],
+    ['Teams', ['build', 'cmap', 'own']], ['Trades', ['trades', 'journey', 'finder', 'calc']]];
   let TABS_ALL = [];
   function updatePhoneChrome(tabs){
     TABS_ALL = tabs;
@@ -1332,6 +1556,7 @@ footer input{width:min(100%,260px)}
   function closeSheet(){ const sh = document.getElementById('msheet'); if (!sh || sh.hidden) return; sh.classList.remove('open'); sh.hidden = true; if (!document.getElementById('pcov') && !document.getElementById('skov')) document.body.classList.remove('sk-lock'); }
   function goTab(k){ if (!D) return; opts.tab = k; saveOpts(); closeSheet(); render(); window.scrollTo(0, 0); }
   window.__goTab = goTab;
+  document.addEventListener('toggle', e => { const d = e.target; if (d && d.matches && d.matches('details.phow')) opts.howOpen = d.open ? d.dataset.how : (opts.howOpen === d.dataset.how ? null : opts.howOpen); }, true);
   document.addEventListener('click', e => {
     const g = e.target.closest && e.target.closest('#mnav [data-go], #msheet [data-go]'); if (g) { goTab(g.dataset.go); return; }
     if (e.target.closest && e.target.closest('#mnav [data-more]')) { openSheet(); return; }
@@ -1437,7 +1662,7 @@ footer input{width:min(100%,260px)}
     const hot = top(D.ids, r => sN(r, 'W')), cold = top(D.ids, r => sN(r, 'L'));
     const bestW = top(D.ids, r => info.get(r).bestW), bestL = top(D.ids, r => info.get(r).bestL);
     const card = (label, x, unit, cls) => `<div class="scard ${cls}"><span class="slabel">${label}</span>${x ? `${teamBlock(team(x.r), '')}<b>${x.v} ${unit}</b>` : '<span class="asset-sub">None yet</span>'}</div>`;
-    let html = `<h2 class="sech">League Standings</h2>`;
+    let html = '';
     const sos = sosData(info);
     if (!any) return html + '<p class="note">Standings appear once the season starts.</p>';
     html += `<div class="scards">${card('Longest active win streak', hot, 'wins', 'good')}${card('Longest active losing streak', cold, 'losses', 'bad')}${card('Best win streak this season', bestW, 'wins', 'good')}${card('Worst losing streak this season', bestL, 'losses', 'bad')}</div>`;
@@ -1514,11 +1739,11 @@ footer input{width:min(100%,260px)}
   ];
   function renderBylaws(){
     const kv = [['Effective date', '8/5/2026'], ['Commissioner', 'Yunel Dudley'], ['Co-commissioner', 'Geno'], ['Teams', '12'], ['Platform', 'Sleeper']];
-    let html = `<h2 class="sech">League Bylaws</h2>
+    let html = `
       <div class="lawbar"><a class="btn lawdl" href="League_Bylaws.pdf" download="Dudley_Dynasty_League_Bylaws.pdf">Download the bylaws (PDF)</a>
       <span class="lawmeta">${kv.map(([k, v]) => `<span><b>${esc(v)}</b> ${esc(k)}</span>`).join('')}</span></div>
-      <h3 class="lawh">The short version</h3><ul class="lawsum">${BYLAWS.map(a => `<li><b>${esc(a.t)}:</b> ${esc(a.sum)}</li>`).join('')}</ul>
-      <h3 class="lawh">The full rules</h3>`;
+      <h3 class="lawh">The Short Version</h3><ul class="lawsum">${BYLAWS.map(a => `<li><b>${esc(a.t)}:</b> ${esc(a.sum)}</li>`).join('')}</ul>
+      <h3 class="lawh">The Full Rules</h3>`;
     html += BYLAWS.map(a => `<details class="law"><summary><span class="lawn">Article ${a.n}</span> ${esc(a.t)}</summary><ol>${a.r.map(([k, v]) => `<li><b>${esc(k)}:</b> ${esc(v)}</li>`).join('')}</ol></details>`).join('');
     html += '<p class="note">By joining or remaining in Dudley Dynasty each owner agrees to abide by these bylaws.</p>';
     return html;
@@ -1648,7 +1873,7 @@ footer input{width:min(100%,260px)}
   }
 
   function renderCmap(){
-    let html = '<h2 class="sech">Contender Map</h2>';
+    let html = '';
     if (!D.cm) { loadCmap(); return html + '<p class="status">Loading values and rosters…</p>'; }
     if (D.cm.error) return html + `<div class="error"><strong>${esc(D.cm.error)}</strong></div>`;
     const cur = cmCurrent();
@@ -1853,17 +2078,17 @@ footer input{width:min(100%,260px)}
   }
 
   function renderFinder(){
-    if (!D.tf) { loadFinder(); return '<h2 class="sech">Trade Finder</h2><p class="status">Loading dynasty values from FantasyCalc…</p>'; }
-    if (D.tf.error) return `<h2 class="sech">Trade Finder</h2><div class="error"><strong>${esc(D.tf.error)}</strong></div>`;
+    if (!D.tf) { loadFinder(); return '<p class="status">Loading dynasty values from FantasyCalc…</p>'; }
+    if (D.tf.error) return `<div class="error"><strong>${esc(D.tf.error)}</strong></div>`;
     const model = finderModel();
     const ids = [...model.teams.keys()];
-    if (!ids.length) return '<h2 class="sech">Trade Finder</h2><p class="note">Rosters are empty so far.</p>';
+    if (!ids.length) return '<p class="note">Rosters are empty so far.</p>';
     const me = ids.includes(opts.tfTeam) ? opts.tfTeam : ids[0];
     const tolPct = opts.tfTol || 10, tol = tolPct / 100;
     const f = D.tf.f;
     const teamOpts = ids.map(r => `<option value="${r}" ${r === me ? 'selected' : ''}>${esc(team(r).name)}</option>`).join('');
     const tolOpts = [[5, 'Very even (5%)'], [10, 'Close (10%)'], [20, 'Loose (20%)']].map(([v, l]) => `<option value="${v}" ${v === tolPct ? 'selected' : ''}>${l}</option>`).join('');
-    let html = `<h2 class="sech">Trade Finder</h2>
+    let html = `
       <div class="controls"><label class="field">Your team<select data-opt="tfTeam">${teamOpts}</select></label><label class="field">Fairness<select data-opt="tfTol">${tolOpts}</select></label>
         <label class="field">Strategy<select data-opt="tfStrat">${[['balanced', 'Balanced'], ['contend', 'Contend now'], ['rebuild', 'Rebuild']].map(([v, l]) => `<option value="${v}" ${(opts.tfStrat || 'balanced') === v ? 'selected' : ''}>${l}</option>`).join('')}</select></label>
         <label class="field">Target position<select data-opt="tfPos">${[['', 'Any'], ...model.POS.map(x => [x, x])].map(([v, l]) => `<option value="${v}" ${(opts.tfPos || '') === v ? 'selected' : ''}>${l}</option>`).join('')}</select></label>
@@ -1884,10 +2109,10 @@ footer input{width:min(100%,260px)}
 
   // ---------- Trade Calculator ----------
   function renderCalc(){
-    if (!D.tf) { loadFinder(); return '<h2 class="sech">Trade Calculator</h2><p class="status">Loading dynasty values from FantasyCalc…</p>'; }
-    if (D.tf.error) return `<h2 class="sech">Trade Calculator</h2><div class="error"><strong>${esc(D.tf.error)}</strong></div>`;
+    if (!D.tf) { loadFinder(); return '<p class="status">Loading dynasty values from FantasyCalc…</p>'; }
+    if (D.tf.error) return `<div class="error"><strong>${esc(D.tf.error)}</strong></div>`;
     const model = finderModel(), ids = [...model.teams.keys()];
-    if (ids.length < 2) return '<h2 class="sech">Trade Calculator</h2><p class="note">Rosters are empty so far.</p>';
+    if (ids.length < 2) return '<p class="note">Rosters are empty so far.</p>';
     if (!D.calc) D.calc = { a: { rid: ids[0], items: [], st: 'balanced' }, b: { rid: ids[1], items: [], st: 'balanced' } };
     const C = D.calc;
     ['a', 'b'].forEach(k => { if (!model.teams.has(C[k].rid)) C[k] = { rid: ids[k === 'a' ? 0 : 1], items: [], st: 'balanced' }; });
@@ -1904,7 +2129,7 @@ footer input{width:min(100%,260px)}
         <div class="csearch"><input type="search" class="cadd" data-calc-search="${k}" placeholder="Search ${esc(team(C[k].rid).name)}’s players or picks…" aria-label="Search players or picks" autocomplete="off"><ul class="csug" data-sug="${k}" hidden></ul></div>
         <ul class="clist">${items}</ul><div class="tfsum">Raw value <b>${Math.round(list.reduce((x, a) => x + a.v, 0)).toLocaleString()}</b></div></div>`;
     };
-    let html = `<h2 class="sech">Trade Calculator</h2>
+    let html = `
       
       <div class="ccols">${sideHtml('a', A)}${sideHtml('b', B)}</div>`;
     if (D.calcFocus) { const k = D.calcFocus; D.calcFocus = null; setTimeout(() => { const i = document.querySelector(`[data-calc-search="${k}"]`); if (i) i.focus(); }, 0); }
@@ -1940,7 +2165,7 @@ footer input{width:min(100%,260px)}
       for (let r = 1; r <= opts.rounds; r++) {
         const slots = (opts.type === 'snake' && r % 2 === 0) ? order.slice().reverse() : order;
         const tradedCount = slots.filter(o => ownerOf(y, r, o) !== o).length;
-        html += `<section class="round"><h2>Round ${r}<small>${tradedCount ? `${tradedCount} traded` : 'No trades'}</small></h2><ol class="picks">`;
+        html += `<section class="round"><h3>Round ${r}<small>${tradedCount ? `${tradedCount} Traded` : 'No Trades'}</small></h3><ol class="picks">`;
         slots.forEach((orig, i) => {
           const t = team(orig), owner = ownerOf(y, r, orig), traded = owner !== orig;
           let meta = `${record(t)}, ${pfTxt(t)} PF`;
@@ -1955,7 +2180,7 @@ footer input{width:min(100%,260px)}
       const byName = D.ids.slice().sort((a, b) => team(a).name.localeCompare(team(b).name));
       for (let r = 1; r <= opts.rounds; r++) {
         const tradedCount = byName.filter(o => ownerOf(y, r, o) !== o).length;
-        html += `<section class="round"><h2>Round ${r}<small>${tradedCount ? `${tradedCount} traded` : 'No trades'}</small></h2><ol class="picks">`;
+        html += `<section class="round"><h3>Round ${r}<small>${tradedCount ? `${tradedCount} Traded` : 'No Trades'}</small></h3><ol class="picks">`;
         byName.forEach(orig => {
           const owner = ownerOf(y, r, orig), traded = owner !== orig;
           html += `<li class="pick future${traded ? ' traded' : ''}"><span class="pno">${ordinal(r)}</span>${teamBlock(team(orig), '')}
@@ -2128,7 +2353,7 @@ footer input{width:min(100%,260px)}
     cards.forEach(c => {
       if (!c.rows.length) return;
       const first = c.rows[0];
-      html += `<article class="rcard"><h3>${esc(c.title)}</h3><div class="rval">${esc(first.val)}</div>
+      html += `<article class="rcard"><h3>${esc(titleCase(c.title))}</h3><div class="rval">${esc(first.val)}</div>
         <div class="rwho">${esc(first.who)}</div><div class="rwhen">${esc(first.when)}</div>
       </article>`;
     });
@@ -2555,7 +2780,7 @@ footer input{width:min(100%,260px)}
     let html = `<div class="feed">`;
     let lastWeek = null;
     const liveList = D.live || [];
-    if (liveList.length) html += `<h3 class="feedwk livewk"><span class="livedot"></span>Just in</h3>`;
+    if (liveList.length) html += `<h3 class="feedwk livewk"><span class="livedot"></span>Just In</h3>`;
     liveList.concat(posts).forEach(p => {
       if (!p.live && p.week !== lastWeek) { html += `<h3 class="feedwk">Week ${p.week}</h3>`; lastWeek = p.week; }
       const h = hashStr(p.key);
@@ -2828,8 +3053,8 @@ footer input{width:min(100%,260px)}
         <span class="wk-n">Week ${i}</span><span class="wk-d">${ranges && ranges[i] ? esc(ranges[i]) : '&nbsp;'}</span>${tag ? `<span class="wk-t">${tag}</span>` : ''}</button>`);
     }
     const seg = `<div class="mseg" role="tablist" aria-label="Matchups view"><button type="button" role="tab" data-mview="week" aria-selected="${opts.mview !== 'team'}">By week</button><button type="button" role="tab" data-mview="team" aria-selected="${opts.mview === 'team'}">Team schedule</button></div>`;
-    if (opts.mview === 'team') return `<div class="wkhead"><h2 class="wktitle">Schedule <u>${D.season}</u></h2></div>${seg}` + renderTeamSched(ranges);
-    let html = `<div class="wkhead"><h2 class="wktitle">Matchups <u>${D.season}</u></h2></div>${seg}
+    if (opts.mview === 'team') return seg + renderTeamSched(ranges);
+    let html = `${seg}
       <div class="wkstrip"><button class="wkarrow" type="button" data-week-step="-1" ${w <= D.startWeek ? 'disabled' : ''} aria-label="Previous week">‹</button>
         <div class="wkscroll" id="wkscroll" role="tablist" aria-label="Weeks">${items.join('')}</div>
         <button class="wkarrow" type="button" data-week-step="1" ${w >= lastWeek ? 'disabled' : ''} aria-label="Next week">›</button></div>`;
@@ -3115,7 +3340,7 @@ footer input{width:min(100%,260px)}
         status = '<div class="payodds">To be decided</div>';
       }
       html += `<article class="paycard${cur[p.key] != null ? ' decided' : ''}"><div class="payhead"><span class="payamt">${usd(p.amount)}</span><span class="paypct">${p.pct}% of pot</span></div>
-        <h3>${p.label}</h3>${status}</article>`;
+        <h3>${titleCase(p.label)}</h3>${status}</article>`;
     });
     html += '</div>';
 
@@ -3135,7 +3360,7 @@ footer input{width:min(100%,260px)}
         cash = 1 - (1 - champish) * (1 - thirdP) * (1 - ptsP);
         return { rid, e, cash: Math.min(1, cash) };
       }).sort((a, b) => b.e - a.e);
-      html += `<h2 class="sech">Projected ${D.season} winnings</h2>
+      html += `<h3 class="sh3">Projected ${D.season} Winnings</h3>
         
         <div class="tablewrap"><table><thead><tr><th class="tl" scope="col">Team</th><th scope="col">Record</th><th scope="col">Chance to cash</th><th scope="col">Expected payout</th><th scope="col">Expected net</th></tr></thead><tbody>
         ${ev.map(x => `<tr><td class="tl">${teamBlock(team(x.rid), '')}</td><td>${record(team(x.rid))}</td><td>${pct(x.cash)}</td>
@@ -3144,7 +3369,7 @@ footer input{width:min(100%,260px)}
     }
 
     // All-time money list
-    html += `<h2 class="sech">All-time money list</h2>`;
+    html += `<h3 class="sh3">All-Time Money List</h3>`;
     if (!D.money) return html + '<p class="status">Loading league history…</p>';
     if (D.money.error) return html + `<div class="error"><strong>${esc(D.money.error)}</strong><br>Try Refresh.</div>`;
     html += `
@@ -3195,7 +3420,7 @@ footer input{width:min(100%,260px)}
 
   // Who has held each player the longest, from draft picks and transactions across every season
   async function loadAcquisitions(hist){
-    const holder = new Map(), log = new Map();
+    const holder = new Map(), log = new Map(), trades = [];
     const oldest = hist.length ? hist[hist.length - 1].season : null;
     const note = (pid, e) => { if (!log.has(pid)) log.set(pid, []); log.get(pid).push(e); };
     for (const L of hist.slice().reverse()) {
@@ -3221,10 +3446,18 @@ footer input{width:min(100%,260px)}
         const ts = t.status_updated || t.created || 0;
         Object.entries(t.adds || {}).forEach(([pid, rid]) => { if (ownerOfRid.has(rid)) ev.push({ ts, ord: 0, kind: 'add', pid, owner: ownerOfRid.get(rid) }); });
         const how = t.type === 'trade' ? 'trade' : t.type === 'waiver' ? 'waiver' : t.type === 'free_agent' ? 'fa' : 'commish';
+        if (how === 'trade') trades.push({ ts, season: L.season, week: t.leg, id: t.transaction_id, owners: [...new Set((t.roster_ids || []).map(r => ownerOfRid.get(r)).filter(Boolean))] });
         Object.entries(t.adds || {}).forEach(([pid, rid]) => {
           if (!ownerOfRid.has(rid)) return;
           const fromRid = (t.drops || {})[pid];
-          note(pid, { ts, ord: 1, how, to: ownerOfRid.get(rid), from: fromRid != null && ownerOfRid.has(fromRid) ? ownerOfRid.get(fromRid) : null, bid: Number((t.settings || {}).waiver_bid) || 0, week: t.leg, season: L.season });
+          // For trades, keep what the old team got back from the new team in the same deal.
+          let ret = null;
+          if (how === 'trade' && fromRid != null) ret = {
+            players: Object.entries(t.adds || {}).filter(([p, r]) => r === fromRid && (t.drops || {})[p] === rid).map(([p]) => p),
+            picks: (t.draft_picks || []).filter(dp => dp.owner_id === fromRid && dp.previous_owner_id === rid).map(dp => ({ season: dp.season, round: dp.round, orig: ownerOfRid.get(dp.roster_id) || null })),
+            faab: (t.waiver_budget || []).filter(w => w.sender === rid && w.receiver === fromRid).reduce((a, w) => a + (Number(w.amount) || 0), 0)
+          };
+          note(pid, { ts, ord: 1, how, to: ownerOfRid.get(rid), from: fromRid != null && ownerOfRid.has(fromRid) ? ownerOfRid.get(fromRid) : null, bid: Number((t.settings || {}).waiver_bid) || 0, week: t.leg, season: L.season, ret, tx: t.transaction_id });
         });
         if (t.type !== 'trade') Object.entries(t.drops || {}).forEach(([pid, rid]) => {
           if (ownerOfRid.has(rid)) note(pid, { ts, ord: 0, how: 'drop', from: ownerOfRid.get(rid), week: t.leg, season: L.season });
@@ -3239,6 +3472,7 @@ footer input{width:min(100%,260px)}
     }
     log.forEach(list => list.sort((a, b) => (a.ts - b.ts) || (a.ord - b.ord)));
     holder.log = log;
+    holder.trades = trades;
     return holder;
   }
 
@@ -3356,9 +3590,9 @@ footer input{width:min(100%,260px)}
           <div class="asset-sub">On this roster since ${new Date(t.tenured.ts).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' })} (${durTxt(Date.now() - t.tenured.ts)})</div></div>`
           : '<div class="tempty">Not available yet</div>'}
       </article>
-      <article class="bcard"><h2 class="rtitle">Current roster</h2>${nflF ? `<div class="fbar">Showing <b>${esc(nflF)}</b> players only <button type="button" class="linkbtn" data-nfl="${esc(nflF)}">Clear filter</button></div>` : ''}${posF ? `<div class="fbar">Showing <b>${esc(posF)}</b>s only <button type="button" class="linkbtn" data-pos-filter="${esc(posF)}">Clear filter</button></div>` : ''}
+      <article class="bcard"><h3 class="rtitle">Current Roster</h3>${nflF ? `<div class="fbar">Showing <b>${esc(nflF)}</b> players only <button type="button" class="linkbtn" data-nfl="${esc(nflF)}">Clear filter</button></div>` : ''}${posF ? `<div class="fbar">Showing <b>${esc(posF)}</b>s only <button type="button" class="linkbtn" data-pos-filter="${esc(posF)}">Clear filter</button></div>` : ''}
         ${group('Starters', startRows, startItems.length)}${group('Bench', bench.map(p => row(p, p.pos || '')).join(''), bench.length)}
-        ${group('Injured reserve', irList.map(p => row(p, p.pos || '')).join(''), irList.length)}${group('Taxi squad', taxiList.map(p => row(p, p.pos || '')).join(''), taxiList.length)}
+        ${group('Injured Reserve', irList.map(p => row(p, p.pos || '')).join(''), irList.length)}${group('Taxi Squad', taxiList.map(p => row(p, p.pos || '')).join(''), taxiList.length)}
       </article></div>`;
     return html;
   }
@@ -3501,7 +3735,7 @@ footer input{width:min(100%,260px)}
   }
 
   function renderRivals(){
-    let html = '<h2 class="sech">Rivalries</h2>';
+    let html = '';
     if (!D.rv) { loadRivals(); return html + '<p class="status">Loading every season’s matchups from Sleeper…</p>'; }
     if (D.rv.error) return html + `<div class="error"><strong>${esc(D.rv.error)}</strong><br>Try Refresh.</div>`;
     const M = rvManagers(), byKey = new Map(M.map(m => [m.key, m]));
@@ -3527,10 +3761,10 @@ footer input{width:min(100%,260px)}
       // ---- phone: pick a matchup
       const a = (D.rvRow && byKey.get(D.rvRow)) ? D.rvRow : sel ? sel[0] : M[0].key, b = sel && sel[0] === a ? sel[1] : '';
       const opt = (cur, skip, blank) => (blank ? `<option value="">${blank}</option>` : '') + M.filter(m => m.key !== skip).map(m => `<option value="${esc(m.key)}" ${m.key === cur ? 'selected' : ''}>${esc(m.name)}</option>`).join('');
-      html += `<div class="rv-pick"><h3>Pick a matchup</h3><div class="rv-pickrow"><select data-rv-a aria-label="Manager">${opt(a, null)}</select><span>vs</span><select data-rv-b aria-label="Opponent">${opt(b, a, 'Opponent…')}</select></div></div>`;
+      html += `<div class="rv-pick"><h3>Pick a Matchup</h3><div class="rv-pickrow"><select data-rv-a aria-label="Manager">${opt(a, null)}</select><span>vs</span><select data-rv-b aria-label="Opponent">${opt(b, a, 'Opponent…')}</select></div></div>`;
       if (b) html += rvPanel(rvStats(a, b), byKey);
       const me = byKey.get(a);
-      html += `<h3 class="rv-sub">${esc(me.name)} vs everyone</h3><div class="rv-list">${M.filter(m => m.key !== a).map(m => { const s = rvStats(a, m.key);
+      html += `<h3 class="rv-sub">${esc(me.name)} vs Everyone</h3><div class="rv-list">${M.filter(m => m.key !== a).map(m => { const s = rvStats(a, m.key);
         const cls = !s.n || Math.abs(s.pct - 0.5) < 1e-9 ? 'even' : s.pct > 0.5 ? 'win' : 'loss';
         return `<button type="button" class="rv-li ${cls}${m.key === b ? ' on' : ''}" data-rv-pair="${esc(a)}|${esc(m.key)}">${teamBlock({ ...m.t, name: m.name }, esc(m.t.name))}<span class="rv-li-rec">${s.n ? rvRec(s) : '—'}${s.po ? '<i class="rv-po" title="Met in the playoffs">🏆</i>' : ''}</span><span class="ts-go">›</span></button>`; }).join('')}</div>`;
       return html;
@@ -3574,7 +3808,7 @@ footer input{width:min(100%,260px)}
         ${stat('Biggest blowout', g1(s.blowout))}
         ${stat('Closest game', g1(s.closest))}
       </dl>
-      <h3 class="rv-sub">Game log</h3>
+      <h3 class="rv-sub">Game Log</h3>
       <div class="tablewrap rv-log"><table><thead><tr><th class="tl" scope="col">Season</th><th scope="col">Score</th><th scope="col">Margin</th><th scope="col">Winner</th></tr></thead><tbody>${rows}</tbody></table></div></section>`;
   }
   // Small Rivalries block for a Manager Profiles card.
@@ -3595,6 +3829,306 @@ footer input{width:min(100%,260px)}
     render();
     const el = pair ? document.getElementById('rvpanel') : (!isPhoneUI() && row ? document.getElementById(`rvrow-${row}`) : null);
     if (el) el.scrollIntoView({ behavior: 'smooth', block: pair ? 'start' : 'center' }); else window.scrollTo(0, 0);
+  }
+
+  // ---------- Journeymen: players who have moved between the most rosters ----------
+  // Uses the same all-season draft + transaction history as Team Construction (loadAcquisitions), tracked by owner user_id.
+  const JM_HOW = { draft: 'Drafted', trade: 'Trade', waiver: 'Waivers', fa: 'Free Agent', commish: 'Commissioner' };
+  function journeyHow(){
+    return '<p>Every draft, trade, waiver claim and free-agent pickup in league history counts, across all seasons, and each manager is tracked by account so his teams stay together across seasons. A player <b>moves</b> when he lands on a new manager’s roster; his first stop (usually the startup draft) is not a move. Drops show in the timeline but are not moves, and being re-added by the same manager is not a move either.</p><p>Ranked by the number of different teams, then total moves. <b>Trades only</b> counts trades and the teams on either side of them. <span class="jm-badge never">Never Moved</span> is still on the roster that drafted him in the startup draft. <span class="jm-badge boom">Boomerang</span> came back to a team he had left.</p>';
+  }
+  async function loadJourney(){
+    if (!D || D.jm || D.jmLoading) return;
+    const myD = D; myD.jmLoading = true;
+    try {
+      const hist = await loadHistory();
+      if (!myD.build) { loadBuild(); await new Promise(res => { const t0 = Date.now(), iv = setInterval(() => { if (myD.build || Date.now() - t0 > 90000) { clearInterval(iv); res(); } }, 300); }); }
+      if (!myD.build || myD.build.error || !myD.build.holder || !myD.build.holder.log) throw new Error((myD.build && myD.build.error) || 'Couldn’t load transactions from Sleeper.');
+      const holder = myD.build.holder;
+      // Names and avatars for every manager who has owned a roster, newest season first.
+      const owners = new Map();
+      hist.slice().sort((a, b) => b.season - a.season).forEach(L => {
+        const ub = new Map((L.users || []).map(u => [u.user_id, u]));
+        L.rosters.forEach(r => { const k = r.owner_id || `${L.id}-${r.roster_id}`; if (owners.has(k)) return;
+          const t = L.teamOf(r.roster_id) || {}, u = ub.get(r.owner_id) || {};
+          owners.set(k, { name: t.name || u.display_name || 'Former team', manager: t.manager || u.display_name || '', avatar: t.avatar || null, current: !!L.current }); });
+      });
+      const info = await playerInfoFor([...holder.log.keys()]);
+      myD.jm = { owners, info, holder };
+    } catch (e) {
+      myD.jm = { error: e.message || 'Couldn’t load transactions from Sleeper.' };
+    } finally {
+      myD.jmLoading = false;
+      if (D === myD && opts.tab === 'journey') render();
+    }
+  }
+  const jmOwner = k => (D.jm && D.jm.owners.get(k)) || { name: 'Former team', manager: '', avatar: null };
+  // One player's stops in order, plus drop markers, from his event log.
+  function jmPath(pid){
+    const evs = (D.jm.holder.log.get(pid) || []).slice().sort((a, b) => (a.ts - b.ts) || (a.ord - b.ord));
+    const stops = [], items = [];
+    let cur = null;
+    evs.forEach(e => {
+      if (e.how === 'drop') {
+        if (cur && !cur.end && cur.owner === e.from) { cur.end = e.ts; items.push({ kind: 'drop', from: e.from, ts: e.ts, week: e.week, season: e.season }); }
+        return;
+      }
+      if (cur && cur.owner === e.to) { if (cur.end) { cur.end = null; items.push({ kind: 'readd', to: e.to, ts: e.ts }); } return; }
+      if (cur && !cur.end) cur.end = e.ts;
+      const st = { kind: 'stop', owner: e.to, how: e.how, ts: e.ts, week: e.week, season: e.season, first: !stops.length, from: e.from, bid: e.bid, ret: e.ret,
+        startup: e.how === 'draft' && /startup/.test(e.draft || ''), draft: e.draft, round: e.round, slot: e.slot, no: e.no, end: null };
+      stops.push(st); items.push(st); cur = st;
+    });
+    const h = D.jm.holder.get(pid);
+    const owner = h ? h.owner : null;
+    const trades = stops.filter(s => s.how === 'trade');
+    const boomerang = stops.some((s, i) => i > 0 && stops.slice(0, i).some(p => p.owner === s.owner));
+    const never = stops.length === 1 && stops[0].startup && !stops[0].end && owner === stops[0].owner;
+    const tradeTeams = new Set(trades.flatMap(s => [s.owner, s.from].filter(Boolean)));
+    return { pid, stops, items, owner, trades: trades.length, moves: stops.filter(s => !s.first).length, teams: new Set(stops.map(s => s.owner)).size,
+      tradeTeams: tradeTeams.size, boomerang, never };
+  }
+  function jmAll(){
+    if (D.jm.list) return D.jm.list;
+    D.jm.list = [...D.jm.holder.log.keys()].map(jmPath).filter(p => p.stops.length);
+    return D.jm.list;
+  }
+  const jmName = pid => { const i = D.jm.info[pid] || {}; return i.n || (pname(pid) || {}).nm || `Player ${pid}`; };
+  const jmDate = ts => ts ? new Date(ts).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' }) : '';
+
+  function renderJourney(){
+    if (!D.jm) { loadJourney(); return '<p class="status">Loading every season’s transactions from Sleeper…</p>'; }
+    if (D.jm.error) return `<div class="error"><strong>${esc(D.jm.error)}</strong><br>Try Refresh.</div>`;
+    const all = jmAll();
+    const pos = opts.jmPos || 'ALL', tradesOnly = opts.jmType === 'trades';
+    const posOpts = [['ALL', 'All positions'], ['QB', 'QB'], ['RB', 'RB'], ['WR', 'WR'], ['TE', 'TE']].map(([v, l]) => `<option value="${v}" ${pos === v ? 'selected' : ''}>${l}</option>`).join('');
+    let html = `<div class="controls"><label class="field">Position<select data-opt="jmPos">${posOpts}</select></label>
+      <div class="field"><span class="flabel">Moves</span><div class="seg" role="group" aria-label="Move type"><button type="button" data-jm-type="all" aria-pressed="${!tradesOnly}">All moves</button><button type="button" data-jm-type="trades" aria-pressed="${tradesOnly}">Trades only</button></div></div></div>`;
+    if (!all.length) return html + '<p class="note">No draft or transaction history yet.</p>';
+    // ---- highlights
+    const mostTraded = all.filter(p => p.trades).sort((a, b) => b.trades - a.trades || b.teams - a.teams || a.stops[0].ts - b.stops[0].ts)[0];
+    const pairCount = new Map();
+    (D.jm.holder.trades || []).forEach(t => { const o = t.owners; for (let i = 0; i < o.length; i++) for (let j = i + 1; j < o.length; j++) { const k = [o[i], o[j]].sort().join('|'); pairCount.set(k, (pairCount.get(k) || 0) + 1); } });
+    const topPair = [...pairCount.entries()].sort((a, b) => b[1] - a[1])[0];
+    const tenured = all.filter(p => p.never).sort((a, b) => a.stops[0].ts - b.stops[0].ts || (a.stops[0].no || 999) - (b.stops[0].no || 999))[0];
+    const pInfo = pid => { const i = D.jm.info[pid] || {}; return { pos: i.pos || '', tm: i.t || '' }; };
+    const hlPlayer = (label, p, line) => { if (!p) return `<article class="jm-hl"><span class="slabel">${label}</span><p class="tempty">Nobody yet.</p></article>`;
+      const i = pInfo(p.pid); return `<button type="button" class="jm-hl" data-jm="${esc(p.pid)}"><span class="slabel">${label}</span><span class="jm-hlp">${shot(p.pid, i.pos, i.tm, jmName(p.pid))}<span><b>${esc(jmName(p.pid))}</b><small>${esc([i.pos, i.tm || 'FA'].filter(Boolean).join(' · '))}</small></span></span><span class="jm-hlv">${line}</span></button>`; };
+    const pairCard = () => { if (!topPair) return `<article class="jm-hl"><span class="slabel">Most Active Trade Partners</span><p class="tempty">No trades yet.</p></article>`;
+      const [a, b] = topPair[0].split('|').map(jmOwner);
+      return `<article class="jm-hl"><span class="slabel">Most Active Trade Partners</span><span class="jm-hlpair">${avatar(a)}<b>${esc(a.name)}</b><em>&amp;</em><b>${esc(b.name)}</b>${avatar(b)}</span><span class="jm-hlv">${topPair[1]} trade${topPair[1] === 1 ? '' : 's'} together</span></article>`; };
+    html += `<div class="jm-hls">${hlPlayer('Most Traded Player', mostTraded, mostTraded ? `Traded ${mostTraded.trades} time${mostTraded.trades === 1 ? '' : 's'} · ${mostTraded.teams} teams` : '')}${pairCard()}
+      ${hlPlayer('Longest-Tenured Player', tenured, tenured ? `On ${esc(jmOwner(tenured.owner).name)} since the startup draft${tenured.stops[0].round ? ` (pick ${tenured.stops[0].round}.${String(tenured.stops[0].slot).padStart(2, '0')})` : ''} · ${durTxt(Date.now() - tenured.stops[0].ts)}` : '')}</div>`;
+    // ---- leaderboard
+    const view = all.filter(p => pos === 'ALL' || (D.jm.info[p.pid] || {}).pos === pos).map(p => ({ p, teams: tradesOnly ? p.tradeTeams : p.teams, moves: tradesOnly ? p.trades : p.moves }))
+      .filter(x => !tradesOnly || x.moves > 0)
+      .sort((a, b) => b.teams - a.teams || b.moves - a.moves || jmName(a.p.pid).localeCompare(jmName(b.p.pid)));
+    const shown = D.jmAll ? view : view.slice(0, 25);
+    let rank = 0, prev = null;
+    const rows = shown.map((x, i) => {
+      if (!prev || prev.teams !== x.teams || prev.moves !== x.moves) rank = i + 1; prev = x;
+      const p = x.p, inf = pInfo(p.pid), o = p.owner ? jmOwner(p.owner) : null;
+      const badges = `${p.never ? '<span class="jm-badge never">Never Moved</span>' : ''}${p.boomerang ? '<span class="jm-badge boom">Boomerang</span>' : ''}`;
+      const open = D.jmSel === p.pid;
+      return `<li class="jm-item${open ? ' open' : ''}"><button type="button" class="jm-row" data-jm="${esc(p.pid)}" aria-expanded="${open}">
+          <span class="jm-rk">${rank}</span>${shot(p.pid, inf.pos, inf.tm, jmName(p.pid))}
+          <span class="jm-who"><b>${esc(jmName(p.pid))}</b><small>${esc([inf.pos, inf.tm || 'FA'].filter(Boolean).join(' · '))}</small>${badges ? `<span class="jm-badges">${badges}</span>` : ''}</span>
+          <span class="jm-num jm-tm"><b>${x.teams}</b><small>team${x.teams === 1 ? '' : 's'}</small></span><span class="jm-num jm-mv"><b>${x.moves}</b><small>${tradesOnly ? 'trade' : 'move'}${x.moves === 1 ? '' : 's'}</small></span>
+          <span class="jm-own">${o ? `${avatar(o)}<span>${esc(o.name)}</span>` : '<span class="asset-sub">Free agent</span>'}</span></button>
+        ${open ? jmTimeline(p) : ''}</li>`;
+    }).join('');
+    html += `<h3 class="sh3">Leaderboard</h3>${view.length ? `<div class="jm-head" aria-hidden="true"><span>#</span><span>Player</span><span>Teams</span><span>${tradesOnly ? 'Trades' : 'Moves'}</span><span>Current owner</span></div><ol class="jm-list">${rows}</ol>
+      ${view.length > shown.length ? `<button type="button" class="btn ghost jm-more" data-jm-all>Show all ${view.length} players</button>` : ''}` : '<p class="note">No players match those filters.</p>'}`;
+    return html;
+  }
+  function jmTimeline(p){
+    const stopHtml = s => {
+      const o = jmOwner(s.owner), stay = (s.end || Date.now()) - s.ts, here = !s.end && p.owner === s.owner;
+      const how = s.how === 'draft' ? `Drafted${s.round ? ` · ${s.round}.${String(s.slot).padStart(2, '0')}` : ''}${s.startup ? ' (startup)' : ''}` : s.how === 'waiver' && s.bid ? `Waivers · $${s.bid.toLocaleString()}` : JM_HOW[s.how] || 'Added';
+      let ret = '';
+      if (s.how === 'trade' && s.ret) {
+        const parts = s.ret.players.map(id => PL(id, jmName(id), 'span'))
+          .concat(s.ret.picks.map(pk => `${esc(pk.season)} ${ordinal(pk.round)}${pk.orig && pk.orig !== s.owner ? ` <small>(${esc(jmOwner(pk.orig).name)})</small>` : ''}`))
+          .concat(s.ret.faab ? [`$${s.ret.faab.toLocaleString()} FAAB`] : []);
+        ret = `<div class="jm-ret"><em class="jm-retl">${s.from ? `${esc(jmOwner(s.from).name)} got` : 'Sent back'}</em>${parts.length ? parts.join(', ') : 'nothing listed'}</div>`;
+      }
+      return `<div class="jm-stop${here ? ' here' : ''}"><div class="jm-stop-h">${avatar(o)}<div><b>${esc(o.name)}</b><small>${esc(o.manager || '')}</small></div></div>
+        <span class="jm-how h-${s.how}">${how}</span><span class="jm-when">${esc(jmDate(s.ts))}</span><span class="jm-stay">${here ? `Here ${durTxt(stay)}` : `Stayed ${durTxt(stay)}`}</span>${ret}</div>`;
+    };
+    const parts = p.items.map(it => it.kind === 'stop' ? stopHtml(it)
+      : it.kind === 'drop' ? `<div class="jm-drop">✂️ Dropped by ${esc(jmOwner(it.from).name)}<small>${esc(jmDate(it.ts))}</small></div>`
+      : `<div class="jm-drop">↩︎ Re-added by ${esc(jmOwner(it.to).name)}<small>${esc(jmDate(it.ts))}</small></div>`);
+    return `<div class="jm-tl"><div class="jm-tl-h"><span>${p.stops.length} stop${p.stops.length === 1 ? '' : 's'} · ${p.moves} move${p.moves === 1 ? '' : 's'}${p.trades ? ` · ${p.trades} trade${p.trades === 1 ? '' : 's'}` : ''}</span><button type="button" class="linkbtn" data-player="${esc(p.pid)}">Player profile ›</button></div>
+      <div class="jm-path">${parts.join('<span class="jm-arrow" aria-hidden="true">→</span>')}</div></div>`;
+  }
+
+  // ---------- Trading Cards: a collectible card for every manager ----------
+  const TC_TIERS = [['legendary', 'Legendary'], ['epic', 'Epic'], ['rare', 'Rare'], ['common', 'Common']];
+  const TC_QPHRASE = { jug: 'Built to win now and later', con: 'All in on this season', reb: 'Building for the future', mid: 'Still searching for a direction' };
+  const waitFor = (fn, ms) => new Promise(res => { if (fn()) return res(true); const t0 = Date.now(), iv = setInterval(() => { if (fn() || Date.now() - t0 > (ms || 90000)) { clearInterval(iv); res(!!fn()); } }, 300); });
+  function cardsHow(){
+    return '<p><b>Rarity</b> ranks managers by a score built from trophies and all-time win percentage: 10 points per championship, 5 per runner-up finish, 3 each for third place, the best regular-season record and the points title, 1 per league record held, plus 20 × win percentage. The top 1 in 12 managers are <b>Legendary</b>, the next 2 in 12 <b>Epic</b>, the next 4 in 12 <b>Rare</b>, and the rest <b>Common</b>.</p><p>The nickname is the manager’s Sleeper team name when one is set; otherwise it is earned from his stats. Tap a card to flip it. Download saves a 1080×1350 image of the front.</p>';
+  }
+  async function loadCards(){
+    if (!D || D.tc || D.tcLoading) return;
+    const myD = D; myD.tcLoading = true;
+    try {
+      const hist = await loadHistory();
+      loadProfiles(); loadBuild(); loadCmap();
+      await waitFor(() => myD.profiles && myD.build && myD.cm);
+      if (!myD.profiles || myD.profiles.error) throw new Error((myD.profiles && myD.profiles.error) || 'Couldn’t load league history from Sleeper.');
+      myD.tc = tcBuild(hist);
+    } catch (e) {
+      myD.tc = { error: e.message || 'Couldn’t build the trading cards.' };
+    } finally {
+      myD.tcLoading = false;
+      if (D === myD && (opts.tab === 'cards' || opts.tab === 'mgr')) render();
+    }
+  }
+  function tcBuild(hist){
+    const M = rvManagers();  // current managers: { key, rid, t, name }
+    const prof = new Map(D.profiles.list.map(m => [m.key, m]));
+    // High score and playoff appearances by owner, across every season.
+    const hi = new Map(), po = new Map();
+    hist.forEach(L => {
+      const keyOf = new Map(L.rosters.map(r => [r.roster_id, r.owner_id || `${L.id}-${r.roster_id}`]));
+      L.weeks.forEach(({ week, list }) => (list || []).forEach(m => { const k = keyOf.get(m.roster_id); if (!k || !(m.points > 0)) return; const c = hi.get(k); if (!c || m.points > c.v) hi.set(k, { v: m.points, season: L.season, week }); }));
+      const inBr = new Set(); (L.bracket || []).forEach(g => { [g.t1, g.t2].forEach(r => { if (r != null && keyOf.has(r)) inBr.add(keyOf.get(r)); }); });
+      inBr.forEach(k => po.set(k, (po.get(k) || 0) + 1));
+    });
+    // Trades and favorite partner.
+    const trades = (D.build && D.build.holder && D.build.holder.trades) || [];
+    const tradeCount = new Map(), partners = new Map();
+    trades.forEach(t => t.owners.forEach(a => { tradeCount.set(a, (tradeCount.get(a) || 0) + 1); t.owners.forEach(b => { if (a === b) return; const m = partners.get(a) || new Map(); m.set(b, (m.get(b) || 0) + 1); partners.set(a, m); }); }));
+    // Roster value (every player + owned picks) and Contender Map quadrant, from live FantasyCalc values.
+    let cm = null, val = new Map();
+    if (D.cm && !D.cm.error) {
+      try { cm = cmCurrent(); } catch (e) { cm = null; }
+      const vals = D.cm.live;
+      D.ids.forEach(rid => { const r = (D.rosters || []).find(x => x.roster_id === rid) || {}, pl = (r.players || []).map(String);
+        const pv = pl.reduce((t, id) => t + (vals.players[id] || 0), 0), team = cm && cm.teams.find(t => t.rid === rid), pk = team ? team.picks.reduce((t, p) => t + p.v, 0) : 0;
+        const best = pl.filter(id => vals.players[id]).sort((a, b) => vals.players[b] - vals.players[a])[0] || null;
+        val.set(rid, { total: pv + pk, best }); });
+    }
+    const valRank = rid => 1 + D.ids.filter(o => (val.get(o) || { total: 0 }).total > (val.get(rid) || { total: 0 }).total).length;
+    const userTeamName = key => { const u = (D.users || []).find(x => x.user_id === key); return u && u.metadata && u.metadata.team_name ? u.metadata.team_name : ''; };
+    const cards = M.map(mg => {
+      const p = prof.get(mg.key) || { w: 0, l: 0, t: 0, pct: 0, pf: 0, trophies: [], seasons: new Set() };
+      const g = p.w + p.l + p.t, cnt = type => p.trophies.filter(x => x.type === type).length;
+      const tr = { champ: cnt('champ'), runner: cnt('runner'), third: cnt('third'), reg: cnt('reg'), pts: cnt('pts'), records: cnt('record') };
+      const pm = partners.get(mg.key), fav = pm ? [...pm.entries()].sort((a, b) => b[1] - a[1])[0] : null;
+      const favM = fav ? (M.find(x => x.key === fav[0]) || null) : null;
+      const team = cm && cm.teams.find(t => t.rid === mg.rid), v = val.get(mg.rid);
+      const qbTop = team ? team.lineup.filter(x => x.p && x.p.pos === 'QB').reduce((s, x) => s + x.p.v, 0) : 0;
+      return { key: mg.key, rid: mg.rid, t: mg.t, name: mg.name, teamName: mg.t.name, setName: userTeamName(mg.key),
+        w: p.w, l: p.l, ties: p.t, g, pct: g ? p.pct : 0, pf: p.pf, ppg: g ? p.pf / g : 0, tr, playoffs: po.get(mg.key) || 0, high: hi.get(mg.key) || null,
+        trades: tradeCount.get(mg.key) || 0, fav: favM ? { name: favM.t.name, n: fav[1] } : null,
+        q: team ? team.q : null, value: v ? v.total : null, valueRank: v ? valRank(mg.rid) : null, best: v && v.best ? v.best : null, qbTop,
+        score: 10 * tr.champ + 5 * tr.runner + 3 * (tr.third + tr.reg + tr.pts) + tr.records + 20 * (g ? p.pct : 0) };
+    });
+    // Rarity: relative scarcity (1/12 Legendary, 2/12 Epic, 4/12 Rare, rest Common).
+    const n = cards.length, cut = [Math.max(1, Math.round(n / 12)), Math.max(1, Math.round(2 * n / 12)), Math.max(1, Math.round(4 * n / 12))];
+    cards.slice().sort((a, b) => b.score - a.score || b.pct - a.pct || b.pf - a.pf).forEach((c, i) => {
+      c.tier = i < cut[0] ? 'legendary' : i < cut[0] + cut[1] ? 'epic' : i < cut[0] + cut[1] + cut[2] ? 'rare' : 'common'; });
+    const order = { legendary: 0, epic: 1, rare: 2, common: 3 };
+    cards.sort((a, b) => order[a.tier] - order[b.tier] || b.pct - a.pct || b.score - a.score || a.name.localeCompare(b.name));
+    cards.forEach((c, i) => { c.no = i + 1; });
+    // Nicknames: the Sleeper team name if set, otherwise earned from stats (each earned nickname used once).
+    const taken = new Set(), maxBy = f => cards.reduce((m, c) => !m || f(c) > f(m) ? c : m, null), minBy = f => cards.reduce((m, c) => !m || f(c) < f(m) ? c : m, null);
+    const topPpg = maxBy(c => c.ppg), topTrades = maxBy(c => c.trades), topQB = maxBy(c => c.qbTop), worst = minBy(c => c.g ? c.pct : 1);
+    cards.forEach(c => {
+      if (c.setName) { c.nick = c.setName; return; }
+      const opts2 = [];
+      if (c.tr.champ) opts2.push('The Dynasty');
+      if (c === topPpg && c.ppg > 0) opts2.push('The Point Machine');
+      if (c === topTrades && c.trades >= 2) opts2.push('The Wheeler-Dealer');
+      if (c === topQB && c.qbTop > 0) opts2.push('Mr. Superflex');
+      if (c === worst && c.g >= 3) opts2.push('The Bench Disaster');
+      if (c.q) opts2.push({ jug: 'The Juggernaut', con: 'All-In', reb: 'The Architect', mid: 'The Tinkerer' }[c.q]);
+      opts2.push('The Grinder', 'The Closer', 'The Sleeper Agent', 'The Waiver Hawk');
+      c.nick = opts2.find(x => !taken.has(x)) || 'The Grinder'; taken.add(c.nick);
+    });
+    cards.forEach(c => {
+      const rec = `${c.w}-${c.l}${c.ties ? `-${c.ties}` : ''}`;
+      c.report = `${c.q ? TC_QPHRASE[c.q] : 'A steady hand'}: ${rec} all-time at ${c.ppg.toFixed(1)} points a game, ${c.trades ? `and deals most with ${c.fav ? c.fav.name : 'the league'}` : 'and hasn’t made a trade yet'}.`;
+    });
+    return { cards, byKey: new Map(cards.map(c => [c.key, c])), n };
+  }
+  function tcCard(c, mini){
+    const tier = TC_TIERS.find(t => t[0] === c.tier)[1];
+    const n = D.tc.n, pct = c.g ? c.pct.toFixed(3).replace(/^0/, '') : '.000';
+    const ini = esc((c.t.name || '?').trim().slice(0, 2).toUpperCase());
+    const bi = c.best ? ((D.cm && D.cm.info && D.cm.info[c.best]) || {}) : null;
+    const best = c.best ? `<div class="tc-best"><span class="tc-bimg"><img src="https://sleepercdn.com/content/nfl/players/thumb/${esc(c.best)}.jpg" alt="" onerror="this.remove()"></span><small>${esc(bi && bi.n ? bi.n.split(' ').slice(-1)[0] : 'Top player')}</small></div>` : '';
+    const stat = (k, v) => `<div><dt>${k}</dt><dd>${v}</dd></div>`;
+    const QN = { jug: 'Juggernaut', con: 'Contender', reb: 'Rebuilder', mid: 'Stuck in the Middle' };
+    return `<div class="tc tc-${c.tier}${mini ? ' tc-mini' : ''}" data-tc="${esc(c.key)}">
+      <button type="button" class="tc-flip" data-tc-flip aria-label="${esc(c.name)} trading card. Tap to flip"><div class="tc-inner">
+        <div class="tc-face tc-front"><div class="tc-frame">
+          <div class="tc-top"><span class="tc-tier">${tier}</span><span class="tc-no">#${String(c.no).padStart(2, '0')} / ${n}</span></div>
+          <div class="tc-art"><div class="tc-av">${ini}${c.t.avatar ? `<img src="${esc(c.t.avatar.replace('/avatars/thumbs/', '/avatars/'))}" alt="" onerror="this.remove()">` : ''}</div>${best}</div>
+          <div class="tc-nick">“${esc(c.nick)}”</div>
+          <div class="tc-name">${esc(c.name)}</div>
+          <div class="tc-team">${c.setName || c.teamName === c.name ? `${esc(rec3(c))} all-time` : esc(c.teamName)}</div>
+          <div class="tc-foot"><span>${D.season} Season</span><span>Dudley Dynasty</span></div>
+        </div></div>
+        <div class="tc-face tc-back"><div class="tc-frame">
+          <div class="tc-top"><span class="tc-tier">${esc(c.name)}</span><span class="tc-no">#${String(c.no).padStart(2, '0')}</span></div>
+          <dl class="tc-stats">
+            ${stat('Record', rec3(c))}${stat('Win %', pct)}${stat('Titles', c.tr.champ)}${stat('Playoffs', c.playoffs)}
+            ${stat('High score', c.high ? c.high.v.toFixed(2) : '–')}${stat('Career PF', c.pf.toFixed(1))}
+            ${stat('Trades', c.trades)}${stat('Fav. partner', c.fav ? esc(c.fav.name) : '–')}
+            ${stat('Value rank', c.valueRank ? `#${c.valueRank} of ${n}` : '–')}${stat('Quadrant', c.q ? QN[c.q] : '–')}
+          </dl>
+          <p class="tc-report">${esc(c.report)}</p>
+          <div class="tc-foot"><span>Scouting Report</span><span>${D.season}</span></div>
+        </div></div>
+      </div></button>
+      <button type="button" class="tc-dl" data-tc-dl="${esc(c.key)}">⤓ Download Card</button></div>`;
+  }
+  const rec3 = c => `${c.w}-${c.l}${c.ties ? `-${c.ties}` : ''}`;
+  function renderCards(){
+    if (!D.tc) { loadCards(); return '<p class="status">Printing cards… (loading league history, trades and values)</p>'; }
+    if (D.tc.error) return `<div class="error"><strong>${esc(D.tc.error)}</strong><br>Try Refresh.</div>`;
+    return `<div class="tc-grid">${D.tc.cards.map(c => tcCard(c, false)).join('')}</div>`;
+  }
+  function tcProfileCard(key){
+    if (!D.tc) { loadCards(); return ''; }
+    if (D.tc.error || !D.tc.byKey.has(key)) return '';
+    return `<div class="tc-pwrap">${tcCard(D.tc.byKey.get(key), true)}</div>`;
+  }
+  // Download: render the card front onto a 1080×1350 (Instagram portrait) canvas with the logo and site address.
+  function loadH2C(){
+    if (window.html2canvas) return Promise.resolve(window.html2canvas);
+    if (!loadH2C.p) loadH2C.p = new Promise((res, rej) => { const s = document.createElement('script'); s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js'; s.crossOrigin = 'anonymous'; s.referrerPolicy = 'no-referrer';
+      s.onload = () => res(window.html2canvas); s.onerror = () => { loadH2C.p = null; rej(new Error('Couldn’t load the image tool. Check your connection and try again.')); }; document.head.appendChild(s); });
+    return loadH2C.p;
+  }
+  async function tcDownload(key, btn){
+    const c = D.tc && D.tc.byKey.get(key); if (!c) return;
+    const label = btn.textContent; btn.disabled = true; btn.textContent = 'Preparing…';
+    const wrap = document.createElement('div'); wrap.className = 'tc-export'; wrap.setAttribute('aria-hidden', 'true');
+    const logo = (document.querySelector('.logo') || {}).src || '';
+    wrap.innerHTML = `<div class="tc-exp-card"></div><div class="tc-exp-foot">${logo ? `<img src="${logo}" alt="">` : ''}<span>dudleydynasty.com</span></div>`;
+    const front = document.querySelector(`.tc[data-tc="${CSS.escape(key)}"] .tc-front`).cloneNode(true);
+    const holder = document.createElement('div'); holder.className = `tc tc-${c.tier} tc-exp`; holder.appendChild(front);
+    wrap.querySelector('.tc-exp-card').appendChild(holder);
+    // Fresh cross-origin loads so Sleeper's images can be drawn into the PNG.
+    wrap.querySelectorAll('img').forEach(im => { if (/^https?:/.test(im.src)) { im.crossOrigin = 'anonymous'; im.src = im.src + (im.src.includes('?') ? '&' : '?') + 'dl=' + Date.now(); } });
+    document.body.appendChild(wrap);
+    try {
+      const h2c = await loadH2C();
+      await Promise.all([...wrap.querySelectorAll('img')].map(im => im.complete ? 0 : new Promise(r => { im.onload = im.onerror = r; })));
+      const canvas = await h2c(wrap, { width: 1080, height: 1350, scale: 1, useCORS: true, backgroundColor: '#141B2B', logging: false });
+      const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `dudley-dynasty-${c.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-card.png`;
+      document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 2000);
+      btn.textContent = 'Saved ✓';
+    } catch (e) {
+      btn.textContent = 'Couldn’t save — try again';
+    } finally {
+      wrap.remove(); setTimeout(() => { btn.textContent = label; btn.disabled = false; }, 2200);
+    }
   }
 
   // ---------- Manager profiles ----------
@@ -3752,7 +4286,7 @@ footer input{width:min(100%,260px)}
       m.trophies.filter(t => t.type === 'record').forEach(t => {
         trophies += `<li><span class="ticon" aria-hidden="true">${RECORD_ICONS[t.title] || '🎖️'}</span><span><b>League record: ${esc(t.title)}</b><small>${esc(t.detail)}</small></span></li>`;
       });
-      html += `<article class="pcard">${teamBlock(m.latest, meta)}
+      html += `<article class="pcard">${m.current ? tcProfileCard(m.key) : ''}${teamBlock(m.latest, meta)}
         <div class="prec"><span class="pbig">${m.w}-${m.l}${m.t ? '-' + m.t : ''}</span><span class="psub">All-time record<br>${pct} win pct</span></div>
         <dl class="pstats">
           <div><dt>Playoffs</dt><dd>${m.pw}-${m.pl}</dd></div>
@@ -3761,7 +4295,7 @@ footer input{width:min(100%,260px)}
           <div><dt>Per game</dt><dd>${g ? (m.pf / g).toFixed(1) : '0.0'}</dd></div>
           <div><dt>Top score of the week</dt><dd>${m.weeklyTop}×</dd></div>
         </dl>
-        <h3 class="tch">Trophy case</h3>
+        <h3 class="tch">Trophy Case</h3>
         ${trophies ? `<ul class="trophies">${trophies}</ul>` : '<p class="tempty">Empty for now.</p>'}
         ${m.current ? rvProfileBlock(m.key) : ''}
       </article>`;
@@ -4056,16 +4590,16 @@ footer input{width:min(100%,260px)}
       </header>
       <div class="pc-grid">
         <section class="pc-left">
-          <div class="pc-sec"><h3>Game logs</h3><div class="pc-pills" id="pcpills"></div></div>
+          <div class="pc-sec"><h3>Game Logs</h3><div class="pc-pills" id="pcpills"></div></div>
           <div id="pclog"><p class="status">Loading game log…</p></div>
           <div class="pc-sec"><h3>Career</h3></div>
           <div id="pccareer"><p class="status">Loading career stats…</p></div>
         </section>
         <aside class="pc-right">
-          <h3>League history</h3>${historyHtml(pid)}
+          <h3>League History</h3>${historyHtml(pid)}
           ${luN.length ? `<p class="pc-note">${luN.filter(x => x.started).length} start${luN.filter(x => x.started).length === 1 ? '' : 's'} in ${luN.length} rostered week${luN.length === 1 ? '' : 's'} this season.</p>` : ''}
-          <h3>Latest news</h3><div id="pcnews"><p class="status">Loading news…</p></div>
-          ${tm && pos !== 'DEF' ? '<h3>Depth chart</h3><div id="pcdc"><p class="status">Loading depth chart…</p></div>' : ''}
+          <h3>Latest News</h3><div id="pcnews"><p class="status">Loading news…</p></div>
+          ${tm && pos !== 'DEF' ? '<h3>Depth Chart</h3><div id="pcdc"><p class="status">Loading depth chart…</p></div>' : ''}
         </aside>
       </div>`;
     const fx = box.querySelector('.pc-x, .pm-back'); if (fx) fx.focus({ preventScroll: true });
@@ -4291,6 +4825,17 @@ footer input{width:min(100%,260px)}
     if (e.target.closest('[data-close-match]')) { morphMatch(D.openMatch && D.openMatch.id, false); return; }
     const plb = e.target.closest('[data-pid]');
     if (plb) { toggleBreakdown(plb); return; }
+    const tcf = e.target.closest('[data-tc-flip]');
+    if (tcf) { tcf.closest('.tc').classList.toggle('flipped'); return; }
+    const tcd = e.target.closest('[data-tc-dl]');
+    if (tcd) { tcDownload(tcd.dataset.tcDl, tcd); return; }
+    const jmb = e.target.closest('[data-jm]');
+    if (jmb) { const pid = jmb.dataset.jm, fromHl = jmb.classList.contains('jm-hl'); D.jmSel = D.jmSel === pid && !fromHl ? null : pid;
+      if (fromHl && D.jm && D.jm.list) { const v = D.jm.list.find(p => p.pid === pid); if (v && !D.jmAll) D.jmAll = true; opts.jmPos = 'ALL'; if (opts.jmType === 'trades' && !(v && v.trades)) opts.jmType = 'all'; }
+      render(); const it = document.querySelector('.jm-item.open'); if (it && (fromHl || isPhoneUI())) it.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+    const jmt = e.target.closest('[data-jm-type]');
+    if (jmt) { opts.jmType = jmt.dataset.jmType; saveOpts(); render(); return; }
+    if (e.target.closest('[data-jm-all]')) { D.jmAll = true; render(); return; }
     const rvp = e.target.closest('[data-rv-pair]');
     if (rvp) { const [a, b] = rvp.dataset.rvPair.split('|'); rvGo([a, b], null); return; }
     const rvr = e.target.closest('[data-rv-row]');
