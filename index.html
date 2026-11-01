@@ -67,7 +67,8 @@ h1{margin:0;font:700 clamp(2.3rem,8vw,3.8rem)/.92 "Barlow Condensed","Arial Narr
 .tab:hover{color:var(--ink);border-color:var(--muted)}
 .tabgroup{position:relative}
 .tabgroup>.tab{width:100%;height:100%}
-.tabmenu{display:none;position:absolute;z-index:30;top:100%;left:0;right:0;padding-top:6px}
+.tabmenu{display:none;position:absolute;z-index:30;top:100%;left:0;min-width:100%;width:max-content;max-width:calc(100vw - 32px);padding-top:6px}
+.tabgroup:last-child .tabmenu{left:auto;right:0}
 .tabgroup:hover .tabmenu,.tabgroup:focus-within .tabmenu,.tabgroup.open .tabmenu{display:grid;gap:4px}
 .tabopt{background:var(--surface);border:1px solid var(--muted);border-radius:6px;padding:9px 12px;font:600 1.05rem/1.1 "Barlow Condensed","Arial Narrow",sans-serif;color:var(--ink);cursor:pointer;text-align:center;box-shadow:0 6px 18px rgba(0,0,0,.35)}
 .tabopt:hover,.tabopt[aria-current="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
@@ -980,6 +981,35 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
 .is-phone .jm-stop{width:auto}
 .is-phone .jm-arrow{transform:rotate(90deg);align-self:center;line-height:1}
 .is-phone .jm-drop{align-self:stretch;max-width:none;flex-direction:row;justify-content:center;gap:8px}
+/* Injury/Bye Week Dashboard */
+.ib-hls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--space-md)}
+.ib-card{display:flex;flex-direction:column;gap:var(--space-sm);min-width:0;background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--accent);border-radius:10px;padding:var(--space-md)}
+.ib-card.hot{border-top-color:var(--pylon)}
+.ib-card .slabel{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--accent)}.ib-card.hot .slabel{color:var(--pylon-ink)}
+.ib-big{font-size:2.2rem;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
+.ib-sub{margin:0;font-size:.78rem;color:var(--muted);line-height:1.35}
+.ib-nfl{margin:0;font-size:.82rem;font-weight:700;color:var(--ink);line-height:1.4}
+.ib-hp1{margin:0;font-size:.85rem;min-width:0}.ib-hp1 small{display:block;color:var(--muted);font-size:.72rem}
+.ib-rank{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.ib-rank li{display:flex;align-items:center;gap:8px;min-width:0;font-size:.86rem}
+.ib-rank .av{width:24px;height:24px;font-size:.55rem;flex:none}
+.ib-rank .nm{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ib-rank b{font-variant-numeric:tabular-nums}.ib-rank small{color:var(--muted);font-size:.68rem;min-width:44px}
+.ib-cnt{display:block;margin-top:3px;font-size:.74rem;font-weight:500;color:var(--muted)}
+.ib-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.ib-row{display:grid;grid-template-columns:36px minmax(0,1fr) auto;align-items:center;gap:var(--space-md);padding:8px var(--space-md);background:var(--surface);border:1px solid var(--line);border-radius:10px}
+.ib-row.hp{border-color:var(--pylon);box-shadow:inset 3px 0 0 var(--pylon)}
+.ib-who{min-width:0}.ib-who b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ib-who small{display:block;color:var(--muted);font-size:.75rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ib-tags{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px}
+.ib-b{display:inline-block;padding:2px 9px;border-radius:999px;font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;background:var(--line);color:var(--ink)}
+.ib-b.s5,.ib-b.s4{background:rgba(255,111,126,.18);color:var(--pylon-ink)}
+.ib-b.s3{background:rgba(255,169,77,.16);color:#FFC283}
+.ib-b.s2,.ib-b.s1{background:rgba(255,214,102,.14);color:#FFE08A}
+.ib-b.bye{background:rgba(0,206,184,.15);color:#2DE0C9}.ib-b.bye.past{background:var(--line);color:var(--muted)}
+.ib-b.hp{background:var(--pylon);color:#2A0F14}
+.is-phone .ib-hls{grid-template-columns:1fr;gap:var(--space-sm)}
+.is-phone .ib-row{grid-template-columns:34px minmax(0,1fr);grid-template-areas:"ph who" "tags tags";row-gap:6px;gap:8px;padding:9px 10px}
+.is-phone .ib-row .hs{grid-area:ph;width:34px;height:34px}.is-phone .ib-who{grid-area:who}.is-phone .ib-tags{grid-area:tags;justify-content:flex-start}
 /* ---------- Trading Cards ---------- */
 .tc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:var(--space-lg)}
 .tc{--fc:#8C97AD;--fc2:#5B6478;--glow:rgba(140,151,173,.25);container-type:inline-size;display:flex;flex-direction:column;gap:var(--space-sm);min-width:0}
@@ -1478,8 +1508,8 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
         ? `${season} season hasn’t started. ${D.ids.length} teams.`
         : `${season} season, ${playedWeeks} of ${totalWeeks} weeks played. ${D.ids.length} teams.`;
 
-    const tabs = [['stand', 'Standings'], ['match', 'Matchups'], ['odds', 'Playoff Odds'], ['bracket', 'Playoff Bracket'], ['order', 'Tankathon'], ['proj', 'Tankathon Projections'], ['news', 'News Feed'], ['pay', 'Payouts'], ['rec', 'League Records'], ['mgr', 'Manager Profiles'], ['cards', 'Trading Cards'], ['rivals', 'Rivalries'], ['build', 'Team Construction'], ['cmap', 'Contender Map'], ['own', 'Pick Ownership'], ['trades', 'Trade History'], ['journey', 'Journeymen'], ['finder', 'Trade Finder'], ['calc', 'Trade Calculator'], ['laws', 'League Bylaws']];
-    const GROUPS = [{ label: 'Tankathon', keys: ['order', 'proj'] }, { label: 'Playoffs', keys: ['odds', 'bracket'] }, { label: 'Trades', keys: ['trades', 'journey', 'finder', 'calc'] }];
+    const tabs = [['stand', 'Standings'], ['match', 'Matchups'], ['odds', 'Playoff Odds'], ['bracket', 'Playoff Bracket'], ['order', 'Tankathon'], ['proj', 'Tankathon Projections'], ['news', 'News Feed'], ['pay', 'Payouts'], ['rec', 'League Records'], ['laws', 'League Bylaws'], ['mgr', 'Manager Profiles'], ['cards', 'Trading Cards'], ['rivals', 'Rivalries'], ['build', 'Team Construction'], ['inj', 'Injury/Bye Week Dashboard'], ['cmap', 'Contender Map'], ['own', 'Pick Ownership'], ['trades', 'Trade History'], ['journey', 'Journeymen'], ['finder', 'Trade Finder'], ['calc', 'Trade Calculator']];
+    const GROUPS = [{ label: 'Playoffs', keys: ['odds', 'bracket'] }, { label: 'Tankathon', keys: ['order', 'proj'] }, { label: 'League', keys: ['news', 'pay', 'rec', 'laws'] }, { label: 'Managers', keys: ['mgr', 'cards', 'rivals'] }, { label: 'Teams', keys: ['build', 'inj', 'cmap', 'own'] }, { label: 'Trades', keys: ['trades', 'journey', 'finder', 'calc'] }];
     const tabBtn = ([k, l]) => `<button class="tab" role="tab" type="button" data-tab="${k}" aria-selected="${opts.tab === k}">${l}</button>`;
     const menuBtn = ([k, l]) => `<button class="tabopt" role="menuitem" type="button" data-tab="${k}" aria-current="${opts.tab === k}">${l}</button>`;
     let html = `<nav class="tabs" role="tablist">${tabs.map(t => {
@@ -1490,7 +1520,7 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
     }).join('')}</nav>`;
     const label = (tabs.find(t => t[0] === opts.tab) || [, ''])[1];
     html += pageHeader(opts.tab, label) + '<div class="pbody" id="pbody">';
-    html += opts.tab === 'cards' ? renderCards() : opts.tab === 'journey' ? renderJourney() : opts.tab === 'rivals' ? renderRivals() : opts.tab === 'cmap' ? renderCmap() : opts.tab === 'stand' ? renderStandings() : opts.tab === 'proj' ? renderProj() : opts.tab === 'odds' ? renderOdds() : opts.tab === 'match' ? renderMatchups() : opts.tab === 'news' ? renderNews() : opts.tab === 'bracket' ? renderBracket() : opts.tab === 'pay' ? renderPayouts() : opts.tab === 'rec' ? renderRecords() : opts.tab === 'mgr' ? renderProfiles() : opts.tab === 'build' ? renderBuild() : opts.tab === 'own' ? renderOwn() : opts.tab === 'trades' ? renderTrades() : opts.tab === 'laws' ? renderBylaws() : opts.tab === 'finder' ? renderFinder() : opts.tab === 'calc' ? renderCalc() : renderOrder();
+    html += opts.tab === 'inj' ? renderInj() : opts.tab === 'cards' ? renderCards() : opts.tab === 'journey' ? renderJourney() : opts.tab === 'rivals' ? renderRivals() : opts.tab === 'cmap' ? renderCmap() : opts.tab === 'stand' ? renderStandings() : opts.tab === 'proj' ? renderProj() : opts.tab === 'odds' ? renderOdds() : opts.tab === 'match' ? renderMatchups() : opts.tab === 'news' ? renderNews() : opts.tab === 'bracket' ? renderBracket() : opts.tab === 'pay' ? renderPayouts() : opts.tab === 'rec' ? renderRecords() : opts.tab === 'mgr' ? renderProfiles() : opts.tab === 'build' ? renderBuild() : opts.tab === 'own' ? renderOwn() : opts.tab === 'trades' ? renderTrades() : opts.tab === 'laws' ? renderBylaws() : opts.tab === 'finder' ? renderFinder() : opts.tab === 'calc' ? renderCalc() : renderOrder();
     const prevScroll = document.getElementById('wkscroll'), keep = prevScroll ? prevScroll.scrollLeft : null;
     html += '</div>';
     $('#app').innerHTML = html;
@@ -1517,6 +1547,7 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
     cards: { sub: () => 'A collectible card for every manager', how: () => cardsHow() },
     rivals: { sub: () => 'All-time head-to-head records', how: () => '<p>Records follow each manager across seasons, not the roster slot. Each cell is the row manager’s record against the column manager: teal is winning, red is losing. 🏆 marks pairs that met in the playoffs. Playoff games count the winners bracket only; placement and consolation games are skipped.</p>' },
     build: { sub: () => 'Roster ages, depth and how players arrived', how: () => '<p>Ages come from Sleeper’s player database. Age rank compares a team’s average age at a position with the rest of the league: #1 is the youngest, and the three youngest and oldest teams are colored. The time beside each player is how long he has been on the roster, from draft and transaction history. Tap a player for his profile.</p>' },
+    inj: { sub: () => 'Who’s banged up and who’s on bye', how: () => '<p>Injury status comes from Sleeper’s player list, so it updates as Sleeper does. A player on a roster’s IR slot is shown as IR even if his status field is blank.</p><p>Sleeper doesn’t publish bye weeks directly, so each NFL team’s bye is the one week it has no game on the schedule.</p><p><b>High Priority</b> marks an injured player whose bye is this week or in the next 2 weeks. The summary always covers the whole league; the filters only change the lists below it.</p>' },
     cmap: { sub: () => 'Win-now value vs future value', how: () => '<p><b>Win-Now</b> is the FantasyCalc value of each team’s best legal starting lineup (players on IR are left out). <b>Future</b> is the value of players 25 and under plus every draft pick the team owns. The dashed lines are the league medians. Trails show where each team was in earlier nightly snapshots.</p>' },
     own: { sub: () => `Who owns every pick through ${D.seasons[D.seasons.length - 1] || ''}`, how: () => `<p>${D.draftSeason} picks show their ${seasonDone() ? 'final' : 'current'} slot; later years show the round.</p><p>${KEY}Highlighted picks were acquired in a trade.</p>` },
     trades: { sub: () => 'Every trade in league history', how: null },
@@ -1554,8 +1585,8 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
   const titleCase = s => String(s).split(' ').map((w, i) => w.split('-').map(p => (i > 0 && SMALL_WORDS.has(p.toLowerCase())) ? p.toLowerCase() : p.charAt(0).toUpperCase() + p.slice(1)).join('-')).join(' ');
 
   // ---------- Phone navigation: bottom bar, "More" sheet, current-section label ----------
-  const MORE_GROUPS = [['League', ['stand', 'match', 'news', 'pay', 'rec', 'mgr', 'cards', 'rivals', 'laws']], ['Playoffs', ['odds', 'bracket']], ['Tankathon', ['order', 'proj']],
-    ['Teams', ['build', 'cmap', 'own']], ['Trades', ['trades', 'journey', 'finder', 'calc']]];
+  const MORE_GROUPS = [['Overview', ['stand', 'match']], ['Playoffs', ['odds', 'bracket']], ['Tankathon', ['order', 'proj']], ['League', ['news', 'pay', 'rec', 'laws']], ['Managers', ['mgr', 'cards', 'rivals']],
+    ['Teams', ['build', 'inj', 'cmap', 'own']], ['Trades', ['trades', 'journey', 'finder', 'calc']]];
   let TABS_ALL = [];
   function updatePhoneChrome(tabs){
     TABS_ALL = tabs;
@@ -3855,6 +3886,119 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
   function journeyHow(){
     return '<p>Every draft, trade, waiver claim and free-agent pickup in league history counts, across all seasons, and each manager is tracked by account so his teams stay together across seasons. A player <b>moves</b> when he lands on a new manager’s roster; his first stop (usually the startup draft) is not a move. Drops show in the timeline but are not moves, and being re-added by the same manager is not a move either.</p><p>Ranked by the number of different teams, then total moves. <b>Trades only</b> counts trades and the teams on either side of them. <span class="jm-badge never">Never Moved</span> is still on the roster that drafted him in the startup draft. <span class="jm-badge boom">Boomerang</span> came back to a team he had left.</p>';
   }
+  // ---------- Injury/Bye Week Dashboard ----------
+  // Injury status comes from Sleeper's player list. NFL bye weeks aren't published as a field, so each team's bye is
+  // the one week of the season in which it has no game on Sleeper's schedule.
+  const INJ_SEV = { IR: 5, PUP: 5, Out: 4, Doubtful: 3, Questionable: 2, COV: 2, DNR: 1 };
+  const INJ_LABEL = { IR: 'IR', PUP: 'PUP', Out: 'Out', Doubtful: 'Doubtful', Questionable: 'Questionable', COV: 'COVID', DNR: 'DNR' };
+  async function loadInj(){
+    if (!D || D.inj || D.injLoading) return;
+    const myD = D;
+    myD.injLoading = true;
+    try {
+      const [all, sch] = await Promise.all([getOnce('all', `${API}/players/nfl`), schedFor(myD.season)]);
+      if (!all) throw new Error('Couldn’t load player data from Sleeper.');
+      const games = Array.isArray(sch) ? sch : [];
+      const weeksBy = new Map(), wk = new Map();
+      let maxW = 0;
+      games.forEach(g => {
+        const w = Number(g.week); if (!w) return;
+        maxW = Math.max(maxW, w);
+        [g.home, g.away].forEach(t => { if (!t) return; if (!weeksBy.has(t)) weeksBy.set(t, new Set()); weeksBy.get(t).add(w); });
+        const d = wk.get(w) || { n: 0, done: 0 }; d.n++; if (g.status === 'complete') d.done++; wk.set(w, d);
+      });
+      const bye = new Map();
+      if (maxW) weeksBy.forEach((set, t) => { for (let w = 1; w <= maxW; w++) if (!set.has(w)) { bye.set(t, w); break; } });
+      // The current NFL week is the first one that still has an unfinished game.
+      let cur = maxW;
+      for (let w = 1; w <= maxW; w++) { const d = wk.get(w); if (d && d.done < d.n) { cur = w; break; } }
+      const rosters = (myD.rosters || []).filter(r => r.roster_id != null);
+      const info = {};
+      rosters.forEach(r => (r.players || []).forEach(id => {
+        const pl = all[id], isD = !pl && /^[A-Z]{2,3}$/.test(id);
+        info[id] = { nm: pl ? (pl.full_name || [pl.first_name, pl.last_name].filter(Boolean).join(' ') || id) : id, pos: pl ? (pl.position || '') : (isD ? 'DEF' : ''),
+          tm: pl ? (pl.team || '') : (isD ? id : ''), inj: pl && INJ_SEV[pl.injury_status] ? pl.injury_status : null, body: (pl && pl.injury_body_part) || '', note: (pl && pl.injury_notes) || '' };
+      }));
+      myD.inj = { info, bye, cur, maxW, rosters, hasSched: !!maxW };
+    } catch (e) {
+      myD.inj = { error: e.message || 'Couldn’t load injuries from Sleeper.' };
+    } finally {
+      myD.injLoading = false;
+      if (D === myD && opts.tab === 'inj') render();
+    }
+  }
+  function injRows(){
+    const { info, bye, cur, rosters } = D.inj;
+    return rosters.map(r => {
+      const reserve = new Set(r.reserve || []), taxi = new Set(r.taxi || []), starters = new Set(r.starters || []);
+      const players = (r.players || []).map(id => {
+        const i = info[id] || { nm: id, pos: '', tm: '', inj: null, body: '', note: '' };
+        const inj = i.inj || (reserve.has(id) ? 'IR' : null), bw = i.tm ? bye.get(i.tm) : null, d = bw ? bw - cur : null;
+        const sev = inj ? INJ_SEV[inj] : 0;
+        return { id, nm: i.nm, pos: i.pos, tm: i.tm, inj, sev, body: i.body, note: i.note, bw, d,
+          byeSoon: d != null && d >= 0 && d <= 2, slot: reserve.has(id) ? 'IR slot' : taxi.has(id) ? 'Taxi' : starters.has(id) ? 'Starter' : 'Bench',
+          hp: !!inj && d != null && d >= 0 && d <= 2 };
+      });
+      return { rid: r.roster_id, players };
+    });
+  }
+  function renderInj(){
+    if (!D.inj) { loadInj(); return '<p class="status">Loading injuries and bye weeks from Sleeper…</p>'; }
+    if (D.inj.error) return `<div class="error"><strong>${esc(D.inj.error)}</strong><br>Try Refresh.</div>`;
+    const { bye, cur, hasSched } = D.inj;
+    const teams = injRows();
+    if (!teams.some(t => t.players.length)) return '<p class="note">Rosters are empty so far. This page fills in once teams have players.</p>';
+    const view = opts.injView || 'mgr', show = opts.injShow || 'all';
+    const sel = teams.some(t => String(t.rid) === String(opts.injMgr)) ? String(opts.injMgr) : 'all';
+    const tn = rid => team(rid).name;
+    const whenTxt = d => d == null ? '' : d < 0 ? 'bye already passed' : d === 0 ? 'this week' : d === 1 ? 'next week' : `in ${d} weeks`;
+
+    // ---- league-wide summary (always every team, whatever the filters say)
+    const hurt = teams.map(t => ({ t, n: t.players.filter(p => p.inj).length, bad: t.players.filter(p => p.sev >= 4).length })).filter(x => x.n).sort((a, b) => b.n - a.n || b.bad - a.bad || tn(a.t.rid).localeCompare(tn(b.t.rid))).slice(0, 5);
+    const onBye = teams.map(t => ({ t, n: t.players.filter(p => p.d === 0).length })).filter(x => x.n).sort((a, b) => b.n - a.n || tn(a.t.rid).localeCompare(tn(b.t.rid))).slice(0, 5);
+    const byeTeams = [...bye.entries()].filter(([, w]) => w === cur).map(([t]) => t).sort();
+    const hps = teams.flatMap(t => t.players.filter(p => p.hp).map(p => ({ ...p, rid: t.rid }))).sort((a, b) => a.d - b.d || b.sev - a.sev);
+    const rank = (rows, unit) => `<ul class="ib-rank">${rows.map(x => `<li>${avatar(team(x.t.rid))}<span class="nm">${esc(tn(x.t.rid))}</span><b>${x.n}</b><small>${unit}</small></li>`).join('')}</ul>`;
+    let html = `<div class="controls">
+      <div class="field"><span class="flabel">View</span><div class="seg" role="group" aria-label="View"><button type="button" data-ib-view="mgr" aria-pressed="${view === 'mgr'}">By Manager</button><button type="button" data-ib-view="sev" aria-pressed="${view === 'sev'}">By Injury</button><button type="button" data-ib-view="bye" aria-pressed="${view === 'bye'}">By Bye Week</button></div></div>
+      <label class="field">Manager<select data-opt="injMgr"><option value="all">All Managers</option>${teams.map(t => `<option value="${t.rid}" ${String(t.rid) === sel ? 'selected' : ''}>${esc(tn(t.rid))}</option>`).join('')}</select></label>
+      <div class="field"><span class="flabel">Show</span><div class="seg" role="group" aria-label="Show"><button type="button" data-ib-show="all" aria-pressed="${show === 'all'}">All Players</button><button type="button" data-ib-show="inj" aria-pressed="${show === 'inj'}">Injured</button><button type="button" data-ib-show="hp" aria-pressed="${show === 'hp'}">High Priority</button></div></div></div>`;
+    html += `<h3 class="sh3">League Summary</h3><div class="ib-hls">
+      <article class="ib-card"><span class="slabel">Most Banged-Up Managers</span>${hurt.length ? rank(hurt, 'hurt') : '<p class="tempty">Nobody is injured right now.</p>'}</article>
+      <article class="ib-card"><span class="slabel">On Bye This Week${hasSched ? ` · Week ${cur}` : ''}</span>${!hasSched ? '<p class="tempty">The NFL schedule isn’t available yet.</p>' : byeTeams.length ? `<p class="ib-nfl">${byeTeams.map(esc).join(' · ')}</p>${onBye.length ? rank(onBye, 'on bye') : '<p class="tempty">None of those teams’ players are on a roster here.</p>'}` : '<p class="tempty">No NFL teams are on bye this week.</p>'}</article>
+      <article class="ib-card ${hps.length ? 'hot' : ''}"><span class="slabel">High Priority</span><div class="ib-big">${hps.length}</div><p class="ib-sub">Injured players whose bye is this week or in the next 2 weeks.</p>${hps.slice(0, 3).map(p => `<p class="ib-hp1">${p.pos === 'DEF' ? esc(p.nm) : PL(p.id, p.nm)} <small>${esc(tn(p.rid))} · ${esc(INJ_LABEL[p.inj])} · bye W${p.bw}</small></p>`).join('')}</article></div>`;
+
+    // ---- rows
+    const keep = p => show === 'hp' ? p.hp : show === 'inj' ? !!p.inj : true;
+    const posI = pos => { const i = POS_ORDER.indexOf(pos); return i < 0 ? 99 : i; };
+    const sortP = (a, b) => (b.hp - a.hp) || (b.sev - a.sev) || ((a.d >= 0 ? a.d : 99) - (b.d >= 0 ? b.d : 99)) || (posI(a.pos) - posI(b.pos)) || a.nm.localeCompare(b.nm);
+    const badges = p => `${p.inj ? `<span class="ib-b s${p.sev}" title="${esc(p.note || '')}">${esc(INJ_LABEL[p.inj])}${p.body ? ` · ${esc(p.body)}` : ''}</span>` : ''}${p.bw ? `<span class="ib-b bye${p.d < 0 ? ' past' : p.d === 0 ? ' now' : ''}">Bye W${p.bw}${p.d >= 0 && p.d <= 2 ? ` · ${whenTxt(p.d)}` : ''}</span>` : ''}${p.hp ? '<span class="ib-b hp">High Priority</span>' : ''}`;
+    const row = (p, rid, withMgr) => `<li class="ib-row${p.hp ? ' hp' : ''}">${shot(p.id, p.pos, p.tm, p.nm)}<div class="ib-who">${p.pos === 'DEF' ? `<b>${esc(p.nm)}</b>` : PL(p.id, p.nm)}<small>${esc([p.pos, p.tm || 'FA', p.slot, withMgr ? tn(rid) : ''].filter(Boolean).join(' · '))}</small></div><div class="ib-tags">${badges(p)}</div></li>`;
+    const list = rows => `<ul class="ib-list">${rows.join('')}</ul>`;
+    const scope = teams.filter(t => sel === 'all' || String(t.rid) === sel);
+    const none = '<p class="note">No players match these filters.</p>';
+    if (view === 'mgr') {
+      scope.slice().sort((a, b) => tn(a.rid).localeCompare(tn(b.rid))).forEach(t => {
+        const ps = t.players.filter(keep).sort(sortP), n = t.players.filter(p => p.inj).length, nb = t.players.filter(p => p.d === 0).length, nh = t.players.filter(p => p.hp).length;
+        html += `<h3 class="sh3">${esc(tn(t.rid))}<span class="ib-cnt">${n} injured · ${nb} on bye this week${nh ? ` · ${nh} high priority` : ''}</span></h3>${ps.length ? list(ps.map(p => row(p, t.rid, false))) : '<p class="note">No players match these filters.</p>'}`;
+      });
+    } else if (view === 'sev') {
+      const all = scope.flatMap(t => t.players.filter(p => p.inj && keep(p)).map(p => ({ p, rid: t.rid })));
+      const buckets = [['IR / PUP', x => x.p.sev === 5], ['Out', x => x.p.sev === 4], ['Doubtful', x => x.p.sev === 3], ['Questionable & Other', x => x.p.sev <= 2]];
+      buckets.forEach(([lab, f]) => { const g = all.filter(f).sort((a, b) => sortP(a.p, b.p) || tn(a.rid).localeCompare(tn(b.rid))); if (g.length) html += `<h3 class="sh3">${lab}<span class="ib-cnt">${g.length} player${g.length === 1 ? '' : 's'}</span></h3>${list(g.map(x => row(x.p, x.rid, true)))}`; });
+      if (!all.length) html += `<h3 class="sh3">Injuries</h3>${none}`;
+      const healthy = scope.reduce((n, t) => n + t.players.filter(p => !p.inj).length, 0);
+      if (all.length && show === 'all') html += `<p class="note">${healthy} healthy player${healthy === 1 ? '' : 's'} not shown.</p>`;
+    } else {
+      const all = scope.flatMap(t => t.players.filter(p => p.bw && keep(p)).map(p => ({ p, rid: t.rid })));
+      const weeks = [...new Set(all.map(x => x.p.bw))].sort((a, b) => ((a >= cur ? 0 : 1) - (b >= cur ? 0 : 1)) || a - b);
+      weeks.forEach(w => { const g = all.filter(x => x.p.bw === w).sort((a, b) => sortP(a.p, b.p) || tn(a.rid).localeCompare(tn(b.rid))), nt = [...bye.entries()].filter(([, bw]) => bw === w).map(([t]) => t).sort();
+        html += `<h3 class="sh3">Week ${w}${w === cur ? ' · This Week' : w === cur + 1 ? ' · Next Week' : w < cur ? ' · Already Passed' : ''}<span class="ib-cnt">${nt.join(', ')} · ${g.length} player${g.length === 1 ? '' : 's'} · ${g.filter(x => x.p.inj).length} injured</span></h3>${list(g.map(x => row(x.p, x.rid, true)))}`; });
+      if (!all.length) html += `<h3 class="sh3">Bye Weeks</h3>${hasSched ? none : '<p class="note">The NFL schedule isn’t available yet, so bye weeks can’t be shown.</p>'}`;
+    }
+    return html;
+  }
+
   async function loadJourney(){
     if (!D || D.jm || D.jmLoading) return;
     const myD = D; myD.jmLoading = true;
@@ -4869,6 +5013,8 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
       render(); const it = document.querySelector('.jm-item.open'); if (it && (fromHl || isPhoneUI())) it.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
     const jmt = e.target.closest('[data-jm-type]');
     if (jmt) { opts.jmType = jmt.dataset.jmType; saveOpts(); render(); return; }
+    const ibv = e.target.closest('[data-ib-view]'); if (ibv) { opts.injView = ibv.dataset.ibView; saveOpts(); render(); return; }
+    const ibs = e.target.closest('[data-ib-show]'); if (ibs) { opts.injShow = ibs.dataset.ibShow; saveOpts(); render(); return; }
     if (e.target.closest('[data-jm-all]')) { D.jmAll = true; render(); return; }
     const rvp = e.target.closest('[data-rv-pair]');
     if (rvp) { const [a, b] = rvp.dataset.rvPair.split('|'); rvGo([a, b], null); return; }
