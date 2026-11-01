@@ -1,0 +1,43 @@
+name: Nightly snapshot
+
+# Saves Sleeper rosters and FantasyCalc dynasty values to data/ every night,
+# so the site can show values over time and grade trades at the moment they happened.
+on:
+  schedule:
+    - cron: '17 10 * * *'   # 10:17 UTC every day (about 3:17 AM Pacific)
+  workflow_dispatch:         # adds a "Run workflow" button on the Actions tab
+
+permissions:
+  contents: write            # lets the job commit the snapshot back to the repo
+
+concurrency:
+  group: snapshot
+  cancel-in-progress: false
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Take snapshot
+        run: node scripts/snapshot.mjs
+        env:
+          LEAGUE_ID: '1389350335302078464'
+
+      - name: Commit snapshot
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data
+          if git diff --cached --quiet; then
+            echo "Nothing changed since the last snapshot."
+          else
+            git commit -m "Nightly snapshot $(date -u +%Y-%m-%d)"
+            git push
+          fi
