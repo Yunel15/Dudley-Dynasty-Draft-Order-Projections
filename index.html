@@ -1441,8 +1441,36 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
     const src = pos === 'DEF'
       ? `https://sleepercdn.com/images/team_logos/nfl/${encodeURIComponent(String(id).toLowerCase())}.png`
       : `https://sleepercdn.com/content/nfl/players/thumb/${encodeURIComponent(id)}.jpg`;
-    return `<span class="hs" aria-hidden="true">${ini}<img src="${src}" alt="" loading="lazy" onerror="this.remove()"></span>`;
+    return `<span class="hs" aria-hidden="true">${ini}<img src="${src}" alt="" loading="lazy" crossorigin="anonymous" onload="hsFix(this)" onerror="hsErr(this)"></span>`;
   }
+  // Sleeper serves one 350x254 photo per player. Browsers shrink that to a ~34px circle in one jump, which looks
+  // jagged; step it down by halves on a canvas (like a mipmap) so small headshots stay crisp.
+  const hsCache = {};
+  window.hsErr = function(img){
+    const m = img.src.match(/players\/thumb\/([^.\/]+)\.jpg/);
+    if (m && !img.dataset.alt) { img.dataset.alt = 1; img.src = 'https://sleepercdn.com/content/nfl/players/' + m[1] + '.jpg'; } else img.remove();
+  };
+  window.hsFix = function(img){
+    try {
+      if (img.dataset.hs || !img.naturalWidth || /^data:/.test(img.src)) return;
+      const box = img.parentElement, dpr = Math.max(window.devicePixelRatio || 1, 1);
+      const css = Math.max(box.clientHeight, box.clientWidth, 0) || 36;
+      const th = Math.round(css * dpr * 1.25);                       // target height (a little over, for sharpness)
+      if (img.naturalHeight <= th * 1.5) { img.dataset.hs = 1; return; }
+      const key = img.src + '|' + th;
+      if (hsCache[key]) { img.dataset.hs = 1; img.src = hsCache[key]; return; }
+      let src = img, w = img.naturalWidth, h = img.naturalHeight;
+      const tw = Math.round(w * th / h);
+      while (h / 2 > th) {
+        const c = document.createElement('canvas'); c.width = Math.round(w / 2); c.height = Math.round(h / 2);
+        const x = c.getContext('2d'); x.imageSmoothingQuality = 'high'; x.drawImage(src, 0, 0, c.width, c.height);
+        src = c; w = c.width; h = c.height;
+      }
+      const f = document.createElement('canvas'); f.width = tw; f.height = th;
+      const fx = f.getContext('2d'); fx.imageSmoothingQuality = 'high'; fx.drawImage(src, 0, 0, tw, th);
+      img.dataset.hs = 1; hsCache[key] = f.toDataURL('image/jpeg', 0.92); img.src = hsCache[key];
+    } catch (e) { img.dataset.hs = 1; }
+  };
   function teamBlock(t, meta){
     return `<div class="team">${avatar(t)}<div class="tx"><div class="tname">${esc(t.name)}</div>${meta ? `<div class="tmeta">${meta}</div>` : ''}</div></div>`;
   }
