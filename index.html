@@ -815,6 +815,66 @@ footer input{width:min(100%,260px)}
 .is-phone .cm-axes{grid-template-columns:1fr;gap:6px}.is-phone .cm-keygrid{grid-template-columns:1fr;gap:8px}
 .is-phone .cm-kq.q-jug{order:1}.is-phone .cm-kq.q-con{order:2}.is-phone .cm-kq.q-reb{order:3}.is-phone .cm-kq.q-mid{order:4}
 .is-phone .cm-key{padding:10px}
+/* ---------- Rivalries ---------- */
+.rv-spots{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:6px 0 14px}
+.rv-spot{display:flex;flex-direction:column;gap:8px;text-align:left;background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--sc);border-radius:10px;padding:10px 12px;color:var(--ink);font:inherit;cursor:pointer;min-width:0}
+.rv-spot.even{--sc:#00CEB8}.rv-spot.lop{--sc:#FF8A96}.rv-spot.high{--sc:#FFA94D}
+.rv-spot:hover{border-color:var(--sc)}
+.rv-spot .slabel{font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;color:var(--sc);font-weight:700}
+.rv-sp-teams{display:flex;align-items:center;gap:6px;min-width:0}.rv-sp-teams .av{width:28px;height:28px;font-size:.62rem}
+.rv-sp-teams b{font-size:.86rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}.rv-sp-teams em{font-style:normal;color:var(--muted);font-size:.72rem;flex:none}
+.rv-sp-val{font:700 1.7rem/1 "Barlow Condensed","Arial Narrow",sans-serif}.rv-sp-val small{display:block;margin-top:5px;font-family:"Barlow","Helvetica Neue",Arial,sans-serif;font-size:.76rem;font-weight:500;line-height:1.3;color:var(--muted)}
+.rv-gridwrap{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:6px;overflow:hidden}
+.rv-grid{width:100%;table-layout:fixed;border-collapse:separate;border-spacing:3px;font-size:.78rem}
+.rv-grid th,.rv-grid td{border:0;padding:0;white-space:nowrap}
+.rv-grid thead th{vertical-align:bottom;padding:2px 0 6px;font-weight:600;color:var(--muted);font-size:.64rem}
+.rv-grid thead th .av{width:24px;height:24px;margin:0 auto 3px;font-size:.55rem}
+.rv-grid thead th span{display:block;overflow:hidden;text-overflow:ellipsis}
+.rv-grid th.rv-corner{width:132px;text-align:left;vertical-align:bottom}.rv-grid th.rv-corner span{font-size:.6rem;text-transform:uppercase;letter-spacing:.06em}
+.rv-grid tbody th{display:flex;align-items:center;gap:6px;height:34px;padding-right:4px;text-align:left;font-size:.78rem;font-weight:600;color:var(--ink);overflow:hidden}
+.rv-grid tbody th .av{width:24px;height:24px;font-size:.55rem}.rv-grid tbody th span{overflow:hidden;text-overflow:ellipsis}
+.rv-grid tbody tr.hl th{color:var(--accent)}.rv-grid tbody tr.hl td{box-shadow:inset 0 0 0 1px rgba(0,206,184,.5)}
+.rv-c{height:34px;border-radius:6px;background:var(--bg);text-align:center}
+.rv-c button{position:relative;width:100%;height:100%;border:0;background:none;color:var(--ink);font:700 .82rem inherit;font-family:inherit;font-variant-numeric:tabular-nums;cursor:pointer;border-radius:6px}
+.rv-c button:hover,.rv-c button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.rv-c.none button{color:var(--muted);font-weight:500}
+.rv-c.on button{outline:2px solid #fff;outline-offset:-2px}
+.rv-self{background:repeating-linear-gradient(45deg,transparent 0 4px,rgba(255,255,255,.04) 4px 8px);border-radius:6px}
+.rv-po{position:absolute;top:1px;right:2px;font-style:normal;font-size:.55rem;line-height:1}
+.rv-panel{position:relative;margin-top:12px;background:var(--surface);border:1px solid var(--accent);border-radius:10px;padding:10px 16px 14px;scroll-margin-top:90px}
+.rv-x{position:absolute;top:8px;right:8px}
+.rv-panel .mhead{padding-right:28px}
+.rv-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0 4px}
+.rv-stats div{background:var(--bg);border-radius:8px;padding:8px 10px;min-width:0}
+.rv-stats dt{font-size:.64rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.rv-stats dd{margin:3px 0 0;font-size:.88rem;font-weight:600;line-height:1.35}.rv-stats dd small{color:var(--muted);font-weight:500}
+.rv-sub{margin:14px 0 6px;font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.rv-log{margin-top:0}.rv-log table{table-layout:fixed}
+.rv-log th:nth-child(1){width:30%}.rv-log th:nth-child(3){width:16%}
+.rv-log td small{display:block;color:var(--muted);font-size:.7rem}
+.rv-log td b{font-weight:600}.rv-log td b.w{color:var(--accent);font-weight:800}.rv-log td span{margin:0 4px;color:var(--muted)}
+.rv-log tr.po td{background:rgba(0,206,184,.05)}
+.rv-log .rv-wn{overflow:hidden;text-overflow:ellipsis}
+.rv-prof{list-style:none;margin:0 0 6px;padding:0;font-size:.85rem}.rv-prof li{display:flex;align-items:baseline;gap:8px;padding:2px 0}
+.rv-prof li span{width:78px;flex:none;color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.05em}.rv-prof .linkbtn{padding:0;text-align:left}
+.rv-proflink{background:none;border:0;padding:4px 0;color:var(--accent);font:inherit;font-size:.85rem;font-weight:600;cursor:pointer}.rv-proflink:hover{text-decoration:underline}
+/* phone */
+.rv-pick{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.rv-pick h3{margin:0 0 8px;font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.rv-pickrow{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:8px}.rv-pickrow select{width:100%;min-width:0}.rv-pickrow span{color:var(--muted);font-size:.8rem}
+.rv-list{display:flex;flex-direction:column;gap:6px}
+.rv-li{display:grid;grid-template-columns:minmax(0,1fr) auto 12px;align-items:center;gap:10px;padding:9px 12px;background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--lc,var(--line));border-radius:10px;color:var(--ink);font:inherit;text-align:left;cursor:pointer}
+.rv-li.win{--lc:#00CEB8}.rv-li.loss{--lc:#FF8A96}.rv-li.on{border-color:var(--accent)}
+.rv-li .team{min-width:0}.rv-li .tname{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rv-li-rec{position:relative;font:700 1.25rem/1 "Barlow Condensed","Arial Narrow",sans-serif;font-variant-numeric:tabular-nums}.rv-li.win .rv-li-rec{color:var(--accent)}.rv-li.loss .rv-li-rec{color:var(--pylon-ink)}
+.rv-li .rv-po{position:static;margin-left:4px;font-size:.7rem}
+.is-phone .rv-spots{grid-template-columns:1fr;gap:8px}
+.is-phone .rv-stats{grid-template-columns:1fr 1fr;gap:6px}
+.is-phone .rv-panel{padding:8px 10px 12px}.is-phone .rv-panel .mside .mscore{font-size:2.6rem}.is-phone .rv-panel .mside .av{width:44px;height:44px}
+.is-phone .rv-log th,.is-phone .rv-log td{padding:7px 4px;white-space:normal;font-size:.78rem}
+.is-phone .rv-log th:nth-child(1){width:27%}.is-phone .rv-log th:nth-child(2){width:37%}.is-phone .rv-log th:nth-child(3){width:15%}
+.is-phone .rv-log td.tl,.is-phone .rv-log th.tl{max-width:none;padding-left:8px}
+.is-phone .rv-log td b{display:block}.is-phone .rv-log td span{display:none}
 </style>
 </head>
 <body>
@@ -1234,7 +1294,7 @@ footer input{width:min(100%,260px)}
         ? `${season} season hasn’t started. ${D.ids.length} teams.`
         : `${season} season, ${playedWeeks} of ${totalWeeks} weeks played. ${D.ids.length} teams.`;
 
-    const tabs = [['stand', 'Standings'], ['match', 'Matchups'], ['odds', 'Playoff Odds'], ['bracket', 'Playoff Bracket'], ['order', 'Tankathon'], ['proj', 'Tankathon Projections'], ['news', 'News Feed'], ['pay', 'Payouts'], ['rec', 'League Records'], ['mgr', 'Manager Profiles'], ['build', 'Team Construction'], ['cmap', 'Contender Map'], ['own', 'Pick Ownership'], ['trades', 'Trade History'], ['finder', 'Trade Finder'], ['calc', 'Trade Calculator'], ['laws', 'League Bylaws']];
+    const tabs = [['stand', 'Standings'], ['match', 'Matchups'], ['odds', 'Playoff Odds'], ['bracket', 'Playoff Bracket'], ['order', 'Tankathon'], ['proj', 'Tankathon Projections'], ['news', 'News Feed'], ['pay', 'Payouts'], ['rec', 'League Records'], ['mgr', 'Manager Profiles'], ['rivals', 'Rivalries'], ['build', 'Team Construction'], ['cmap', 'Contender Map'], ['own', 'Pick Ownership'], ['trades', 'Trade History'], ['finder', 'Trade Finder'], ['calc', 'Trade Calculator'], ['laws', 'League Bylaws']];
     const GROUPS = [{ label: 'Tankathon', keys: ['order', 'proj'] }, { label: 'Playoffs', keys: ['odds', 'bracket'] }, { label: 'Trades', keys: ['trades', 'finder', 'calc'] }];
     const tabBtn = ([k, l]) => `<button class="tab" role="tab" type="button" data-tab="${k}" aria-selected="${opts.tab === k}">${l}</button>`;
     const menuBtn = ([k, l]) => `<button class="tabopt" role="menuitem" type="button" data-tab="${k}" aria-current="${opts.tab === k}">${l}</button>`;
@@ -1244,7 +1304,7 @@ footer input{width:min(100%,260px)}
       if (g.keys[0] !== t[0]) return '';
       return `<div class="tabgroup"><button class="tab" type="button" data-group aria-haspopup="menu" aria-expanded="false" aria-selected="${g.keys.includes(opts.tab)}">${g.label} ▾</button><div class="tabmenu" role="menu">${tabs.filter(x => g.keys.includes(x[0])).map(menuBtn).join('')}</div></div>`;
     }).join('')}</nav>`;
-    html += opts.tab === 'cmap' ? renderCmap() : opts.tab === 'stand' ? renderStandings() : opts.tab === 'proj' ? renderProj() : opts.tab === 'odds' ? renderOdds() : opts.tab === 'match' ? renderMatchups() : opts.tab === 'news' ? renderNews() : opts.tab === 'bracket' ? renderBracket() : opts.tab === 'pay' ? renderPayouts() : opts.tab === 'rec' ? renderRecords() : opts.tab === 'mgr' ? renderProfiles() : opts.tab === 'build' ? renderBuild() : opts.tab === 'own' ? renderOwn() : opts.tab === 'trades' ? renderTrades() : opts.tab === 'laws' ? renderBylaws() : opts.tab === 'finder' ? renderFinder() : opts.tab === 'calc' ? renderCalc() : renderOrder();
+    html += opts.tab === 'rivals' ? renderRivals() : opts.tab === 'cmap' ? renderCmap() : opts.tab === 'stand' ? renderStandings() : opts.tab === 'proj' ? renderProj() : opts.tab === 'odds' ? renderOdds() : opts.tab === 'match' ? renderMatchups() : opts.tab === 'news' ? renderNews() : opts.tab === 'bracket' ? renderBracket() : opts.tab === 'pay' ? renderPayouts() : opts.tab === 'rec' ? renderRecords() : opts.tab === 'mgr' ? renderProfiles() : opts.tab === 'build' ? renderBuild() : opts.tab === 'own' ? renderOwn() : opts.tab === 'trades' ? renderTrades() : opts.tab === 'laws' ? renderBylaws() : opts.tab === 'finder' ? renderFinder() : opts.tab === 'calc' ? renderCalc() : renderOrder();
     const prevScroll = document.getElementById('wkscroll'), keep = prevScroll ? prevScroll.scrollLeft : null;
     $('#app').innerHTML = html;
     updatePhoneChrome(tabs);
@@ -1252,7 +1312,7 @@ footer input{width:min(100%,260px)}
   }
 
   // ---------- Phone navigation: bottom bar, "More" sheet, current-section label ----------
-  const MORE_GROUPS = [['League', ['stand', 'match', 'news', 'pay', 'rec', 'mgr', 'laws']], ['Playoffs', ['odds', 'bracket']], ['Tankathon', ['order', 'proj']],
+  const MORE_GROUPS = [['League', ['stand', 'match', 'news', 'pay', 'rec', 'mgr', 'rivals', 'laws']], ['Playoffs', ['odds', 'bracket']], ['Tankathon', ['order', 'proj']],
     ['Teams', ['build', 'cmap', 'own']], ['Trades', ['trades', 'finder', 'calc']]];
   let TABS_ALL = [];
   function updatePhoneChrome(tabs){
@@ -3345,6 +3405,198 @@ footer input{width:min(100%,260px)}
     return myD.historyPromise;
   }
 
+  // ---------- Rivalries: all-time head-to-head records between managers ----------
+  // Managers are tracked by Sleeper user_id (owner_id), so a record follows the person across seasons, not the roster slot.
+  const rvPair = (a, b) => a < b ? `${a}|${b}` : `${b}|${a}`;
+  // Which NFL weeks a winners-bracket round was played in (1 week per round, or 2-week rounds / 2-week final).
+  function rvRoundWeeks(lg, round, lastRound){
+    const st = lg.settings || {}, pws = st.playoff_week_start || 15, type = st.playoff_round_type || 0;
+    if (type === 2) return [pws + 2 * (round - 1), pws + 2 * (round - 1) + 1];
+    if (type === 1 && round === lastRound) return [pws + round - 1, pws + round];
+    return [pws + round - 1];
+  }
+  async function loadRivals(){
+    if (!D || D.rv || D.rvLoading) return;
+    const myD = D; myD.rvLoading = true;
+    try {
+      const hist = await loadHistory();
+      const games = [];
+      for (const L of hist) {
+        const keyOf = new Map(L.rosters.map(r => [r.roster_id, r.owner_id || `${L.id}-${r.roster_id}`]));
+        // Regular season: every head-to-head pairing in a completed week (the current season only includes finished weeks).
+        L.weeks.forEach(({ week, list }) => {
+          const by = new Map();
+          (list || []).forEach(m => { if (m.matchup_id == null) return; if (!by.has(m.matchup_id)) by.set(m.matchup_id, []); by.get(m.matchup_id).push(m); });
+          by.forEach(g => {
+            if (g.length !== 2) return;
+            const [x, y] = g, px = x.points || 0, py = y.points || 0;
+            if (!px && !py) return;
+            const a = keyOf.get(x.roster_id), b = keyOf.get(y.roster_id);
+            if (a && b && a !== b) games.push({ season: L.season, week, a, b, pa: px, pb: py, po: false });
+          });
+        });
+        // Playoffs: winners-bracket games that have a winner. Placement games (3rd, 5th place) count as consolation and are skipped.
+        const br = (L.bracket || []).filter(g => g && g.t1 != null && g.t2 != null && g.w != null && (g.p == null || g.p === 1));
+        if (!br.length) continue;
+        const lastRound = Math.max(...(L.bracket || []).map(g => g.r || 0));
+        const weeks = [...new Set(br.flatMap(g => rvRoundWeeks(L.league, g.r, lastRound)))];
+        const lists = new Map(await Promise.all(weeks.map(w => getJSON(`/league/${L.id}/matchups/${w}`).catch(() => []).then(x => [w, x || []]))));
+        br.forEach(g => {
+          const ws = rvRoundWeeks(L.league, g.r, lastRound);
+          const pts = rid => ws.reduce((t, w) => { const m = (lists.get(w) || []).find(x => x.roster_id === rid); return t + ((m && m.points) || 0); }, 0);
+          const a = keyOf.get(g.t1), b = keyOf.get(g.t2);
+          if (!a || !b || a === b) return;
+          let pa = pts(g.t1), pb = pts(g.t2);
+          games.push({ season: L.season, week: ws[ws.length - 1], a, b, pa, pb, po: true, round: g.r, final: g.p === 1, winner: keyOf.get(g.w) });
+        });
+      }
+      // Group into pairs, oldest game first.
+      const pairs = new Map();
+      games.sort((p, q) => p.season - q.season || p.week - q.week).forEach(g => {
+        const k = rvPair(g.a, g.b);
+        if (!pairs.has(k)) pairs.set(k, []);
+        pairs.get(k).push(g);
+      });
+      myD.rv = { pairs, seasons: hist.map(L => L.season).sort() };
+    } catch (e) {
+      myD.rv = { error: e.message || 'Couldn’t load league history from Sleeper.' };
+    } finally {
+      myD.rvLoading = false;
+      if (D === myD && (opts.tab === 'rivals' || opts.tab === 'mgr')) render();
+    }
+  }
+  // The current league's managers, keyed the same way as the games.
+  function rvManagers(){
+    return D.ids.map(rid => { const r = (D.rosters || []).find(x => x.roster_id === rid) || {}, t = team(rid);
+      return { key: r.owner_id || `${leagueId}-${rid}`, rid, t, name: t.manager || t.name }; })
+      .sort((a, b) => a.name.localeCompare(b.name));
+  }
+  // Everything about one pair, from A's point of view.
+  function rvStats(a, b){
+    const list = (D.rv.pairs.get(rvPair(a, b)) || []).map(g => {
+      const me = g.a === a ? g.pa : g.pb, op = g.a === a ? g.pb : g.pa;
+      const res = g.po && g.winner ? (g.winner === a ? 'W' : 'L') : me > op ? 'W' : me < op ? 'L' : 'T';
+      return { ...g, me, op, res };
+    });
+    const s = { a, b, games: list, n: list.length, w: 0, l: 0, t: 0, rw: 0, rl: 0, rt: 0, pw: 0, pl: 0, ptsA: 0, ptsB: 0, po: 0 };
+    list.forEach(g => { s.ptsA += g.me; s.ptsB += g.op; const k = g.res === 'W' ? 'w' : g.res === 'L' ? 'l' : 't'; s[k]++;
+      if (g.po) { s.po++; if (g.res === 'W') s.pw++; else if (g.res === 'L') s.pl++; } else s['r' + k]++; });
+    s.pct = s.n ? (s.w + 0.5 * s.t) / s.n : 0.5;
+    // streaks
+    let run = 0, who = null, bestA = 0, bestB = 0;
+    list.forEach(g => { const x = g.res === 'W' ? 'a' : g.res === 'L' ? 'b' : null; if (x && x === who) run++; else { who = x; run = x ? 1 : 0; }
+      if (who === 'a') bestA = Math.max(bestA, run); if (who === 'b') bestB = Math.max(bestB, run); });
+    s.cur = { who, n: run }; s.bestA = bestA; s.bestB = bestB;
+    const margin = g => Math.abs(g.me - g.op);
+    s.blowout = list.reduce((m, g) => !m || margin(g) > margin(m) ? g : m, null);
+    s.closest = list.reduce((m, g) => !m || margin(g) < margin(m) ? g : m, null);
+    return s;
+  }
+  const rvRec = s => `${s.w}-${s.l}${s.t ? `-${s.t}` : ''}`;
+  const rvWhen = g => g.po ? `${g.season} ${g.final ? 'Championship' : `Playoffs R${g.round}`}` : `${g.season} Wk ${g.week}`;
+  function rvAll(){
+    const M = rvManagers(), out = [];
+    for (let i = 0; i < M.length; i++) for (let j = i + 1; j < M.length; j++) { const s = rvStats(M[i].key, M[j].key); if (s.n) out.push(s); }
+    return out;
+  }
+
+  function renderRivals(){
+    let html = '<h2 class="sech">Rivalries</h2>';
+    if (!D.rv) { loadRivals(); return html + '<p class="status">Loading every season’s matchups from Sleeper…</p>'; }
+    if (D.rv.error) return html + `<div class="error"><strong>${esc(D.rv.error)}</strong><br>Try Refresh.</div>`;
+    const M = rvManagers(), byKey = new Map(M.map(m => [m.key, m]));
+    const all = rvAll();
+    if (!all.length) return html + '<p class="note">No head-to-head games have been played yet.</p>';
+    // ---- spotlight
+    const even = all.slice().sort((p, q) => Math.abs(p.pct - 0.5) - Math.abs(q.pct - 0.5) || q.n - p.n || Math.abs(p.ptsA - p.ptsB) - Math.abs(q.ptsA - q.ptsB))[0];
+    const lop = all.filter(s => s.n >= 3).sort((p, q) => Math.abs(q.pct - 0.5) - Math.abs(p.pct - 0.5) || q.n - p.n)[0];
+    const high = all.slice().sort((p, q) => (q.ptsA + q.ptsB) / q.n - (p.ptsA + p.ptsB) / p.n)[0];
+    const spot = (title, s, line, cls) => {
+      if (!s) return `<article class="rv-spot ${cls}"><span class="slabel">${title}</span><p class="tempty">Needs a pair with 3+ games.</p></article>`;
+      let A = byKey.get(s.a), B = byKey.get(s.b), st = s;
+      if (cls === 'lop' && s.pct < 0.5) { [A, B] = [B, A]; st = rvStats(s.b, s.a); }
+      return `<button type="button" class="rv-spot ${cls}" data-rv-pair="${esc(A.key)}|${esc(B.key)}"><span class="slabel">${title}</span>
+        <span class="rv-sp-teams">${avatar(A.t)}<b>${esc(A.name)}</b><em>vs</em><b>${esc(B.name)}</b>${avatar(B.t)}</span>
+        <span class="rv-sp-val">${rvRec(st)}<small>${line(st)}</small></span></button>`;
+    };
+    html += `<div class="rv-spots">${spot('Closest Rivalry', even, s => `${s.n} game${s.n === 1 ? '' : 's'} · ${(s.ptsA - s.ptsB >= 0 ? '+' : '−') + Math.abs(s.ptsA - s.ptsB).toFixed(1)} pts`, 'even')}
+      ${spot('Most Lopsided', lop, s => `${Math.round(s.pct * 100)}% win rate over ${s.n} games`, 'lop')}
+      ${spot('Highest-Scoring Rivalry', high, s => `${((s.ptsA + s.ptsB) / s.n).toFixed(1)} combined pts per game`, 'high')}</div>`;
+    const sel = D.rvSel && byKey.get(D.rvSel[0]) && byKey.get(D.rvSel[1]) ? D.rvSel : null;
+    if (isPhoneUI()) {
+      // ---- phone: pick a matchup
+      const a = (D.rvRow && byKey.get(D.rvRow)) ? D.rvRow : sel ? sel[0] : M[0].key, b = sel && sel[0] === a ? sel[1] : '';
+      const opt = (cur, skip, blank) => (blank ? `<option value="">${blank}</option>` : '') + M.filter(m => m.key !== skip).map(m => `<option value="${esc(m.key)}" ${m.key === cur ? 'selected' : ''}>${esc(m.name)}</option>`).join('');
+      html += `<div class="rv-pick"><h3>Pick a matchup</h3><div class="rv-pickrow"><select data-rv-a aria-label="Manager">${opt(a, null)}</select><span>vs</span><select data-rv-b aria-label="Opponent">${opt(b, a, 'Opponent…')}</select></div></div>`;
+      if (b) html += rvPanel(rvStats(a, b), byKey);
+      const me = byKey.get(a);
+      html += `<h3 class="rv-sub">${esc(me.name)} vs everyone</h3><div class="rv-list">${M.filter(m => m.key !== a).map(m => { const s = rvStats(a, m.key);
+        const cls = !s.n || Math.abs(s.pct - 0.5) < 1e-9 ? 'even' : s.pct > 0.5 ? 'win' : 'loss';
+        return `<button type="button" class="rv-li ${cls}${m.key === b ? ' on' : ''}" data-rv-pair="${esc(a)}|${esc(m.key)}">${teamBlock({ ...m.t, name: m.name }, esc(m.t.name))}<span class="rv-li-rec">${s.n ? rvRec(s) : '—'}${s.po ? '<i class="rv-po" title="Met in the playoffs">🏆</i>' : ''}</span><span class="ts-go">›</span></button>`; }).join('')}</div>`;
+      return html;
+    }
+    // ---- desktop: head-to-head grid (row manager's record against the column manager)
+    const short = n => n.length > 9 ? n.slice(0, 8) + '…' : n;
+    html += `<div class="rv-gridwrap"><table class="rv-grid"><thead><tr><th class="rv-corner"><span>Row vs column</span></th>${M.map(m => `<th scope="col" title="${esc(m.name)}">${avatar(m.t)}<span>${esc(short(m.name))}</span></th>`).join('')}</tr></thead><tbody>
+      ${M.map(r => `<tr class="${D.rvRow === r.key ? 'hl' : ''}" id="rvrow-${esc(r.key)}"><th scope="row">${avatar(r.t)}<span>${esc(r.name)}</span></th>${M.map(c => {
+        if (c.key === r.key) return '<td class="rv-self"></td>';
+        const s = rvStats(r.key, c.key);
+        if (!s.n) return `<td class="rv-c none"><button type="button" data-rv-pair="${esc(r.key)}|${esc(c.key)}" aria-label="${esc(r.name)} vs ${esc(c.name)}: no games">–</button></td>`;
+        const d = s.pct - 0.5, a = Math.min(0.55, 0.12 + Math.abs(d) * 0.9).toFixed(2);
+        const bg = Math.abs(d) < 1e-9 ? '' : ` style="background:rgba(${d > 0 ? '0,206,184' : '255,111,126'},${a})"`;
+        const on = sel && sel[0] === r.key && sel[1] === c.key;
+        return `<td class="rv-c${on ? ' on' : ''}"${bg}><button type="button" data-rv-pair="${esc(r.key)}|${esc(c.key)}" aria-label="${esc(r.name)} vs ${esc(c.name)}: ${rvRec(s)}${s.po ? ', met in the playoffs' : ''}">${rvRec(s)}${s.po ? '<i class="rv-po">🏆</i>' : ''}</button></td>`;
+      }).join('')}</tr>`).join('')}</tbody></table></div>`;
+    if (sel) html += rvPanel(rvStats(sel[0], sel[1]), byKey);
+    return html;
+  }
+  function rvPanel(s, byKey){
+    const A = byKey.get(s.a), B = byKey.get(s.b);
+    const side = (m, wins, cls, win) => `<div class="mside ${cls}${win ? ' win' : ''}">${avatar(m.t)}<div class="mname">${esc(m.name)}</div><div class="tmeta">${esc(m.t.name)}</div><div class="mscore">${wins}</div></div>`;
+    const head = `<div class="mhead">${side(A, s.w, 'l', s.w > s.l)}<div class="mvs">${s.t ? `${s.t} tie${s.t === 1 ? '' : 's'}` : 'vs'}</div>${side(B, s.l, 'r', s.l > s.w)}</div>`;
+    if (!s.n) return `<section class="rv-panel" id="rvpanel"><button type="button" class="sk-x rv-x" data-rv-close aria-label="Close">×</button>${head}<p class="tempty">These two haven’t played each other yet.</p></section>`;
+    const f1 = v => v.toFixed(1), f2 = v => v.toFixed(2);
+    const cur = s.cur.n ? `${esc((s.cur.who === 'a' ? A : B).name)} has won ${s.cur.n} straight` : 'No active streak (last game was a tie)';
+    const g1 = g => `${esc(rvWhen(g))}: ${f2(g.me)}–${f2(g.op)}, ${esc((g.res === 'W' ? A : g.res === 'L' ? B : { name: 'tie' }).name)} by ${f2(Math.abs(g.me - g.op))}`;
+    const stat = (k, v) => `<div><dt>${k}</dt><dd>${v}</dd></div>`;
+    const rows = s.games.slice().reverse().map(g => { const wn = g.res === 'W' ? A : g.res === 'L' ? B : null;
+      return `<tr${g.po ? ' class="po"' : ''}><td class="tl">${g.season}<small>${g.po ? (g.final ? 'Championship 🏆' : `Playoffs · Round ${g.round}`) : `Week ${g.week}`}</small></td>
+        <td><b class="${g.res === 'W' ? 'w' : ''}">${f2(g.me)}</b><span>–</span><b class="${g.res === 'L' ? 'w' : ''}">${f2(g.op)}</b></td><td>${f2(Math.abs(g.me - g.op))}</td><td class="rv-wn">${wn ? esc(wn.name) : 'Tie'}</td></tr>`; }).join('');
+    return `<section class="rv-panel" id="rvpanel"><button type="button" class="sk-x rv-x" data-rv-close aria-label="Close">×</button>${head}
+      <dl class="rv-stats">
+        ${stat('All-time', `${rvRec(s)} <small>${esc(A.name)}’s record</small>`)}
+        ${stat('Regular season', `${s.rw}-${s.rl}${s.rt ? `-${s.rt}` : ''}`)}
+        ${stat('Playoffs', s.po ? `${s.pw}-${s.pl}` : '<span class="asset-sub">Never met</span>')}
+        ${stat('Total points', `${f1(s.ptsA)} <small>to</small> ${f1(s.ptsB)}`)}
+        ${stat('Average score', `${f1(s.ptsA / s.n)} <small>to</small> ${f1(s.ptsB / s.n)}`)}
+        ${stat('Current streak', cur)}
+        ${stat('Longest streak', `${esc(A.name)} ${s.bestA} · ${esc(B.name)} ${s.bestB}`)}
+        ${stat('Biggest blowout', g1(s.blowout))}
+        ${stat('Closest game', g1(s.closest))}
+      </dl>
+      <h3 class="rv-sub">Game log</h3>
+      <div class="tablewrap rv-log"><table><thead><tr><th class="tl" scope="col">Season</th><th scope="col">Score</th><th scope="col">Margin</th><th scope="col">Winner</th></tr></thead><tbody>${rows}</tbody></table></div></section>`;
+  }
+  // Small Rivalries block for a Manager Profiles card.
+  function rvProfileBlock(key){
+    if (!D.rv) { loadRivals(); return '<h3 class="tch">Rivalries</h3><p class="tempty">Loading…</p>'; }
+    if (D.rv.error) return '';
+    const M = rvManagers(); if (!M.some(m => m.key === key)) return '';
+    const rec = M.filter(m => m.key !== key).map(m => ({ m, s: rvStats(key, m.key) })).filter(x => x.s.n);
+    const best = rec.slice().sort((p, q) => q.s.pct - p.s.pct || q.s.n - p.s.n)[0], worst = rec.slice().sort((p, q) => p.s.pct - q.s.pct || q.s.n - p.s.n)[0];
+    const line = (lab, x) => x ? `<li><span>${lab}</span><button type="button" class="linkbtn" data-rv-pair="${esc(key)}|${esc(x.m.key)}">${esc(x.m.name)} · ${rvRec(x.s)}</button></li>` : '';
+    return `<h3 class="tch">Rivalries</h3>${rec.length ? `<ul class="rv-prof">${line('Owns', best)}${worst && worst !== best ? line('Owned by', worst) : ''}</ul>` : '<p class="tempty">No head-to-head games yet.</p>'}
+      <button type="button" class="rv-proflink" data-rv-row="${esc(key)}">See all head-to-head records ›</button>`;
+  }
+  function rvGo(pair, row){
+    opts.tab = 'rivals'; saveOpts();
+    if (pair) { D.rvSel = pair; D.rvRow = isPhoneUI() ? pair[0] : D.rvRow; }
+    if (row) { D.rvRow = row; D.rvSel = null; }
+    render();
+    const el = pair ? document.getElementById('rvpanel') : (!isPhoneUI() && row ? document.getElementById(`rvrow-${row}`) : null);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: pair ? 'start' : 'center' }); else window.scrollTo(0, 0);
+  }
+
   // ---------- Manager profiles ----------
   async function loadProfiles(){
     if (!D || D.profiles || D.profilesLoading) return;
@@ -3511,6 +3763,7 @@ footer input{width:min(100%,260px)}
         </dl>
         <h3 class="tch">Trophy case</h3>
         ${trophies ? `<ul class="trophies">${trophies}</ul>` : '<p class="tempty">Empty for now.</p>'}
+        ${m.current ? rvProfileBlock(m.key) : ''}
       </article>`;
     });
     return html + '</div>';
@@ -4038,6 +4291,11 @@ footer input{width:min(100%,260px)}
     if (e.target.closest('[data-close-match]')) { morphMatch(D.openMatch && D.openMatch.id, false); return; }
     const plb = e.target.closest('[data-pid]');
     if (plb) { toggleBreakdown(plb); return; }
+    const rvp = e.target.closest('[data-rv-pair]');
+    if (rvp) { const [a, b] = rvp.dataset.rvPair.split('|'); rvGo([a, b], null); return; }
+    const rvr = e.target.closest('[data-rv-row]');
+    if (rvr) { rvGo(null, rvr.dataset.rvRow); return; }
+    if (e.target.closest('[data-rv-close]')) { D.rvSel = null; render(); return; }
     const cmt = e.target.closest('[data-cm-team]');
     if (cmt) { const rid = Number(cmt.dataset.cmTeam); const fromList = !!cmt.closest('.cm-tbl, .cm-key'); D.cmSel = D.cmSel === rid && !fromList ? null : rid; render();
       const pnl = document.getElementById('cmpanel'); if (pnl && (fromList || isPhoneUI())) pnl.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
@@ -4064,6 +4322,8 @@ footer input{width:min(100%,260px)}
       if (cst) D.calc[cst.dataset.calcSt].st = cst.value;
       render(); return;
     }
+    if (e.target.matches('[data-rv-a]')) { D.rvRow = e.target.value; D.rvSel = null; render(); return; }
+    if (e.target.matches('[data-rv-b]')) { const a = document.querySelector('[data-rv-a]').value; if (e.target.value) rvGo([a, e.target.value], null); else { D.rvSel = null; render(); } return; }
     const el = e.target.closest('[data-opt]');
     if (!el) return;
     const k = el.dataset.opt;
