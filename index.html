@@ -3160,6 +3160,7 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
     else if (ty === 'Field Goal Good') add('kicker', yd < 20 ? S('fgm_0_19') : yd < 30 ? S('fgm_20_29') : yd < 40 ? S('fgm_30_39') : yd < 50 ? S('fgm_40_49') : (S('fgm_50p') || S('fgm_50_59') || S('fgm_40_49')) || 3);
     return out;
   }
+  const playTxt = t => String(t || '').replace(/\s+/g, ' ').replace(/\((?:Shotgun|No Huddle|Shotgun, No Huddle|No Huddle, Shotgun)\)\s*/g, '').replace(/(TOUCHDOWN)\..*$/, '$1').replace(/\s*\([^)]*\)\.?$/, '').trim();
   const clkSecs = c => { const m = String(c).match(/(\d+):(\d+)/); return m ? +m[1] * 60 + +m[2] : 0; };
   async function momentumPBP(a, b, w, ctx, games, onProgress){
     const starters = (m, side) => (m.starters || []).map((id, i) => ({ id, side, pts: ((m.starters_points || [])[i]) || 0 })).filter(x => x.id && x.id !== '0');
@@ -3270,11 +3271,11 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
     if (R && document.getElementById('wpov') && R.samples.length > 2) {
       const body2 = document.querySelector('#wpov .wpc-body');
       const when = t => { const d = new Date(t); return d.toLocaleDateString([], { weekday: 'short' }) + ' ' + d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }); };
-      const rows = R.swings.map((r, i) => { const who = r.who.slice().sort((u, v) => v.pts - u.pts), tx = r.p.text.replace(/\s+/g, ' ').slice(0, 120), up = r.d > 0, tm = up ? ta : tb;
+      const rows = R.swings.map((r, i) => { const who = r.who.slice().sort((u, v) => v.pts - u.pts), tx = playTxt(r.p.text).slice(0, 120), up = r.d > 0, tm = up ? ta : tb;
         return `<tr><th scope="row"><span class="wpc-no">${i + 1}</span></th><td><b>${esc(tm.name)}</b> <small class="${up ? 'up' : 'bl'}">+${Math.abs(Math.round(r.d * 100))}</small></td><td>${esc(tx)}<small>Q${r.p.per} ${esc(r.p.clk)} · ${esc(when(r.t))} · ${who.map(x => `${esc(x.nm)} +${r.who.length > 1 ? x.pts.toFixed(1) : r.pts.toFixed(1)}`).join(', ')} pts</small></td></tr>`; }).join('');
       const top = R.swings[0];
       body2.innerHTML = `${wpTimeSvg(R, ta, tb)}
-        <p class="wpc-sum">${top ? `Biggest swing: <b>${esc(top.p.text.replace(/\s+/g, ' ').slice(0, 90))}</b> moved ${top.d > 0 ? esc(ta.name) : esc(tb.name)} by ${Math.abs(Math.round(top.d * 100))} percentage points.` : 'The win probability has barely moved.'}</p>
+        <p class="wpc-sum">${top ? `Biggest swing: <b>${esc(playTxt(top.p.text).slice(0, 90))}</b> moved ${top.d > 0 ? esc(ta.name) : esc(tb.name)} by ${Math.abs(Math.round(top.d * 100))} percentage points.` : 'The win probability has barely moved.'}</p>
         ${rows ? `<div class="wpc-tw"><table class="wpc-tbl"><thead><tr><th>#</th><th>Helped</th><th>Play</th></tr></thead><tbody>${rows}</tbody></table></div>` : ''}
         <p class="note wpc-note">Built from ESPN’s play-by-play: each starter’s points sit on the plays that produced them, scaled to match Sleeper’s totals${R.placed < R.n ? `; ${R.n - R.placed} starter${R.n - R.placed === 1 ? '' : 's'} (defenses, kickers or players ESPN couldn’t match) are spread evenly across their game` : ''}. Gaps between game windows are squeezed out. Win probability is for ${esc(ta.name)}${R.live ? '; the last point is live.' : '.'}</p>`;
       return;
