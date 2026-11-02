@@ -630,8 +630,9 @@ footer input{width:min(100%,260px)}
 .is-phone .mtabname:empty{display:none}
 .is-phone .brand:has(.mtabname:not(:empty)) .sub{display:none}
 .is-phone #refresh{padding:7px 12px;font-size:.8rem;flex:none}
-.is-phone .cd{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 12px;margin:10px 0 12px;text-align:left}
-.is-phone .cdlabel{font-size:.6rem;line-height:1.35;max-width:38%}
+.is-phone .cd{padding:8px 12px;margin:10px 0 12px;text-align:left}
+.is-phone .cdt{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.is-phone .cdlabel{font-size:.6rem;line-height:1.35}.is-phone .cdt .cdlabel{max-width:38%}
 .is-phone .cdgrid{gap:12px;margin:0}.is-phone .cdgrid>div{min-width:0}
 .is-phone .cdgrid b{font-size:1.3rem}.is-phone .cdgrid span{font-size:.55rem}
 .is-phone .tabs{display:none}
@@ -981,6 +982,33 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
 .is-phone .jm-stop{width:auto}
 .is-phone .jm-arrow{transform:rotate(90deg);align-self:center;line-height:1}
 .is-phone .jm-drop{align-self:stretch;max-width:none;flex-direction:row;justify-content:center;gap:8px}
+/* Rotating top banner */
+.cdstage{display:grid}
+.cdp{grid-area:1/1;align-self:center;min-width:0;opacity:0;visibility:hidden;transition:opacity .45s ease,visibility .45s}
+.cdp.on{opacity:1;visibility:visible}
+.cddots{display:flex;justify-content:center;gap:2px;margin-top:4px}.cddots:empty{display:none}
+.cddots button{all:unset;box-sizing:content-box;width:6px;height:6px;padding:4px;border-radius:50%;background:var(--line);background-clip:content-box;cursor:pointer}
+.cddots button[aria-pressed="true"]{background:var(--accent);background-clip:content-box}
+.cddots button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.cdscore{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:8px;text-align:left}
+.cdm{all:unset;box-sizing:border-box;cursor:pointer;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:3px;min-width:0;padding:7px 9px 10px;background:var(--bg);border:1px solid var(--line);border-radius:8px}
+.cdm:hover,.cdm:focus-visible{border-color:var(--accent)}
+.cdm .r{display:flex;justify-content:space-between;gap:8px;font-size:.78rem;color:var(--muted)}
+.cdm .r i{font-style:normal;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cdm .r b{font-variant-numeric:tabular-nums;color:var(--ink);font-weight:600}
+.cdm .r.win i{color:var(--ink);font-weight:700}.cdm .r.win b{color:var(--accent);font-weight:800}
+.cdm .wpm{position:absolute;left:0;right:0;bottom:0;height:3px;background:#5AA6FF}.cdm .wpm i{display:block;height:100%;background:var(--accent)}
+.cdsw{all:unset;box-sizing:border-box;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:16px;width:100%;margin-top:6px;padding:2px 4px}
+.cdsw:hover .cdsw-t b,.cdsw:focus-visible .cdsw-t b{color:var(--accent)}
+.cdsw-d{flex:none;text-align:center;font:700 2.6rem/1 "Barlow Condensed","Arial Narrow",sans-serif;color:var(--accent);font-variant-numeric:tabular-nums}
+.cdsw-d small{display:block;margin-top:2px;font:600 .58rem/1 Inter,system-ui,sans-serif;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.cdsw-t{min-width:0;max-width:560px;display:flex;flex-direction:column;gap:2px;text-align:left}
+.cdsw-t b{font-size:.95rem}
+.cdsw-t i{font-style:normal;font-size:.85rem;color:#C9D0DC;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.cdsw-t small{color:var(--muted);font-size:.72rem}
+.is-phone .cdscore{display:flex;overflow-x:auto;scroll-snap-type:x proximity;padding-bottom:4px}
+.is-phone .cdm{flex:0 0 200px;scroll-snap-align:start}
+.is-phone .cdsw{gap:10px}.is-phone .cdsw-d{font-size:2rem}.is-phone .cdsw-t b{font-size:.85rem}.is-phone .cdsw-t i{font-size:.78rem}
 /* Win probability momentum chart */
 .wpb{cursor:pointer;border-radius:8px}.wpb:hover .wpb-hint,.wpb:focus-visible .wpb-hint{color:var(--accent);text-decoration:underline}.wpb:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 .wpb-hint{color:var(--accent);font-weight:600;font-size:.68rem;letter-spacing:.02em}
@@ -1108,11 +1136,18 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
     </div>
     <button class="btn" id="refresh" type="button">Refresh</button>
   </header>
-  <section class="cd" id="cd" aria-label="Countdown to the NFL 2027 Draft">
-    <div class="cdlabel">NFL 2027 Draft · April 29, 8:00 PM ET</div>
-    <div class="cdgrid" id="cdgrid" role="timer">
-      <div><b id="cdD">--</b><span>days</span></div><div><b id="cdH">--</b><span>hours</span></div><div><b id="cdM">--</b><span>min</span></div><div><b id="cdS">--</b><span>sec</span></div>
+  <section class="cd" id="cd" aria-label="League banner: draft countdown, weekly scoreboard and biggest momentum swing">
+    <div class="cdstage">
+      <div class="cdp cdt on" data-panel="timer">
+        <div class="cdlabel">NFL 2027 Draft · April 29, 8:00 PM ET</div>
+        <div class="cdgrid" id="cdgrid" role="timer">
+          <div><b id="cdD">--</b><span>days</span></div><div><b id="cdH">--</b><span>hours</span></div><div><b id="cdM">--</b><span>min</span></div><div><b id="cdS">--</b><span>sec</span></div>
+        </div>
+      </div>
+      <div class="cdp" data-panel="score" id="cdscore" inert></div>
+      <div class="cdp" data-panel="swing" id="cdswing" inert></div>
     </div>
+    <div class="cddots" id="cddots"></div>
   </section>
   <main id="app"><p class="status">Loading league from Sleeper…</p></main>
   <footer>
@@ -1548,6 +1583,7 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
     $('#app').innerHTML = html;
     tidyPage();
     updatePhoneChrome(tabs);
+    refreshBanner(); bannerSwingLoad();
     if (opts.tab === 'match') { const sc = document.getElementById('wkscroll'); if (sc && keep != null) sc.scrollLeft = keep; centerWeek(keep != null); }
   }
 
@@ -5365,6 +5401,101 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
     D = null;
     load();
   });
+
+  // ---------- Top banner: rotates draft timer / weekly scoreboard / biggest momentum swing (every minute) ----------
+  const BN = { cur: 'timer', hover: false, label: { timer: 'draft countdown', score: 'weekly scoreboard', swing: 'biggest momentum swing' } };
+  const bnAvail = () => ['timer', ...(D && D.bnScore ? ['score'] : []), ...(D && D.bsw && D.bsw.data ? ['swing'] : [])];
+  function bnShow(k){
+    const av = bnAvail(); if (!av.includes(k)) k = 'timer';
+    BN.cur = k;
+    document.querySelectorAll('#cd .cdp').forEach(el => { const on = el.dataset.panel === k; el.classList.toggle('on', on); if (on) el.removeAttribute('inert'); else el.setAttribute('inert', ''); });
+    const dots = document.getElementById('cddots');
+    if (dots) dots.innerHTML = av.length > 1 ? av.map(x => `<button type="button" data-bn-go="${x}" aria-label="Show the ${BN.label[x]}" aria-pressed="${x === k}"></button>`).join('') : '';
+  }
+  function gotoMatch(w, mid, chart){
+    closeSheet(); opts.tab = 'match'; opts.mview = 'week'; opts.week = w; D.openMatch = { w, id: mid }; saveOpts(); render();
+    const card = document.querySelector(`[data-card="${mid}"]`); window.scrollTo(0, card ? Math.max(0, window.scrollY + card.getBoundingClientRect().top - 80) : 0);
+    if (chart) setTimeout(() => openWpChart(w, mid), 350);
+  }
+  function bnPairs(list){
+    const g = new Map(); (list || []).forEach(m => { if (m.matchup_id == null) return; if (!g.has(m.matchup_id)) g.set(m.matchup_id, []); g.get(m.matchup_id).push(m); });
+    return [...g.entries()].sort((x, y) => x[0] - y[0]).map(([mid, v]) => { v.mid = mid; return v; }).filter(v => v.length === 2);
+  }
+  function refreshBanner(){
+    if (!D || !document.getElementById('cd')) return;
+    const w = D.defWeek, list = D.weekData.get(w);
+    if (!list && !D.weekLoading.has(w)) { fetchWeek(w).then(() => refreshBanner()); }
+    const sc = document.getElementById('cdscore'), pairs = bnPairs(list);
+    if (sc && pairs.length) {
+      const ctx = D.wctx && D.wctx.get(w), anyPts = (list || []).some(m => (m.points || 0) > 0);
+      const live = ctx && [...ctx.sched.values()].some(x => x.status === 'in_game');
+      const allDone = ctx && ctx.sched.size && [...ctx.sched.values()].every(x => x.status === 'complete');
+      const tiles = pairs.map(([a, b]) => {
+        const ta = team(a.roster_id), tb = team(b.roster_id), pa = a.points || 0, pb = b.points || 0;
+        const wp = ctx && !allDone && (ctx.hasProj || anyPts) ? Math.round(winProb(a, b, ctx, false).pA * 100) : null;
+        return `<button type="button" class="cdm" data-bn-match="${pairs.indexOf(pairs.find(q => q.mid === a.matchup_id))}" data-bn-mid="${a.matchup_id}" aria-label="${esc(ta.name)} ${anyPts ? pa.toFixed(2) : ''} versus ${esc(tb.name)} ${anyPts ? pb.toFixed(2) : ''}. Open matchup">
+          <span class="r${anyPts && pa > pb ? ' win' : ''}"><i>${esc(ta.name)}</i><b>${anyPts ? pa.toFixed(2) : '–'}</b></span><span class="r${anyPts && pb > pa ? ' win' : ''}"><i>${esc(tb.name)}</i><b>${anyPts ? pb.toFixed(2) : '–'}</b></span>${wp != null ? `<span class="wpm" title="${esc(ta.name)} ${wp}% to win"><i style="width:${wp}%"></i></span>` : ''}</button>`;
+      }).join('');
+      sc.innerHTML = `<div class="cdlabel">Week ${w} Scoreboard${live ? ' · Live' : allDone ? ' · Final' : ''}</div><div class="cdscore">${tiles}</div>`;
+      D.bnScore = true;
+    }
+    const sw = document.getElementById('cdswing'), d = D.bsw && D.bsw.data;
+    if (sw && d) {
+      const ta = team(d.a), tb = team(d.b), helped = team(d.helped), pts = Math.abs(Math.round(d.d * 100));
+      sw.innerHTML = `<div class="cdlabel">Biggest Momentum Swing · Week ${d.w}${d.final ? ' · Final' : ' · Live'}</div>
+        <button type="button" class="cdsw" data-bn-swing aria-label="Open the momentum chart for ${esc(ta.name)} versus ${esc(tb.name)}"><span class="cdsw-d">+${pts}<small>win prob</small></span>
+        <span class="cdsw-t"><b>${esc(helped.name)}</b><i>${esc(d.text)}</i><small>${esc(ta.name)} vs ${esc(tb.name)} · Q${d.per} ${esc(d.clk)}${d.who ? ` · ${esc(d.who)}` : ''}</small></span></button>`;
+    }
+    bnShow(BN.cur);
+  }
+  async function bannerSwingLoad(){
+    if (!D) return;
+    const myD = D, s = myD.bsw || (myD.bsw = { ts: 0, busy: false, data: null, final: false });
+    if (s.busy || (s.ts && (s.final || Date.now() - s.ts < 120000))) return;
+    s.busy = true;
+    try {
+      const wait = async (fn, ms) => { const t0 = Date.now(); while (!fn() && Date.now() - t0 < ms) await new Promise(r => setTimeout(r, 250)); return fn(); };
+      let w = myD.defWeek;
+      let list = await fetchWeek(w), ctx = (weekContext(w), null);
+      await wait(() => myD.wctx.has(w), 20000); ctx = myD.wctx.get(w);
+      if (!ctx) throw new Error('ctx');
+      if (![...ctx.sched.values()].some(x => x.status !== 'pre_game') && w > myD.startWeek) {   // nothing has kicked off yet: show last week's
+        w -= 1; list = await fetchWeek(w); weekContext(w); await wait(() => myD.wctx.has(w), 20000); ctx = myD.wctx.get(w); if (!ctx) throw new Error('ctx');
+      }
+      const sts = [...ctx.sched.values()], started = sts.some(x => x.status !== 'pre_game'), final = sts.length > 0 && sts.every(x => x.status === 'complete');
+      if (!started) { s.data = null; s.ts = Date.now(); return; }
+      const pairs = bnPairs(list), ids = pairs.flatMap(g => g.flatMap(m => m.starters || []));
+      ensureNames(ids); await wait(() => ids.every(id => !id || id === '0' || myD.players[id]), 20000);
+      await kickoffsFor(w); try { await loadEspnIds(); } catch (e) {}
+      const games = myD.gmeta && myD.gmeta.get(w); if (!games) throw new Error('games');
+      let best = null;
+      for (const g of pairs) {
+        let R = null; try { R = await momentumPBP(g[0], g[1], w, ctx, games); } catch (e) { R = null; }
+        const r = R && R.swings[0]; if (!r || (best && Math.abs(r.d) <= Math.abs(best.d))) continue;
+        const who = r.who.slice().sort((x, y) => y.pts - x.pts)[0];
+        best = { w, mid: g.mid, a: g[0].roster_id, b: g[1].roster_id, helped: (r.d > 0 ? g[0] : g[1]).roster_id, d: r.d, text: playTxt(r.p.text).slice(0, 140), per: r.p.per, clk: r.p.clk, who: who ? `${who.nm} +${(r.who.length > 1 ? who.pts : r.pts).toFixed(1)} pts` : '' };
+      }
+      if (myD === D) { s.data = best ? { ...best, final } : null; s.final = final; s.ts = Date.now(); }
+    } catch (e) { s.ts = Date.now() - 60000; }
+    finally { s.busy = false; if (myD === D) refreshBanner(); }
+  }
+  // every minute: move to the next panel (paused while the pointer is over the banner) and refresh live data
+  function bnTick(){
+    if (document.hidden || !D) return;
+    const w = D.defWeek, ctx = D.wctx && D.wctx.get(w), live = ctx && [...ctx.sched.values()].some(x => x.status === 'in_game');
+    if (live) { D.wctx.delete(w); D.kick && D.kick.delete(w); D.gmeta && D.gmeta.delete(w); D.weekData.delete(w); weekContext(w); fetchWeek(w).then(() => refreshBanner()); if (D.bsw) D.bsw.ts = 0; }
+    bannerSwingLoad();
+    if (BN.hover) return;
+    const av = bnAvail(); bnShow(av[(Math.max(0, av.indexOf(BN.cur)) + 1) % av.length]);
+  }
+  setInterval(bnTick, 60000);
+  (() => { const cd = document.getElementById('cd'); if (!cd) return;
+    cd.addEventListener('mouseenter', () => { BN.hover = true; }); cd.addEventListener('mouseleave', () => { BN.hover = false; });
+    cd.addEventListener('click', e => {
+      const go = e.target.closest('[data-bn-go]'); if (go) { bnShow(go.dataset.bnGo); return; }
+      const m = e.target.closest('[data-bn-mid]'); if (m && D) { gotoMatch(D.defWeek, Number(m.dataset.bnMid), false); return; }
+      if (e.target.closest('[data-bn-swing]') && D && D.bsw && D.bsw.data) gotoMatch(D.bsw.data.w, D.bsw.data.mid, true);
+    }); })();
 
   // Countdown: April 29, 2027, 8:00 PM Eastern (EDT, UTC-4) = April 30, 2027 00:00 UTC
   const CD_TARGET = Date.UTC(2027, 3, 30, 0, 0, 0);
