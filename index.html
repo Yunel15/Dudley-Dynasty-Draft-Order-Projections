@@ -4724,11 +4724,10 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
     if (view === 'graph' && isPhoneUI()) html += '<p class="note">The graph is small on a phone. List view is easier to read.</p>';
     html += `<div class="tn-wrap"><div class="tn-main">${view === 'matrix' ? tnMatrix(tn, sel) : view === 'list' ? tnList(tn, sel) : tnGraph(tn, sel)}</div><aside class="tn-panel" aria-label="Manager details">${tnPanel(tn, sel, model)}</aside></div>`;
 
-    const few = ids.filter(r => tn.pk(tn.stat.get(r)) <= 1).sort((a, b) => tn.stat.get(a).n - tn.stat.get(b).n);
-    html += `<h3 class="sh3">Hasn’t Traded Yet<span class="ib-cnt">No trades, or only one trade partner</span></h3>`;
-    html += few.length ? `<ul class="tn-few">${few.map(r => { const s = tn.stat.get(r), only = s.partners.size ? [...s.partners.entries()][0] : null;
-      return `<li><button type="button" class="tn-lrow" data-tn-pick="${r}">${avatar(team(r))}<span class="tn-ln"><b>${esc(team(r).name)}</b><small>${!s.n ? 'Hasn’t traded yet' : only ? `Only trade partner: ${esc(team(only[0]).name)} (${only[1]} trade${only[1] === 1 ? '' : 's'})` : `Only trade partner is no longer in the league (${s.n} trade${s.n === 1 ? '' : 's'})`}</small></span></button></li>`; }).join('')}</ul>`
-      : '<p class="note">Every manager has traded with at least two partners.</p>';
+    const few = ids.filter(r => tn.stat.get(r).n === 0);
+    html += `<h3 class="sh3">Hasn’t Traded Yet<span class="ib-cnt">Managers who haven’t made a trade</span></h3>`;
+    html += few.length ? `<ul class="tn-few">${few.map(r => `<li><button type="button" class="tn-lrow" data-tn-pick="${r}">${avatar(team(r))}<span class="tn-ln"><b>${esc(team(r).name)}</b><small>Hasn’t traded yet</small></span></button></li>`).join('')}</ul>`
+      : '<p class="note">Every manager has made at least one trade.</p>';
 
     html += `<h3 class="sh3">Most Likely Trade Partner<span class="ib-cnt">Past trades plus complementary roster needs</span></h3>`;
     if (!model) html += `<p class="note">${D.tf && D.tf.error ? 'Player values couldn’t load, so these suggestions use trade history only.' : 'Roster needs are still loading. These suggestions update when they arrive.'}</p>`;
