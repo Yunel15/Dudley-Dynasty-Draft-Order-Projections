@@ -1255,6 +1255,30 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
 @keyframes cdbump{0%{transform:scale(1.25);color:#fff;text-shadow:0 0 18px var(--accent)}100%{transform:scale(1)}}
 @media (prefers-reduced-motion:reduce){#cd .cdm .r b.bump{animation:none}}
 .is-phone #cd .cdm .cdtag{padding:1px 8px;border-radius:999px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;font-size:.7rem;background:rgba(255,111,126,.16);color:var(--pylon-ink)}
+/* ---------- Scoreboard: phone revamp (versus cards) ---------- */
+.cdpos{display:none}
+.is-phone .cdpos{display:inline-block;margin-left:auto;font-size:.875rem;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums}
+.is-phone .cdstage{min-height:152px}
+.is-phone .cdp{align-self:start}
+.is-phone #cd .cdscore{gap:10px}
+.is-phone #cd .cdm{flex:0 0 min(320px,88%);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:auto auto auto auto;column-gap:14px;row-gap:2px;padding:10px 12px 9px 14px;min-height:108px;background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,0) 60%),var(--bg)}
+.is-phone #cd .cdm .r{display:contents}
+.is-phone #cd .cdm .r .tn{grid-row:1;gap:6px;font-size:.9rem}
+.is-phone #cd .cdm .r:nth-of-type(1) .tn{grid-column:1}
+.is-phone #cd .cdm .r:nth-of-type(2) .tn{grid-column:2;flex-direction:row-reverse}
+.is-phone #cd .cdm .r:nth-of-type(2) .tn i{text-align:right}
+.is-phone #cd .cdm .r b{grid-row:2;font-size:1.85rem;line-height:1.1}
+.is-phone #cd .cdm .r.win b{font-size:1.85rem}
+.is-phone #cd .cdm .r:nth-of-type(1) b{grid-column:1}
+.is-phone #cd .cdm .r:nth-of-type(2) b{grid-column:2;text-align:right}
+.is-phone #cd .cdm .av{width:22px;height:22px}
+.is-phone #cd .cdm .wpb{grid-row:3;grid-column:1/-1;margin-top:6px;height:5px}
+.is-phone #cd .cdm .wpt{display:flex;grid-row:4;grid-column:1/-1;font-size:.875rem;margin-top:3px}
+.is-phone #cd .cdm .cdtag{font-size:.75rem}
+.is-phone #cd .cdm::after{content:"vs";position:absolute;left:50%;top:44px;transform:translateX(-50%);font-size:.75rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);opacity:.7;pointer-events:none}
+.is-phone .cdt .cdgrid,.is-phone .cdsw{margin-top:2px}
+@media (max-width:350px){.is-phone .cdpos{display:none}}
+.is-phone .cdp.cdt{align-self:center}
 /* ---------- Trading Cards ---------- */
 .tc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:var(--space-lg)}
 .tc{--fc:#8C97AD;--fc2:#5B6478;--glow:rgba(140,151,173,.25);container-type:inline-size;display:flex;flex-direction:column;gap:var(--space-sm);min-width:0}
@@ -6177,8 +6201,22 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
         return `<button type="button" class="cdm${st}${anyPts ? (pa > pb ? ' la' : pb > pa ? ' lb' : '') : ''}" data-bn-match="${pairs.indexOf(pairs.find(q => q.mid === a.matchup_id))}" data-bn-mid="${a.matchup_id}" aria-label="${esc(ta.name)} ${anyPts ? pa.toFixed(2) : ''} versus ${esc(tb.name)} ${anyPts ? pb.toFixed(2) : ''}. Open matchup">
           <span class="r${anyPts && pa > pb ? ' win' : ''}"><span class="tn">${avatar(ta)}<i>${esc(ta.name)}</i></span><b${bumpA ? ' class="bump"' : ''}>${anyPts ? pa.toFixed(2) : '–'}</b></span><span class="r${anyPts && pb > pa ? ' win' : ''}"><span class="tn">${avatar(tb)}<i>${esc(tb.name)}</i></span><b${bumpB ? ' class="bump"' : ''}>${anyPts ? pb.toFixed(2) : '–'}</b></span>${wp != null ? `<span class="wpb" title="${esc(ta.name)} ${wp}% to win"><span style="width:${wp}%"></span></span><span class="wpt"><em class="a">${wp}%</em>${st === ' close' && !allDone ? '<span class="cdtag">Nail-biter</span>' : '<span>win prob</span>'}<em class="b">${100 - wp}%</em></span>` : ''}</button>`;
       }).join('');
-      sc.innerHTML = `<div class="cdlabel"><span class="lg">Week ${w} Scoreboard</span><span class="sh">Week ${w}</span>${live ? '<span class="cdchip live">Live</span>' : allDone ? '<span class="cdchip">Final</span>' : ''}</div><div class="cdscore">${tiles}</div>`;
+      sc.innerHTML = `<div class="cdlabel"><span class="lg">Week ${w} Scoreboard</span><span class="sh">Week ${w}</span>${live ? '<span class="cdchip live">Live</span>' : allDone ? '<span class="cdchip">Final</span>' : ''}<span class="cdpos" aria-hidden="true">1/${pairs.length}</span></div><div class="cdscore">${tiles}</div>`;
       D.bnScore = true;
+      const sr = sc.querySelector('.cdscore'), ps = sc.querySelector('.cdpos');
+      if (sr && ps) {
+        let raf = 0;
+        sr.addEventListener('scroll', () => {
+          if (raf) return;
+          raf = requestAnimationFrame(() => {
+            raf = 0;
+            const t = sr.querySelector('.cdm'); if (!t) return;
+            const step = t.offsetWidth + 8, max = sr.scrollWidth - sr.clientWidth;
+            const i = sr.scrollLeft >= max - 4 ? pairs.length : Math.min(pairs.length, Math.round(sr.scrollLeft / step) + 1);
+            ps.textContent = i + '/' + pairs.length;
+          });
+        }, { passive: true });
+      }
     }
     const sw = document.getElementById('cdswing'), d = D.bsw && D.bsw.data;
     if (sw && d) {
