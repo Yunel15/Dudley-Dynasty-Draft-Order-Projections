@@ -1060,6 +1060,44 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
 .is-phone .ib-hls{grid-template-columns:1fr;gap:var(--space-sm)}
 .is-phone .ib-row{grid-template-columns:34px minmax(0,1fr);grid-template-areas:"ph who" "tags tags";row-gap:6px;gap:8px;padding:9px 10px}
 .is-phone .ib-row .hs{grid-area:ph;width:34px;height:34px}.is-phone .ib-who{grid-area:who}.is-phone .ib-tags{grid-area:tags;justify-content:flex-start}
+/* ---------- Transaction Wire ---------- */
+.tx-feed{display:flex;flex-direction:column;gap:var(--space-sm)}
+.tx-card{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:10px;padding:var(--space-md);display:flex;flex-direction:column;gap:10px;min-width:0}
+.tx-card.bad{opacity:.72;border-left-color:var(--pylon)}
+.tx-h{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 12px}
+.tx-who{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;min-width:0}
+.tx-mg{display:inline-flex;align-items:center;gap:8px;min-width:0}.tx-mg b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:220px}.tx-mg .av{width:26px;height:26px;font-size:.6rem}
+.tx-x{color:var(--muted)}
+.tx-tags{display:flex;flex-wrap:wrap;gap:6px}
+.tx-b{display:inline-block;padding:2px 9px;border-radius:999px;font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;background:var(--line);color:var(--ink)}
+.tx-b.ty{background:rgba(0,206,184,.15);color:#2DE0C9}.tx-b.ty.trade{background:rgba(255,169,77,.16);color:#FFC283}
+.tx-b.bid{background:var(--accent);color:var(--accent-ink)}
+.tx-b.st{background:rgba(255,214,102,.14);color:#FFE08A}.tx-b.st.bad{background:rgba(255,111,126,.18);color:var(--pylon-ink)}
+.tx-b.wk{color:var(--muted)}
+.tx-body{display:flex;flex-wrap:wrap;gap:8px 24px}
+.tx-sides{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:var(--space-md)}
+.tx-side{display:flex;flex-direction:column;gap:8px;min-width:0;background:rgba(255,255,255,.03);border-radius:8px;padding:10px}
+.tx-sl{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--accent)}
+.tx-pl{display:flex;align-items:center;gap:10px;min-width:0}
+.tx-pl.drop{opacity:.7}
+.tx-sg{flex:none;width:18px;text-align:center;font-weight:800;font-size:1.05rem;color:var(--accent)}.tx-pl.drop .tx-sg{color:var(--pylon-ink)}
+.tx-pn{min-width:0;flex:1}.tx-pn b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tx-pn small{display:block;color:var(--muted);font-size:.75rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tx-pk{font-size:.7rem}
+.tx-none{color:var(--muted)}
+.tx-note{margin:0;font-size:.8rem;color:var(--pylon-ink)}
+.tx-f{font-size:.75rem;color:var(--muted)}
+.tx-more{text-align:center;margin:var(--space-md) 0 0}
+.tx-lb{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.tx-lr{display:grid;grid-template-columns:28px 36px minmax(0,1fr) auto;align-items:center;gap:var(--space-md);padding:8px var(--space-md);background:var(--surface);border:1px solid var(--line);border-radius:10px}
+.tx-lr .av{width:34px;height:34px}
+.tx-rk{font-weight:800;color:var(--muted);text-align:center;font-variant-numeric:tabular-nums}
+.tx-lr:first-child .tx-rk{color:var(--accent)}
+.tx-val{text-align:right}.tx-val b{display:block;font-variant-numeric:tabular-nums;font-size:1.05rem}.tx-val small{display:block;color:var(--muted);font-size:.7rem;white-space:nowrap}
+.tx-bar{display:block;height:5px;margin-top:5px;border-radius:3px;background:var(--line);overflow:hidden}.tx-bar i{display:block;height:100%;background:var(--accent)}
+.is-phone .tx-lr{grid-template-columns:22px 34px minmax(0,1fr) auto;gap:8px;padding:8px 10px}
+.is-phone .tx-card{padding:10px}.is-phone .tx-mg b{max-width:150px}
+.is-phone .tx-sides{grid-template-columns:1fr}
+.is-phone .tx-body{flex-direction:column}
 /* ---------- Trading Cards ---------- */
 .tc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:var(--space-lg)}
 .tc{--fc:#8C97AD;--fc2:#5B6478;--glow:rgba(140,151,173,.25);container-type:inline-size;display:flex;flex-direction:column;gap:var(--space-sm);min-width:0}
@@ -1565,8 +1603,8 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
         ? `${season} season hasn’t started. ${D.ids.length} teams.`
         : `${season} season, ${playedWeeks} of ${totalWeeks} weeks played. ${D.ids.length} teams.`;
 
-    const tabs = [['stand', 'Standings'], ['match', 'Matchups'], ['odds', 'Playoff Odds'], ['bracket', 'Playoff Bracket'], ['order', 'Tankathon'], ['proj', 'Tankathon Projections'], ['news', 'News Feed'], ['pay', 'Payouts'], ['rec', 'League Records'], ['laws', 'League Bylaws'], ['mgr', 'Manager Profiles'], ['cards', 'Trading Cards'], ['rivals', 'Rivalries'], ['build', 'Team Construction'], ['inj', 'Injury/Bye Week Dashboard'], ['cmap', 'Contender Map'], ['own', 'Pick Ownership'], ['trades', 'Trade History'], ['journey', 'Journeymen'], ['finder', 'Trade Finder'], ['calc', 'Trade Calculator']];
-    const GROUPS = [{ label: 'Playoffs', keys: ['odds', 'bracket'] }, { label: 'Tankathon', keys: ['order', 'proj'] }, { label: 'League', keys: ['news', 'pay', 'rec', 'laws'] }, { label: 'Managers', keys: ['mgr', 'cards', 'rivals'] }, { label: 'Teams', keys: ['build', 'inj', 'cmap', 'own'] }, { label: 'Trades', keys: ['trades', 'journey', 'finder', 'calc'] }];
+    const tabs = [['stand', 'Standings'], ['match', 'Matchups'], ['odds', 'Playoff Odds'], ['bracket', 'Playoff Bracket'], ['order', 'Tankathon'], ['proj', 'Tankathon Projections'], ['news', 'News Feed'], ['pay', 'Payouts'], ['rec', 'League Records'], ['laws', 'League Bylaws'], ['mgr', 'Manager Profiles'], ['cards', 'Trading Cards'], ['rivals', 'Rivalries'], ['build', 'Team Construction'], ['inj', 'Injury/Bye Week Dashboard'], ['cmap', 'Contender Map'], ['own', 'Pick Ownership'], ['trades', 'Trade History'], ['tx', 'Transaction Wire'], ['journey', 'Journeymen'], ['finder', 'Trade Finder'], ['calc', 'Trade Calculator']];
+    const GROUPS = [{ label: 'Playoffs', keys: ['odds', 'bracket'] }, { label: 'Tankathon', keys: ['order', 'proj'] }, { label: 'League', keys: ['news', 'pay', 'rec', 'laws'] }, { label: 'Managers', keys: ['mgr', 'cards', 'rivals'] }, { label: 'Teams', keys: ['build', 'inj', 'cmap', 'own'] }, { label: 'Trades', keys: ['trades', 'tx', 'journey', 'finder', 'calc'] }];
     const tabBtn = ([k, l]) => `<button class="tab" role="tab" type="button" data-tab="${k}" aria-selected="${opts.tab === k}">${l}</button>`;
     const menuBtn = ([k, l]) => `<button class="tabopt" role="menuitem" type="button" data-tab="${k}" aria-current="${opts.tab === k}">${l}</button>`;
     let html = `<nav class="tabs" role="tablist">${tabs.map(t => {
@@ -1577,7 +1615,7 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
     }).join('')}</nav>`;
     const label = (tabs.find(t => t[0] === opts.tab) || [, ''])[1];
     html += pageHeader(opts.tab, label) + '<div class="pbody" id="pbody">';
-    html += opts.tab === 'inj' ? renderInj() : opts.tab === 'cards' ? renderCards() : opts.tab === 'journey' ? renderJourney() : opts.tab === 'rivals' ? renderRivals() : opts.tab === 'cmap' ? renderCmap() : opts.tab === 'stand' ? renderStandings() : opts.tab === 'proj' ? renderProj() : opts.tab === 'odds' ? renderOdds() : opts.tab === 'match' ? renderMatchups() : opts.tab === 'news' ? renderNews() : opts.tab === 'bracket' ? renderBracket() : opts.tab === 'pay' ? renderPayouts() : opts.tab === 'rec' ? renderRecords() : opts.tab === 'mgr' ? renderProfiles() : opts.tab === 'build' ? renderBuild() : opts.tab === 'own' ? renderOwn() : opts.tab === 'trades' ? renderTrades() : opts.tab === 'laws' ? renderBylaws() : opts.tab === 'finder' ? renderFinder() : opts.tab === 'calc' ? renderCalc() : renderOrder();
+    html += opts.tab === 'tx' ? renderTx() : opts.tab === 'inj' ? renderInj() : opts.tab === 'cards' ? renderCards() : opts.tab === 'journey' ? renderJourney() : opts.tab === 'rivals' ? renderRivals() : opts.tab === 'cmap' ? renderCmap() : opts.tab === 'stand' ? renderStandings() : opts.tab === 'proj' ? renderProj() : opts.tab === 'odds' ? renderOdds() : opts.tab === 'match' ? renderMatchups() : opts.tab === 'news' ? renderNews() : opts.tab === 'bracket' ? renderBracket() : opts.tab === 'pay' ? renderPayouts() : opts.tab === 'rec' ? renderRecords() : opts.tab === 'mgr' ? renderProfiles() : opts.tab === 'build' ? renderBuild() : opts.tab === 'own' ? renderOwn() : opts.tab === 'trades' ? renderTrades() : opts.tab === 'laws' ? renderBylaws() : opts.tab === 'finder' ? renderFinder() : opts.tab === 'calc' ? renderCalc() : renderOrder();
     const prevScroll = document.getElementById('wkscroll'), keep = prevScroll ? prevScroll.scrollLeft : null;
     html += '</div>';
     $('#app').innerHTML = html;
@@ -1592,6 +1630,7 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
   // Anything a tab renders inside <div class="controls"> at the very top is moved into the actions row automatically.
   const KEY = '<span class="key"></span>';
   const TAB_META = {
+    tx: { sub: () => 'Every trade, waiver claim and free-agent move', how: () => '<p>This is Sleeper’s own transaction log for the season, newest first. Failed and cancelled moves are hidden unless you switch them on. All the leaderboards count completed moves only.</p><p><b>Waiver Wire Hero</b> adds up the points an added player scored for the team that added him, from the week of the add until he was dropped or the add was repeated. Only finished weeks count, and bench points count too. <b>Waiver Wire Flop</b> takes the ten biggest FAAB bids and lists them from fewest points up.</p><p>The page checks for new moves about once a minute while it is open.</p>' },
     stand: { sub: () => 'Records, streaks and strength of schedule', how: () => `<p>Teams are ranked by record, then points for. Streaks and Last 5 count regular-season games${D.median ? ', including the weekly median game' : ''}. Tap a streak for the week-by-week games, or a result for that matchup.</p><p><b>SOS</b> ranks each schedule by the average points per game of the opponents faced, 1st being the hardest. <span class="sos hard">Red</span> is the toughest third and <span class="sos easy">teal</span> the easiest. <b>Rem. SOS</b> does the same for the rest of the regular season. The small number under each rating is how far above or below the league average those opponents score.</p>` },
     match: { sub: () => 'Weekly scores, lineups and win odds', how: () => '<p>Tap a matchup to open it full screen. Tap a player’s name for his profile, or his points to see how they were scored.</p><p>Win probability starts from each starter’s projection in this league’s scoring. Finished games count what was scored, live games count current points plus half of what is left of the projection, and the more players still to play, the less certain the odds. It is an estimate, not Sleeper’s own number.</p>' },
     odds: { sub: () => 'Each team’s chances from simulated seasons', how: () => `<p>Odds come from ${D.sim ? D.sim.sims.toLocaleString() : 'thousands of'} simulations of the rest of the regular season and the playoffs. Each team’s weekly score is modeled from its scoring so far, pulled slightly toward the league average. Seeds go by record, then points for.</p><p>Teams above the line are in the playoff field by odds. 100% means every simulated season, not a mathematical clinch.</p>` },
@@ -1644,7 +1683,7 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
 
   // ---------- Phone navigation: bottom bar, "More" sheet, current-section label ----------
   const MORE_GROUPS = [['Overview', ['stand', 'match']], ['Playoffs', ['odds', 'bracket']], ['Tankathon', ['order', 'proj']], ['League', ['news', 'pay', 'rec', 'laws']], ['Managers', ['mgr', 'cards', 'rivals']],
-    ['Teams', ['build', 'inj', 'cmap', 'own']], ['Trades', ['trades', 'journey', 'finder', 'calc']]];
+    ['Teams', ['build', 'inj', 'cmap', 'own']], ['Trades', ['trades', 'tx', 'journey', 'finder', 'calc']]];
   let TABS_ALL = [];
   function updatePhoneChrome(tabs){
     TABS_ALL = tabs;
@@ -4308,6 +4347,180 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
     return html;
   }
 
+
+  // ---------- Transaction Wire ----------
+  const TX_PAGE = 40;
+  const TX_TYPE = { trade: 'Trade', waiver: 'Waiver', free_agent: 'Free Agent', commissioner: 'Commissioner' };
+  // Failed and cancelled moves stay hidden by default. Pending and proposed ones still show.
+  const txBad = st => st !== 'complete' && st !== 'pending' && st !== 'proposed';
+  function txNorm(t, w){
+    const adds = Object.entries(t.adds || {}).map(([pid, rid]) => ({ pid: String(pid), rid: Number(rid) }));
+    const drops = Object.entries(t.drops || {}).map(([pid, rid]) => ({ pid: String(pid), rid: Number(rid) }));
+    const rids = [...new Set([...(t.roster_ids || []), ...adds.map(a => a.rid), ...drops.map(a => a.rid)].map(Number))];
+    const bid = t.settings && t.settings.waiver_bid != null ? Number(t.settings.waiver_bid) : null;
+    return { id: t.transaction_id, type: t.type, status: t.status, week: Number(t.leg) || w, ts: t.status_updated || t.created || 0, rids, adds, drops,
+      picks: t.draft_picks || [], faab: t.waiver_budget || [], bid: t.type === 'waiver' ? bid : null, notes: (t.metadata && t.metadata.notes) || '' };
+  }
+  function txDerive(myD){
+    const list = [];
+    myD.tx.byWeek.forEach(a => list.push(...a));
+    list.sort((a, b) => b.ts - a.ts || b.week - a.week);
+    myD.tx.list = list;
+  }
+  async function loadTx(){
+    if (!D || D.tx || D.txLoading) return;
+    const myD = D; myD.txLoading = true;
+    try {
+      const st = await getJSON('/state/nfl').catch(() => ({}));
+      const last = myD.playoff.lastWeek;
+      let cur = Number(st.season) === myD.season && Number(st.week) ? Number(st.week) : (myD.league.status === 'complete' || Number(st.season) > myD.season) ? last : 1;
+      cur = Math.max(1, Math.min(last, cur));
+      const ws = Array.from({ length: cur }, (_, i) => i + 1);
+      const [lists, all] = await Promise.all([
+        Promise.all(ws.map(w => getJSON(`/league/${leagueId}/transactions/${w}`).then(l => Array.isArray(l) ? l : [], () => null))),
+        getOnce('all', `${API}/players/nfl`)
+      ]);
+      if (lists.every(l => l === null)) throw new Error('Couldn’t load transactions from Sleeper.');
+      const byWeek = new Map();
+      lists.forEach((l, i) => byWeek.set(ws[i], (l || []).filter(Boolean).map(t => txNorm(t, ws[i]))));
+      myD.tx = { cur, byWeek, all: all || null, failedWeeks: ws.filter((w, i) => lists[i] === null), shown: TX_PAGE, pts: null };
+      txDerive(myD);
+    } catch (e) {
+      myD.tx = { error: e.message || 'Couldn’t load transactions from Sleeper.' };
+    } finally {
+      myD.txLoading = false;
+      if (D === myD && opts.tab === 'tx') render();
+    }
+  }
+  // Points each added player scored for the team that added him (finished weeks only).
+  async function loadTxPts(){
+    if (!D || !D.tx || D.tx.error || D.tx.pts || D.tx.ptsLoading) return;
+    const myD = D, tx = myD.tx; tx.ptsLoading = true;
+    try {
+      const done = Array.from({ length: tx.cur }, (_, i) => i + 1).filter(w => w < myD.firstOpen);
+      await Promise.all(done.map(fetchWeek));
+      const adds = [];
+      tx.list.forEach(t => { if (t.status === 'complete' && (t.type === 'waiver' || t.type === 'free_agent')) t.adds.forEach(a => adds.push({ t, pid: a.pid, rid: a.rid })); });
+      adds.sort((a, b) => a.t.ts - b.t.ts);
+      tx.pts = adds.map((a, i) => {
+        const nxt = adds.slice(i + 1).find(b => b.pid === a.pid && b.rid === a.rid);
+        const endW = nxt ? nxt.t.week : Infinity;
+        let pts = 0, n = 0;
+        done.forEach(w => {
+          if (w < a.t.week || w >= endW) return;
+          const m = (myD.weekData.get(w) || []).find(x => x.roster_id === a.rid);
+          if (m && m.players_points && m.players_points[a.pid] != null && (m.players || []).includes(a.pid)) { pts += Number(m.players_points[a.pid]) || 0; n++; }
+        });
+        return { t: a.t, pid: a.pid, rid: a.rid, week: a.t.week, bid: a.t.bid, pts: n ? Math.round(pts * 100) / 100 : null, n };
+      });
+    } catch (e) {
+      tx.pts = [];
+    } finally {
+      tx.ptsLoading = false;
+      if (D === myD && opts.tab === 'tx') render();
+    }
+  }
+  function txPoll(){
+    if (!D || !D.tx || D.tx.error || opts.tab !== 'tx' || document.hidden || D.tx.polling) return;
+    const myD = D, tx = myD.tx; tx.polling = true;
+    getJSON(`/league/${leagueId}/transactions/${tx.cur}`).then(l => {
+      if (!Array.isArray(l) || D !== myD) return;
+      const recs = l.filter(Boolean).map(t => txNorm(t, tx.cur));
+      const sig = a => a.map(t => t.id + t.status + t.ts).sort().join('|');
+      if (sig(recs) === sig(tx.byWeek.get(tx.cur) || [])) return;
+      tx.byWeek.set(tx.cur, recs); txDerive(myD); tx.pts = null;
+      if (opts.tab === 'tx') render();
+    }).catch(() => {}).then(() => { tx.polling = false; });
+  }
+  setInterval(txPoll, 60000);
+  function txInfo(pid){
+    const all = D.tx && D.tx.all, pl = all && all[pid];
+    if (pl) return { nm: pl.full_name || [pl.first_name, pl.last_name].filter(Boolean).join(' ') || pid, pos: pl.position || '', tm: pl.team || '' };
+    if (/^[A-Z]{2,3}$/.test(pid)) return { nm: pid + ' Defense', pos: 'DEF', tm: pid };
+    const p = pname(pid);
+    return p ? { nm: p.nm, pos: p.pos, tm: p.tm } : { nm: 'Player ' + pid, pos: '', tm: '' };
+  }
+  const txWhen = ts => ts ? new Date(ts).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : '';
+  const txPlayer = (pid, sign) => {
+    const i = txInfo(pid);
+    return `<div class="tx-pl${sign === '+' ? ' add' : sign === '-' ? ' drop' : ''}">${sign ? `<span class="tx-sg" aria-label="${sign === '+' ? 'Added' : 'Dropped'}">${sign === '-' ? '−' : '+'}</span>` : ''}${shot(pid, i.pos, i.tm, i.nm)}<div class="tx-pn">${i.pos === 'DEF' ? `<b>${esc(i.nm)}</b>` : PL(pid, i.nm)}<small>${esc([i.pos, i.tm || 'FA'].filter(Boolean).join(' · '))}</small></div></div>`;
+  };
+  function txCard(t){
+    const label = TX_TYPE[t.type] || titleCase(String(t.type || 'move').replace(/_/g, ' '));
+    const bad = txBad(t.status);
+    const stat = t.status === 'complete' ? '' : `<span class="tx-b st${bad ? ' bad' : ''}">${esc(titleCase(String(t.status || 'unknown').replace(/_/g, ' ')))}</span>`;
+    const who = t.rids.map(r => `<span class="tx-mg">${avatar(team(r))}<b>${esc(team(r).name)}</b></span>`).join('<span class="tx-x" aria-hidden="true">⇄</span>');
+    let body;
+    if (t.type === 'trade') {
+      body = `<div class="tx-sides">${t.rids.map(r => {
+        const got = [
+          ...t.adds.filter(a => a.rid === r).map(a => txPlayer(a.pid)),
+          ...t.picks.filter(p => Number(p.owner_id) === r).map(p => `<div class="tx-pl"><span class="hs tx-pk" aria-hidden="true">PK</span><div class="tx-pn"><b>${esc(p.season)} Round ${esc(p.round)} Pick</b><small>${Number(p.roster_id) !== r ? `Originally ${esc(team(Number(p.roster_id)).name)}’s` : 'Own pick'}</small></div></div>`),
+          ...t.faab.filter(f => Number(f.receiver) === r).map(f => `<div class="tx-pl"><span class="hs tx-pk" aria-hidden="true">$</span><div class="tx-pn"><b>$${esc(f.amount)} FAAB</b><small>Waiver budget</small></div></div>`)
+        ];
+        return `<div class="tx-side"><span class="tx-sl">${esc(team(r).name)} receives</span>${got.join('') || '<small class="tx-none">Nothing</small>'}</div>`;
+      }).join('')}</div>`;
+    } else {
+      const parts = [...t.adds.map(a => txPlayer(a.pid, '+')), ...t.drops.map(a => txPlayer(a.pid, '-'))];
+      body = `<div class="tx-body">${parts.join('') || '<small class="tx-none">No players listed</small>'}</div>`;
+    }
+    return `<article class="tx-card${bad ? ' bad' : ''}"><div class="tx-h"><div class="tx-who">${who}</div><div class="tx-tags"><span class="tx-b ty ${esc(t.type)}">${esc(label)}</span>${t.bid != null ? `<span class="tx-b bid">$${t.bid} FAAB</span>` : ''}${stat}<span class="tx-b wk">Week ${t.week}</span></div></div>${body}${bad && t.notes ? `<p class="tx-note">${esc(t.notes)}</p>` : ''}<div class="tx-f">${esc(txWhen(t.ts))}</div></article>`;
+  }
+  function renderTx(){
+    if (!D.tx) { loadTx(); return '<p class="status">Loading the transaction wire from Sleeper…</p>'; }
+    if (D.tx.error) return `<div class="error"><strong>${esc(D.tx.error)}</strong><br>Check your connection, then <button class="btn" type="button" data-tx-retry>Try Again</button></div>`;
+    loadTxPts();
+    const tx = D.tx, list = tx.list;
+    const f = { type: opts.txType || 'all', mgr: opts.txMgr || 'all', pos: opts.txPos || 'all', week: opts.txWeek || 'all' };
+    const types = [...new Set(list.map(t => t.type))].sort();
+    const poss = [...new Set(['QB', 'RB', 'WR', 'TE', 'K', 'DEF', ...list.flatMap(t => [...t.adds, ...t.drops].map(a => txInfo(a.pid).pos)).filter(Boolean)])];
+    const showBad = !!opts.txFailed;
+    const matches = t => (f.type === 'all' || t.type === f.type) && (f.mgr === 'all' || t.rids.map(String).includes(f.mgr)) && (f.week === 'all' || String(t.week) === f.week) && (f.pos === 'all' || [...t.adds, ...t.drops].some(a => txInfo(a.pid).pos === f.pos));
+    const matched = list.filter(matches), nBad = matched.filter(t => txBad(t.status)).length;
+    const visible = matched.filter(t => showBad || !txBad(t.status));
+    const opt = (v, l, cur) => `<option value="${esc(v)}" ${String(cur) === String(v) ? 'selected' : ''}>${esc(l)}</option>`;
+    const mgrs = D.ids.slice().sort((a, b) => team(a).name.localeCompare(team(b).name));
+    let html = `<div class="controls">
+      <label class="field">Type<select data-opt="txType">${opt('all', 'All Types', f.type)}${types.map(x => opt(x, TX_TYPE[x] || titleCase(x.replace(/_/g, ' ')), f.type)).join('')}</select></label>
+      <label class="field">Manager<select data-opt="txMgr">${opt('all', 'All Managers', f.mgr)}${mgrs.map(r => opt(r, team(r).name, f.mgr)).join('')}</select></label>
+      <label class="field">Position<select data-opt="txPos">${opt('all', 'All Positions', f.pos)}${poss.map(x => opt(x, x, f.pos)).join('')}</select></label>
+      <label class="field">Week<select data-opt="txWeek">${opt('all', 'All Weeks', f.week)}${Array.from({ length: tx.cur }, (_, i) => tx.cur - i).map(w => opt(w, 'Week ' + w, f.week)).join('')}</select></label>
+      <div class="field"><span class="flabel">Failed &amp; Cancelled</span><div class="seg" role="group" aria-label="Failed and cancelled moves"><button type="button" data-tx-failed aria-pressed="${showBad}">${showBad ? 'Showing' : 'Hidden'}${nBad ? ` (${nBad})` : ''}</button></div></div>
+    </div>`;
+    html += `<h3 class="sh3">Live Feed<span class="ib-cnt">${visible.length} move${visible.length === 1 ? '' : 's'}${!showBad && nBad ? ` · ${nBad} failed or cancelled hidden` : ''}</span></h3>`;
+    if (tx.failedWeeks.length) html += `<p class="note">Week${tx.failedWeeks.length === 1 ? '' : 's'} ${tx.failedWeeks.join(', ')} couldn’t be loaded from Sleeper, so some moves may be missing. Try Refresh.</p>`;
+    html += visible.length ? `<div class="tx-feed">${visible.slice(0, tx.shown).map(txCard).join('')}</div>${visible.length > tx.shown ? `<p class="tx-more"><button class="btn" type="button" data-tx-more>Show More (${visible.length - tx.shown} left)</button></p>` : ''}`
+      : `<p class="note">${list.length ? 'No moves match these filters.' : 'No moves have been made this season yet.'}</p>`;
+
+    // ---- leaderboards (completed moves only)
+    const done = list.filter(t => t.status === 'complete');
+    const mgrName = r => esc(team(r).name);
+    const row = (i, lead, who, sub, val, vsub) => `<li class="tx-lr"><span class="tx-rk">${i + 1}</span>${lead}<div class="tx-pn">${who}<small>${sub}</small></div><div class="tx-val"><b>${val}</b><small>${vsub}</small></div></li>`;
+    const pRow = (x, i, vals) => { const inf = txInfo(x.pid); return row(i, shot(x.pid, inf.pos, inf.tm, inf.nm), inf.pos === 'DEF' ? `<b>${esc(inf.nm)}</b>` : PL(x.pid, inf.nm), `${mgrName(x.rid)} · Week ${x.week}${vals.extra || ''}`, vals.val, vals.vsub); };
+    const bids = done.filter(t => t.type === 'waiver' && t.bid > 0).flatMap(t => t.adds.map(a => ({ pid: a.pid, rid: a.rid, week: t.week, bid: t.bid }))).sort((a, b) => b.bid - a.bid || b.week - a.week).slice(0, 10);
+    html += `<h3 class="sh3">Biggest FAAB Bids<span class="ib-cnt">Season</span></h3>` + (bids.length ? `<ol class="tx-lb">${bids.map((x, i) => pRow(x, i, { val: '$' + x.bid, vsub: 'FAAB' })).join('')}</ol>` : '<p class="note">No FAAB bids have gone through yet.</p>');
+
+    const act = new Map(D.ids.map(r => [r, { rid: r, trade: 0, waiver: 0, fa: 0 }]));
+    done.forEach(t => {
+      if (t.type === 'trade') t.rids.forEach(r => { if (act.has(r)) act.get(r).trade++; });
+      else if (t.type === 'waiver' || t.type === 'free_agent') t.rids.forEach(r => { if (act.has(r)) act.get(r)[t.type === 'waiver' ? 'waiver' : 'fa']++; });
+    });
+    const ranked = [...act.values()].map(x => ({ ...x, n: x.trade + x.waiver + x.fa })).filter(x => x.n).sort((a, b) => b.n - a.n || b.trade - a.trade || team(a.rid).name.localeCompare(team(b.rid).name));
+    const top = ranked.length ? ranked[0].n : 1;
+    html += `<h3 class="sh3">Most Active Manager<span class="ib-cnt">Total moves</span></h3>` + (ranked.length ? `<ol class="tx-lb">${ranked.map((x, i) => `<li class="tx-lr"><span class="tx-rk">${i + 1}</span>${avatar(team(x.rid))}<div class="tx-pn"><b>${mgrName(x.rid)}</b><small>${x.trade} trade${x.trade === 1 ? '' : 's'} · ${x.waiver} waiver${x.waiver === 1 ? '' : 's'} · ${x.fa} free agent${x.fa === 1 ? '' : 's'}</small><span class="tx-bar"><i style="width:${Math.round(x.n / top * 100)}%"></i></span></div><div class="tx-val"><b>${x.n}</b><small>moves</small></div></li>`).join('')}</ol>` : '<p class="note">No completed moves yet.</p>');
+
+    const ptsReady = !!tx.pts;
+    const scored = ptsReady ? tx.pts.filter(x => x.pts != null) : [];
+    const ptsNote = '<p class="note">Counts points scored for the adding team from the week of the pickup until he was dropped. Finished weeks only.</p>';
+    const pending = '<p class="status">Adding up points from finished weeks…</p>';
+    const hero = scored.slice().sort((a, b) => b.pts - a.pts || b.n - a.n).slice(0, 10);
+    html += `<h3 class="sh3">Waiver Wire Hero<span class="ib-cnt">Best pickups</span></h3>` + (!ptsReady ? pending : hero.length ? `${ptsNote}<ol class="tx-lb">${hero.map((x, i) => pRow(x, i, { extra: x.bid != null ? ` · $${x.bid} bid` : x.t.type === 'free_agent' ? ' · Free agent' : '', val: x.pts.toFixed(1), vsub: `pts · ${x.n} wk${x.n === 1 ? '' : 's'}` })).join('')}</ol>` : '<p class="note">No pickups have scored yet. This fills in once a week has finished.</p>');
+
+    const flop = scored.filter(x => x.bid > 0).sort((a, b) => b.bid - a.bid || a.pts - b.pts).slice(0, 10).sort((a, b) => a.pts - b.pts || b.bid - a.bid);
+    html += `<h3 class="sh3">Waiver Wire Flop<span class="ib-cnt">Priciest duds</span></h3>` + (!ptsReady ? pending : flop.length ? `<p class="note">The ten biggest FAAB bids that have scored, ordered from fewest points.</p><ol class="tx-lb">${flop.map((x, i) => pRow(x, i, { extra: ` · $${x.bid} bid`, val: x.pts.toFixed(1), vsub: `pts · ${x.pts > 0 ? '$' + (x.bid / x.pts).toFixed(2) + '/pt' : 'no return'}` })).join('')}</ol>` : '<p class="note">No FAAB pickups have scored yet.</p>');
+    return html;
+  }
+
   async function loadJourney(){
     if (!D || D.jm || D.jmLoading) return;
     const myD = D; myD.jmLoading = true;
@@ -5322,6 +5535,9 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
       render(); const it = document.querySelector('.jm-item.open'); if (it && (fromHl || isPhoneUI())) it.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
     const jmt = e.target.closest('[data-jm-type]');
     if (jmt) { opts.jmType = jmt.dataset.jmType; saveOpts(); render(); return; }
+    const txr = e.target.closest('[data-tx-retry]'); if (txr) { if (D) D.tx = null; render(); return; }
+    const txm = e.target.closest('[data-tx-more]'); if (txm) { const y = window.scrollY; if (D && D.tx) D.tx.shown += TX_PAGE; render(); window.scrollTo(0, y); return; }
+    const txf = e.target.closest('[data-tx-failed]'); if (txf) { const y = window.scrollY; opts.txFailed = !opts.txFailed; if (D && D.tx) D.tx.shown = TX_PAGE; render(); window.scrollTo(0, y); return; }
     const ibv = e.target.closest('[data-ib-view]'); if (ibv) { opts.injView = ibv.dataset.ibView; saveOpts(); render(); return; }
     const ibs = e.target.closest('[data-ib-show]'); if (ibs) { opts.injShow = ibs.dataset.ibShow; saveOpts(); render(); return; }
     if (e.target.closest('[data-jm-all]')) { D.jmAll = true; render(); return; }
@@ -5363,6 +5579,7 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
     const k = el.dataset.opt;
     const openDetails = !!e.target.closest('details[open]');
     opts[k] = (k === 'rounds' || k === 'season' || k === 'tradeTeam' || k === 'week' || k === 'buildTeam' || k === 'tfTeam' || k === 'tfTol' || k === 'mteam') ? Number(el.value) : el.value;
+    if (k.indexOf('tx') === 0 && D && D.tx) D.tx.shown = TX_PAGE;
     saveOpts();
     if (k === 'tiebreak') runSim();
     if (k === 'buildTeam') { opts.nflFilter = null; opts.posFilter = null; }
