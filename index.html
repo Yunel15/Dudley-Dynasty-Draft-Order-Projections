@@ -1279,6 +1279,22 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
 .is-phone .cdt .cdgrid,.is-phone .cdsw{margin-top:2px}
 @media (max-width:350px){.is-phone .cdpos{display:none}}
 .is-phone .cdp.cdt{align-self:center}
+/* ---------- Phone: readable text + 44px tap areas (mobile only) ---------- */
+.ib-more{display:block;width:100%;min-height:44px;margin:10px 0 4px}
+.news-more{display:block;width:100%;min-height:48px;margin:14px 0 6px;font-weight:700}
+.is-phone #pbody :is(.stkbtn,.dotbtn,.wkarrow,.linkbtn,.posbtn,.plink,.tc-dl,.rv-proflink,.jm-more,.lutoggle){position:relative}
+.is-phone #pbody :is(.stkbtn,.dotbtn,.wkarrow,.linkbtn,.posbtn,.plink,.tc-dl,.rv-proflink,.jm-more,.lutoggle)::after{content:"";position:absolute;left:-6px;right:-6px;top:50%;height:max(100%,44px);transform:translateY(-50%)}
+.is-phone #pbody :is(.plink,.linkbtn){display:inline-block}
+.is-phone #pbody .lutoggle,.is-phone #pbody .jm-more,.is-phone #pbody .btn{min-height:44px}
+.is-phone #pbody :is(small,.ptag,.ib-b,.ib-cnt,.dr-k,.dr-l,.jm-badge,.tn-chip,.tx-b,.tfcap,.wk-d,.wk-t,.wpb-lab,.wpb-hint,.slabel,.sos,.lawn,.asset-sub,.tfv,.hs,.rsub,.rten,.chip,.pickpop,.tags,.paypct,.phandle,.pacts,.ts-lab){font-size:max(.8125rem,1em)}
+.is-phone #pbody .sos span,.is-phone #pbody .sos b{font-size:.8125rem}
+.is-phone #pbody :is(.rv-stats dt,.tn-st dt,.cm-axes dt){font-size:.75rem}
+.is-phone #pbody .heat{font-size:.8125rem}
+.is-phone #pbody .post .ptext{font-size:1rem;line-height:1.5}
+.is-phone #pbody td,.is-phone #pbody th{font-size:max(.8125rem,1em)}
+.is-phone #pbody :is(select,input[type=text],input[type=number],input[type=search]){min-height:44px;font-size:16px}
+.is-phone #pbody .seg button,.is-phone .phead .seg button{min-height:44px;padding-left:14px;padding-right:14px}
+.is-phone #pbody .controls{gap:12px 14px}
 /* ---------- Trading Cards ---------- */
 .tc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:var(--space-lg)}
 .tc{--fc:#8C97AD;--fc2:#5B6478;--glow:rgba(140,151,173,.25);container-type:inline-size;display:flex;flex-direction:column;gap:var(--space-sm);min-width:0}
@@ -3111,7 +3127,8 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
     let lastWeek = null;
     const liveList = D.live || [];
     if (liveList.length) html += `<h3 class="feedwk livewk"><span class="livedot"></span>Just In</h3>`;
-    liveList.concat(posts).forEach(p => {
+    const allP = liveList.concat(posts), lim = isPhoneUI() ? (D.newsShown || 20) : Infinity;
+    allP.slice(0, lim).forEach(p => {
       if (!p.live && p.week !== lastWeek) { html += `<h3 class="feedwk">Week ${p.week}</h3>`; lastWeek = p.week; }
       const h = hashStr(p.key);
       const a = AUTHORS[p.author] || REPORTER;
@@ -3122,7 +3139,9 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
         <div class="pacts" aria-hidden="true"><span>💬 ${replies}</span><span>🔁 ${reposts}</span><span>♡ ${likes}</span></div>
       </div></article>`;
     });
-    return html + '</div>';
+    html += '</div>';
+    if (allP.length > lim) html += `<button type="button" class="btn news-more" data-news-more>Show older posts (${allP.length - lim} more)</button>`;
+    return html;
   }
 
   // ---------- Week data and player names ----------
@@ -4511,8 +4530,9 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
     const none = '<p class="note">No players match these filters.</p>';
     if (view === 'mgr') {
       scope.slice().sort((a, b) => tn(a.rid).localeCompare(tn(b.rid))).forEach(t => {
+        const lim = isPhoneUI() && sel === 'all' && !(D.ibOpen && D.ibOpen[t.rid]) ? 6 : Infinity;
         const ps = t.players.filter(keep).sort(sortP), n = t.players.filter(p => p.inj).length, nb = t.players.filter(p => p.d === 0).length, nh = t.players.filter(p => p.hp).length;
-        html += `<h3 class="sh3">${esc(tn(t.rid))}<span class="ib-cnt">${n} injured · ${nb} on bye this week${nh ? ` · ${nh} high priority` : ''}</span></h3>${ps.length ? list(ps.map(p => row(p, t.rid, false))) : '<p class="note">No players match these filters.</p>'}`;
+        html += `<h3 class="sh3">${esc(tn(t.rid))}<span class="ib-cnt">${n} injured · ${nb} on bye this week${nh ? ` · ${nh} high priority` : ''}</span></h3>${ps.length ? list(ps.slice(0, lim).map(p => row(p, t.rid, false))) : '<p class="note">No players match these filters.</p>'}${ps.length > lim ? `<button type="button" class="btn ib-more" data-ib-more="${t.rid}">Show all ${ps.length} players</button>` : ''}`;
       });
     } else if (view === 'sev') {
       const all = scope.flatMap(t => t.players.filter(p => p.inj && keep(p)).map(p => ({ p, rid: t.rid })));
@@ -6070,6 +6090,8 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
     const jmt = e.target.closest('[data-jm-type]');
     if (jmt) { opts.jmType = jmt.dataset.jmType; saveOpts(); render(); return; }
     if (e.target.closest('[data-load-retry]')) { const rb = document.getElementById('refresh'); if (rb) rb.click(); return; }
+    const ibm = e.target.closest('[data-ib-more]'); if (ibm) { const y = window.scrollY; (D.ibOpen = D.ibOpen || {})[ibm.dataset.ibMore] = 1; render(); window.scrollTo(0, y); return; }
+    const nwm = e.target.closest('[data-news-more]'); if (nwm) { const y = window.scrollY; D.newsShown = (D.newsShown || 20) + 30; render(); window.scrollTo(0, y); return; }
     const txr = e.target.closest('[data-tx-retry]'); if (txr) { if (D) D.tx = null; render(); return; }
     const txm = e.target.closest('[data-tx-more]'); if (txm) { const y = window.scrollY; if (D && D.tx) D.tx.shown += TX_PAGE; render(); window.scrollTo(0, y); return; }
     const txf = e.target.closest('[data-tx-failed]'); if (txf) { const y = window.scrollY; opts.txFailed = !opts.txFailed; if (D && D.tx) D.tx.shown = TX_PAGE; render(); window.scrollTo(0, y); return; }
