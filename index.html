@@ -1298,6 +1298,30 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
 .pc-tog{display:none}
 .is-phone .pcard.fold .pc-tog{display:block;width:100%;min-height:44px;margin-top:10px;background:transparent;color:var(--accent);border:1px solid var(--line)}
 .is-phone .pcard.fold:not(.open)>:not(.team):not(.prec):not(.pc-tog){display:none}
+/* ---------- Phone: slim banner off the home tabs, sticky table columns ---------- */
+.is-phone:not([data-tab=stand]):not([data-tab=match]) #cd:not(.open) .cdstage{min-height:40px;height:40px;overflow:hidden}
+.is-phone:not([data-tab=stand]):not([data-tab=match]) #cd:not(.open) .cdp>:not(.cdlabel){display:none}
+.is-phone:not([data-tab=stand]):not([data-tab=match]) #cd .cdlabel{cursor:pointer}
+.is-phone:not([data-tab=stand]):not([data-tab=match]) #cd .cdlabel::after{content:"";width:8px;height:8px;margin-left:10px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg) translateY(-2px);flex:none;transition:transform .15s}
+.is-phone:not([data-tab=stand]):not([data-tab=match]) #cd.open .cdlabel::after{transform:rotate(-135deg)}
+.is-phone .cdpos{margin-left:auto}
+.is-phone .tablewrap{background:linear-gradient(to right,var(--surface) 30%,rgba(30,38,56,0)) left center/36px 100% no-repeat local,linear-gradient(to left,var(--surface) 30%,rgba(30,38,56,0)) right center/36px 100% no-repeat local,radial-gradient(farthest-side at 0 50%,rgba(0,0,0,.45),rgba(0,0,0,0)) left center/12px 100% no-repeat scroll,radial-gradient(farthest-side at 100% 50%,rgba(0,0,0,.45),rgba(0,0,0,0)) right center/12px 100% no-repeat scroll,var(--surface);-webkit-overflow-scrolling:touch}
+.is-phone .tablewrap :is(th.tl,td.tl){position:sticky;left:0;z-index:2;background:var(--surface);max-width:118px}
+.is-phone .tablewrap :is(th,td){padding-left:8px;padding-right:8px}
+.is-phone .tablewrap td.tl .av{display:none}
+.is-phone .tablewrap td.tl .tname{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.is-phone .jm-row{grid-template-columns:22px 34px minmax(0,1fr) 54px 54px}
+.is-phone #pbody .jm-num small{font-size:.72rem;letter-spacing:.02em}
+.is-phone .dr-row{grid-template-areas:"pk pl gr" "mg mg mg" "v v v" "p p p";row-gap:4px}
+.is-phone .dr-p{justify-content:flex-start;text-align:left}
+.is-phone .dr-v,.is-phone .dr-v.na{font-size:.875rem}
+/* ---------- Phone: touch + render performance ---------- */
+.is-phone *{-webkit-tap-highlight-color:transparent}
+.is-phone :is(button,a,select,summary,[role=button],.plink,[data-open-match],[data-pid]){touch-action:manipulation}
+.is-phone #pbody :is(.post,.dr-row,.jm-row,.ib-row,.pcard){content-visibility:auto;contain-intrinsic-size:auto 120px}
+.is-phone #pbody .pcard{contain-intrinsic-size:auto 190px}
+.is-phone #pbody .post{contain-intrinsic-size:auto 230px}
+.is-phone body{overscroll-behavior-y:none}
 /* ---------- Trading Cards ---------- */
 .tc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:var(--space-lg)}
 .tc{--fc:#8C97AD;--fc2:#5B6478;--glow:rgba(140,151,173,.25);container-type:inline-size;display:flex;flex-direction:column;gap:var(--space-sm);min-width:0}
@@ -1821,6 +1845,7 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
     $('#app').innerHTML = html;
     tidyPage();
     updatePhoneChrome(tabs);
+    document.documentElement.dataset.tab = opts.tab;
     refreshBanner(); bannerSwingLoad();
     if (opts.tab === 'match') { const sc = document.getElementById('wkscroll'); if (sc && keep != null) sc.scrollLeft = keep; centerWeek(keep != null); }
   }
@@ -6301,6 +6326,7 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
     cd.addEventListener('mouseenter', () => { BN.hover = true; }); cd.addEventListener('mouseleave', () => { BN.hover = false; });
     cd.addEventListener('click', e => {
       const go = e.target.closest('[data-bn-go]'); if (go) { bnShow(go.dataset.bnGo); return; }
+      if (e.target.closest('.cdlabel') && isPhoneUI() && !['stand', 'match'].includes(opts.tab)) { cd.classList.toggle('open'); return; }
       const m = e.target.closest('[data-bn-mid]'); if (m && D) { gotoMatch(D.defWeek, Number(m.dataset.bnMid), false); return; }
       if (e.target.closest('[data-bn-swing]') && D && D.bsw && D.bsw.data) gotoMatch(D.bsw.data.w, D.bsw.data.mid, true);
     }); })();
