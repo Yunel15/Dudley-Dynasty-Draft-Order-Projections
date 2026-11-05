@@ -1241,6 +1241,20 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
 .is-phone #cd .cdm .wpb{margin-top:4px;height:4px}
 .is-phone .cdstage{min-height:116px}
 .is-phone .cdt .cdgrid{height:62px}.is-phone .cdsw{min-height:62px}
+/* ---------- Scoreboard: extra polish ---------- */
+#cd{background:radial-gradient(120% 140% at 0% 0%,rgba(0,206,184,.10),transparent 55%),radial-gradient(100% 120% at 100% 100%,rgba(90,166,255,.08),transparent 55%),var(--surface)}
+#cd .cdm{overflow:hidden}
+#cd .cdm::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--line)}
+#cd .cdm.la::before,#cd .cdm.lb::before{background:linear-gradient(180deg,var(--accent),#5AA6FF);box-shadow:0 0 12px rgba(0,206,184,.55)}
+#cd .cdm.close{border-color:rgba(255,111,126,.55);box-shadow:0 0 0 1px rgba(255,111,126,.18),0 0 18px rgba(255,111,126,.12)}
+#cd .cdm.close::before{background:var(--pylon);box-shadow:0 0 12px rgba(255,111,126,.6)}
+#cd .cdm .cdtag{padding:1px 8px;border-radius:999px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;font-size:.7rem;background:rgba(255,111,126,.16);color:var(--pylon-ink)}
+#cd .cdm .r.win b{text-shadow:0 0 14px rgba(0,206,184,.45)}
+#cd .cdm .wpb span{box-shadow:0 0 8px rgba(0,206,184,.7)}
+#cd .cdm .r b.bump{animation:cdbump .9s ease-out}
+@keyframes cdbump{0%{transform:scale(1.25);color:#fff;text-shadow:0 0 18px var(--accent)}100%{transform:scale(1)}}
+@media (prefers-reduced-motion:reduce){#cd .cdm .r b.bump{animation:none}}
+.is-phone #cd .cdm .cdtag{padding:1px 8px;border-radius:999px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;font-size:.7rem;background:rgba(255,111,126,.16);color:var(--pylon-ink)}
 /* ---------- Trading Cards ---------- */
 .tc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:var(--space-lg)}
 .tc{--fc:#8C97AD;--fc2:#5B6478;--glow:rgba(140,151,173,.25);container-type:inline-size;display:flex;flex-direction:column;gap:var(--space-sm);min-width:0}
@@ -6156,8 +6170,12 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
       const tiles = pairs.map(([a, b]) => {
         const ta = team(a.roster_id), tb = team(b.roster_id), pa = a.points || 0, pb = b.points || 0;
         const wp = ctx && !allDone && (ctx.hasProj || anyPts) ? Math.round(winProb(a, b, ctx, false).pA * 100) : null;
-        return `<button type="button" class="cdm" data-bn-match="${pairs.indexOf(pairs.find(q => q.mid === a.matchup_id))}" data-bn-mid="${a.matchup_id}" aria-label="${esc(ta.name)} ${anyPts ? pa.toFixed(2) : ''} versus ${esc(tb.name)} ${anyPts ? pb.toFixed(2) : ''}. Open matchup">
-          <span class="r${anyPts && pa > pb ? ' win' : ''}"><span class="tn">${avatar(ta)}<i>${esc(ta.name)}</i></span><b>${anyPts ? pa.toFixed(2) : '–'}</b></span><span class="r${anyPts && pb > pa ? ' win' : ''}"><span class="tn">${avatar(tb)}<i>${esc(tb.name)}</i></span><b>${anyPts ? pb.toFixed(2) : '–'}</b></span>${wp != null ? `<span class="wpb" title="${esc(ta.name)} ${wp}% to win"><span style="width:${wp}%"></span></span><span class="wpt"><em class="a">${wp}%</em><span>win prob</span><em class="b">${100 - wp}%</em></span>` : ''}</button>`;
+        const mg = Math.abs(pa - pb), st = !anyPts ? '' : allDone ? (mg >= 30 ? ' blow' : '') : (mg < 8 ? ' close' : mg >= 40 ? ' blow' : '');
+        const prev = (BN.prevPts = BN.prevPts || {}), ka = a.roster_id + ':' + a.matchup_id, kb = b.roster_id + ':' + a.matchup_id;
+        const bumpA = prev[ka] != null && prev[ka] !== pa, bumpB = prev[kb] != null && prev[kb] !== pb;
+        prev[ka] = pa; prev[kb] = pb;
+        return `<button type="button" class="cdm${st}${anyPts ? (pa > pb ? ' la' : pb > pa ? ' lb' : '') : ''}" data-bn-match="${pairs.indexOf(pairs.find(q => q.mid === a.matchup_id))}" data-bn-mid="${a.matchup_id}" aria-label="${esc(ta.name)} ${anyPts ? pa.toFixed(2) : ''} versus ${esc(tb.name)} ${anyPts ? pb.toFixed(2) : ''}. Open matchup">
+          <span class="r${anyPts && pa > pb ? ' win' : ''}"><span class="tn">${avatar(ta)}<i>${esc(ta.name)}</i></span><b${bumpA ? ' class="bump"' : ''}>${anyPts ? pa.toFixed(2) : '–'}</b></span><span class="r${anyPts && pb > pa ? ' win' : ''}"><span class="tn">${avatar(tb)}<i>${esc(tb.name)}</i></span><b${bumpB ? ' class="bump"' : ''}>${anyPts ? pb.toFixed(2) : '–'}</b></span>${wp != null ? `<span class="wpb" title="${esc(ta.name)} ${wp}% to win"><span style="width:${wp}%"></span></span><span class="wpt"><em class="a">${wp}%</em>${st === ' close' && !allDone ? '<span class="cdtag">Nail-biter</span>' : '<span>win prob</span>'}<em class="b">${100 - wp}%</em></span>` : ''}</button>`;
       }).join('');
       sc.innerHTML = `<div class="cdlabel"><span class="lg">Week ${w} Scoreboard</span><span class="sh">Week ${w}</span>${live ? '<span class="cdchip live">Live</span>' : allDone ? '<span class="cdchip">Final</span>' : ''}</div><div class="cdscore">${tiles}</div>`;
       D.bnScore = true;
