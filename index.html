@@ -1212,6 +1212,35 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
 /* header: bigger Refresh target, title shrinks before it collides */
 .is-phone #refresh{min-height:44px;min-width:44px;padding:0 14px;font-size:.875rem}
 @media (max-width:359px){.is-phone h1{font-size:1.25rem}.is-phone .logo{width:36px}.is-phone #refresh{padding:0 10px}}
+/* ---------- Scoreboard: richer matchup cards ---------- */
+#cd .cdlabel{display:flex;align-items:center;gap:10px}
+.cdchip{display:inline-flex;align-items:center;gap:6px;padding:2px 9px;border-radius:999px;font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;background:rgba(255,255,255,.08);color:#C9D0DC;line-height:1.4}
+.cdchip.live{background:rgba(255,111,126,.16);color:var(--pylon-ink)}
+.cdchip.live::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--pylon);animation:cdpulse 1.6s ease-in-out infinite}
+@keyframes cdpulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.7)}}
+@media (prefers-reduced-motion:reduce){.cdchip.live::before{animation:none}#cd .cdm{transition:none}}
+#cd .cdscore{gap:10px;margin-top:10px}
+#cd .cdm{gap:5px;padding:10px 12px 9px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,0) 70%),var(--bg);border:1px solid var(--line);border-radius:12px;transition:border-color .15s,transform .15s,box-shadow .15s}
+#cd .cdm:hover,#cd .cdm:focus-visible{border-color:var(--accent);transform:translateY(-1px);box-shadow:0 6px 16px rgba(0,0,0,.28)}
+#cd .cdm .r{align-items:center;gap:10px;font-size:.95rem;color:#AEB8CB}
+#cd .cdm .tn{display:flex;align-items:center;gap:8px;min-width:0;flex:1}
+#cd .cdm .tn i{font-style:normal;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+#cd .cdm .av{width:24px;height:24px;font-size:.55rem;flex:none}
+#cd .cdm .r b{font:700 1.4rem/1 "Barlow Condensed","Arial Narrow",sans-serif;letter-spacing:.01em;font-variant-numeric:tabular-nums;color:#D5DBE6}
+#cd .cdm .r.win{color:#fff}#cd .cdm .r.win .tn i{font-weight:700}#cd .cdm .r.win b{color:var(--accent);font-size:1.5rem}
+#cd .cdm .wpb{display:block;position:static;height:5px;margin-top:3px;border-radius:3px;background:#5AA6FF;overflow:hidden}
+#cd .cdm .wpb span{display:block;height:100%;background:var(--accent);border-radius:3px 0 0 3px}
+#cd .cdm .wpt{display:flex;justify-content:space-between;font-size:.78rem;color:var(--muted);line-height:1}
+#cd .cdm .wpt em{font-style:normal;font-weight:700;font-variant-numeric:tabular-nums}#cd .cdm .wpt .a{color:var(--accent)}
+#cd .cdm .wpt .b{color:#7DB8FF}
+.is-phone #cd .cdscore{gap:8px;margin:0 -12px;padding:0 12px 2px}
+.is-phone #cd .cdm{flex:0 0 min(232px,72%);min-height:0;padding:7px 10px 8px;gap:2px;border-radius:12px}
+.is-phone #cd .cdm .r{font-size:.9rem;gap:8px}.is-phone #cd .cdm .av{width:22px;height:22px}
+.is-phone #cd .cdm .r b{font-size:1.3rem}.is-phone #cd .cdm .r.win b{font-size:1.4rem}
+.is-phone #cd .cdm .wpt{display:none}
+.is-phone #cd .cdm .wpb{margin-top:4px;height:4px}
+.is-phone .cdstage{min-height:116px}
+.is-phone .cdt .cdgrid{height:62px}.is-phone .cdsw{min-height:62px}
 /* ---------- Trading Cards ---------- */
 .tc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:var(--space-lg)}
 .tc{--fc:#8C97AD;--fc2:#5B6478;--glow:rgba(140,151,173,.25);container-type:inline-size;display:flex;flex-direction:column;gap:var(--space-sm);min-width:0}
@@ -6128,9 +6157,9 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
         const ta = team(a.roster_id), tb = team(b.roster_id), pa = a.points || 0, pb = b.points || 0;
         const wp = ctx && !allDone && (ctx.hasProj || anyPts) ? Math.round(winProb(a, b, ctx, false).pA * 100) : null;
         return `<button type="button" class="cdm" data-bn-match="${pairs.indexOf(pairs.find(q => q.mid === a.matchup_id))}" data-bn-mid="${a.matchup_id}" aria-label="${esc(ta.name)} ${anyPts ? pa.toFixed(2) : ''} versus ${esc(tb.name)} ${anyPts ? pb.toFixed(2) : ''}. Open matchup">
-          <span class="r${anyPts && pa > pb ? ' win' : ''}"><i>${esc(ta.name)}</i><b>${anyPts ? pa.toFixed(2) : '–'}</b></span><span class="r${anyPts && pb > pa ? ' win' : ''}"><i>${esc(tb.name)}</i><b>${anyPts ? pb.toFixed(2) : '–'}</b></span>${wp != null ? `<span class="wpm" title="${esc(ta.name)} ${wp}% to win"><i style="width:${wp}%"></i></span>` : ''}</button>`;
+          <span class="r${anyPts && pa > pb ? ' win' : ''}"><span class="tn">${avatar(ta)}<i>${esc(ta.name)}</i></span><b>${anyPts ? pa.toFixed(2) : '–'}</b></span><span class="r${anyPts && pb > pa ? ' win' : ''}"><span class="tn">${avatar(tb)}<i>${esc(tb.name)}</i></span><b>${anyPts ? pb.toFixed(2) : '–'}</b></span>${wp != null ? `<span class="wpb" title="${esc(ta.name)} ${wp}% to win"><span style="width:${wp}%"></span></span><span class="wpt"><em class="a">${wp}%</em><span>win prob</span><em class="b">${100 - wp}%</em></span>` : ''}</button>`;
       }).join('');
-      sc.innerHTML = `<div class="cdlabel"><span class="lg">Week ${w} Scoreboard${live ? ' · Live' : allDone ? ' · Final' : ''}</span><span class="sh">Week ${w}${live ? ' · Live' : allDone ? ' · Final' : ''}</span></div><div class="cdscore">${tiles}</div>`;
+      sc.innerHTML = `<div class="cdlabel"><span class="lg">Week ${w} Scoreboard</span><span class="sh">Week ${w}</span>${live ? '<span class="cdchip live">Live</span>' : allDone ? '<span class="cdchip">Final</span>' : ''}</div><div class="cdscore">${tiles}</div>`;
       D.bnScore = true;
     }
     const sw = document.getElementById('cdswing'), d = D.bsw && D.bsw.data;
