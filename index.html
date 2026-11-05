@@ -1098,6 +1098,48 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
 .is-phone .tx-card{padding:10px}.is-phone .tx-mg b{max-width:150px}
 .is-phone .tx-sides{grid-template-columns:1fr}
 .is-phone .tx-body{flex-direction:column}
+/* ---------- Trade Network ---------- */
+.tn-wrap{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:var(--space-lg);align-items:start}
+.tn-main{min-width:0}
+.tn-panel{background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--accent);border-radius:10px;padding:var(--space-md);display:flex;flex-direction:column;gap:var(--space-sm);min-width:0}
+.tn-svg{width:100%;height:auto;display:block}
+.tn-e{stroke:var(--accent);stroke-opacity:.5;stroke-linecap:round}.tn-e.on{stroke-opacity:.95}.tn-e.off{stroke-opacity:.08}
+.tn-bd circle{fill:var(--bg);stroke:var(--accent);stroke-width:1.5}.tn-bd text{fill:var(--ink);font-size:12px;font-weight:800}
+.tn-node{cursor:pointer;outline:none}.tn-node.dim{opacity:.45}
+.tn-nc{fill:var(--line)}.tn-ini{fill:var(--muted);font-size:12px;font-weight:700}
+.tn-ring{fill:none;stroke:var(--line);stroke-width:2}.tn-node:hover .tn-ring,.tn-node:focus-visible .tn-ring{stroke:var(--accent)}.tn-node.sel .tn-ring{stroke:var(--accent);stroke-width:4}
+.tn-lab{fill:var(--ink);font-size:15px;font-weight:600}
+.tn-empty{color:var(--muted);font-size:.9rem}.tn-empty b{color:var(--ink)}.tn-empty p{margin:6px 0 0}
+.tn-ph{display:flex;align-items:center;gap:10px}.tn-ph .av{width:40px;height:40px;flex:none}.tn-pt{flex:1;min-width:0}.tn-pt b,.tn-pt small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tn-pt small{color:var(--muted);font-size:.75rem}
+.tn-x{padding:4px 10px;min-height:0;font-size:.78rem}
+.tn-st{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0}.tn-st div{background:rgba(255,255,255,.03);border-radius:8px;padding:8px 10px}.tn-st dt{font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}.tn-st dd{margin:2px 0 0;font-size:1.3rem;font-weight:800;font-variant-numeric:tabular-nums}
+.tn-h4{margin:6px 0 0;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--accent)}
+.tn-pp{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}.tn-pp li{display:flex;align-items:center;gap:8px;font-size:.86rem}.tn-pp .av{width:24px;height:24px;font-size:.55rem;flex:none}.tn-pn{flex:1;min-width:0}
+.tn-bar{display:block;height:4px;margin-top:3px;border-radius:2px;background:var(--line);overflow:hidden}.tn-bar i{display:block;height:100%;background:var(--accent)}
+.tn-sm{margin:0;color:var(--muted);font-size:.78rem}
+.tn-as{width:100%;border-collapse:collapse;font-size:.86rem}.tn-as th,.tn-as td{padding:5px 4px;text-align:right;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}.tn-as th:first-child{text-align:left;font-weight:500;color:var(--muted)}.tn-as thead th{font-size:.68rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.tn-sg{display:flex;gap:10px;align-items:flex-start}.tn-sg .av{width:30px;height:30px;flex:none}.tn-sg p,.tn-sgi p{margin:2px 0 0;font-size:.85rem;color:var(--muted)}
+.tn-mxw{overflow-x:auto;border:1px solid var(--line);border-radius:10px}
+.tn-mx{border-collapse:collapse;font-size:.8rem;width:100%}
+.tn-mx th,.tn-mx td{padding:0;text-align:center;border:1px solid var(--line);min-width:34px;height:34px;font-variant-numeric:tabular-nums}
+.tn-mx button{display:flex;align-items:center;gap:6px;background:none;border:0;color:var(--ink);cursor:pointer;padding:4px 6px;font:inherit;width:100%}
+.tn-mx thead th{vertical-align:bottom;height:auto}.tn-mx thead button{flex-direction:column;justify-content:flex-end;padding:6px 2px}.tn-mx thead span{writing-mode:vertical-rl;transform:rotate(180deg);white-space:nowrap;max-height:96px;overflow:hidden;font-size:.72rem;color:var(--muted)}
+.tn-mx .av{width:22px;height:22px;font-size:.5rem;flex:none}
+.tn-mx .c0{text-align:left;min-width:150px;position:sticky;left:0;background:var(--surface);z-index:1}.tn-mx .c0 span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px}
+.tn-mx td.h{background:rgba(0,206,184,var(--a));color:#06231F;font-weight:800}.tn-mx td.self{background:rgba(255,255,255,.03);color:var(--muted)}
+.tn-mx tr.sel th,.tn-mx tr.sel td:not(.h){background:rgba(0,206,184,.12)}.tn-mx th.sel,.tn-mx td.sc:not(.h){background:rgba(0,206,184,.12)}
+.tn-mx .tot{font-weight:800;color:var(--accent)}
+.tn-list,.tn-few,.tn-sgl{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.tn-lrow{display:flex;align-items:center;gap:var(--space-md);width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px var(--space-md);color:var(--ink);cursor:pointer;font:inherit}
+.tn-lrow.sel{border-color:var(--accent);box-shadow:inset 3px 0 0 var(--accent)}
+.tn-lrow .av{width:34px;height:34px;flex:none}.tn-ln{min-width:0;flex:1}.tn-ln b,.tn-ln small{display:block}.tn-ln small{color:var(--muted);font-size:.78rem}
+.tn-chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}.tn-chip{font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:999px;background:rgba(0,206,184,.15);color:#2DE0C9}
+.tn-sgi{display:flex;flex-direction:column;gap:4px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px var(--space-md)}
+.tn-sgh{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.tn-sgh .av{width:28px;height:28px;flex:none}.tn-arr{color:var(--accent);font-weight:800}
+.tn-sgi .btn{align-self:flex-start;margin-top:4px}
+@media (max-width:820px){.tn-wrap{grid-template-columns:1fr}.tn-panel{order:2}}
+.is-phone .tn-wrap{grid-template-columns:1fr}
+.is-phone .tn-mx .c0{min-width:110px}.is-phone .tn-mx .c0 span{max-width:80px}
 /* ---------- Trading Cards ---------- */
 .tc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:var(--space-lg)}
 .tc{--fc:#8C97AD;--fc2:#5B6478;--glow:rgba(140,151,173,.25);container-type:inline-size;display:flex;flex-direction:column;gap:var(--space-sm);min-width:0}
@@ -1603,8 +1645,8 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
         ? `${season} season hasn’t started. ${D.ids.length} teams.`
         : `${season} season, ${playedWeeks} of ${totalWeeks} weeks played. ${D.ids.length} teams.`;
 
-    const tabs = [['stand', 'Standings'], ['match', 'Matchups'], ['odds', 'Playoff Odds'], ['bracket', 'Playoff Bracket'], ['order', 'Tankathon'], ['proj', 'Tankathon Projections'], ['news', 'News Feed'], ['pay', 'Payouts'], ['rec', 'League Records'], ['laws', 'League Bylaws'], ['mgr', 'Manager Profiles'], ['cards', 'Trading Cards'], ['rivals', 'Rivalries'], ['build', 'Team Construction'], ['inj', 'Injury/Bye Week Dashboard'], ['cmap', 'Contender Map'], ['own', 'Pick Ownership'], ['trades', 'Trade History'], ['tx', 'Transaction Wire'], ['journey', 'Journeymen'], ['finder', 'Trade Finder'], ['calc', 'Trade Calculator']];
-    const GROUPS = [{ label: 'Playoffs', keys: ['odds', 'bracket'] }, { label: 'Tankathon', keys: ['order', 'proj'] }, { label: 'League', keys: ['news', 'pay', 'rec', 'laws'] }, { label: 'Managers', keys: ['mgr', 'cards', 'rivals'] }, { label: 'Teams', keys: ['build', 'inj', 'cmap', 'own'] }, { label: 'Trades', keys: ['trades', 'tx', 'journey', 'finder', 'calc'] }];
+    const tabs = [['stand', 'Standings'], ['match', 'Matchups'], ['odds', 'Playoff Odds'], ['bracket', 'Playoff Bracket'], ['order', 'Tankathon'], ['proj', 'Tankathon Projections'], ['news', 'News Feed'], ['pay', 'Payouts'], ['rec', 'League Records'], ['laws', 'League Bylaws'], ['mgr', 'Manager Profiles'], ['cards', 'Trading Cards'], ['rivals', 'Rivalries'], ['build', 'Team Construction'], ['inj', 'Injury/Bye Week Dashboard'], ['cmap', 'Contender Map'], ['own', 'Pick Ownership'], ['trades', 'Trade History'], ['tx', 'Transaction Wire'], ['tn', 'Trade Network'], ['journey', 'Journeymen'], ['finder', 'Trade Finder'], ['calc', 'Trade Calculator']];
+    const GROUPS = [{ label: 'Playoffs', keys: ['odds', 'bracket'] }, { label: 'Tankathon', keys: ['order', 'proj'] }, { label: 'League', keys: ['news', 'pay', 'rec', 'laws'] }, { label: 'Managers', keys: ['mgr', 'cards', 'rivals'] }, { label: 'Teams', keys: ['build', 'inj', 'cmap', 'own'] }, { label: 'Trades', keys: ['trades', 'tx', 'tn', 'journey', 'finder', 'calc'] }];
     const tabBtn = ([k, l]) => `<button class="tab" role="tab" type="button" data-tab="${k}" aria-selected="${opts.tab === k}">${l}</button>`;
     const menuBtn = ([k, l]) => `<button class="tabopt" role="menuitem" type="button" data-tab="${k}" aria-current="${opts.tab === k}">${l}</button>`;
     let html = `<nav class="tabs" role="tablist">${tabs.map(t => {
@@ -1615,7 +1657,7 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
     }).join('')}</nav>`;
     const label = (tabs.find(t => t[0] === opts.tab) || [, ''])[1];
     html += pageHeader(opts.tab, label) + '<div class="pbody" id="pbody">';
-    html += opts.tab === 'tx' ? renderTx() : opts.tab === 'inj' ? renderInj() : opts.tab === 'cards' ? renderCards() : opts.tab === 'journey' ? renderJourney() : opts.tab === 'rivals' ? renderRivals() : opts.tab === 'cmap' ? renderCmap() : opts.tab === 'stand' ? renderStandings() : opts.tab === 'proj' ? renderProj() : opts.tab === 'odds' ? renderOdds() : opts.tab === 'match' ? renderMatchups() : opts.tab === 'news' ? renderNews() : opts.tab === 'bracket' ? renderBracket() : opts.tab === 'pay' ? renderPayouts() : opts.tab === 'rec' ? renderRecords() : opts.tab === 'mgr' ? renderProfiles() : opts.tab === 'build' ? renderBuild() : opts.tab === 'own' ? renderOwn() : opts.tab === 'trades' ? renderTrades() : opts.tab === 'laws' ? renderBylaws() : opts.tab === 'finder' ? renderFinder() : opts.tab === 'calc' ? renderCalc() : renderOrder();
+    html += opts.tab === 'tn' ? renderTn() : opts.tab === 'tx' ? renderTx() : opts.tab === 'inj' ? renderInj() : opts.tab === 'cards' ? renderCards() : opts.tab === 'journey' ? renderJourney() : opts.tab === 'rivals' ? renderRivals() : opts.tab === 'cmap' ? renderCmap() : opts.tab === 'stand' ? renderStandings() : opts.tab === 'proj' ? renderProj() : opts.tab === 'odds' ? renderOdds() : opts.tab === 'match' ? renderMatchups() : opts.tab === 'news' ? renderNews() : opts.tab === 'bracket' ? renderBracket() : opts.tab === 'pay' ? renderPayouts() : opts.tab === 'rec' ? renderRecords() : opts.tab === 'mgr' ? renderProfiles() : opts.tab === 'build' ? renderBuild() : opts.tab === 'own' ? renderOwn() : opts.tab === 'trades' ? renderTrades() : opts.tab === 'laws' ? renderBylaws() : opts.tab === 'finder' ? renderFinder() : opts.tab === 'calc' ? renderCalc() : renderOrder();
     const prevScroll = document.getElementById('wkscroll'), keep = prevScroll ? prevScroll.scrollLeft : null;
     html += '</div>';
     $('#app').innerHTML = html;
@@ -1630,6 +1672,7 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
   // Anything a tab renders inside <div class="controls"> at the very top is moved into the actions row automatically.
   const KEY = '<span class="key"></span>';
   const TAB_META = {
+    tn: { sub: () => 'Who trades with whom, and who should', how: () => '<p>Every completed trade from this season and past seasons counts. Managers are tracked by person, so a trade from an earlier year still counts for the same manager. A line joins two managers who traded, and thicker lines mean more trades. A three-team trade connects all three.</p><p><b>Most Likely Trade Partner</b> blends how often two managers have traded with how well their rosters fit. A fit means one team is thin at a position where the other is deep, using the same roster-need scoring as Trade Finder. If player values can’t load, it uses trade history alone.</p><p>On a phone the List view is easiest to read.</p>' },
     tx: { sub: () => 'Every trade, waiver claim and free-agent move', how: () => '<p>This is Sleeper’s own transaction log for the season, newest first. Failed and cancelled moves are hidden unless you switch them on. All the leaderboards count completed moves only.</p><p><b>Waiver Wire Hero</b> adds up the points an added player scored for the team that added him, from the week of the add until he was dropped or the add was repeated. Only finished weeks count, and bench points count too. <b>Waiver Wire Flop</b> takes the ten biggest FAAB bids and lists them from fewest points up.</p><p>The page checks for new moves about once a minute while it is open.</p>' },
     stand: { sub: () => 'Records, streaks and strength of schedule', how: () => `<p>Teams are ranked by record, then points for. Streaks and Last 5 count regular-season games${D.median ? ', including the weekly median game' : ''}. Tap a streak for the week-by-week games, or a result for that matchup.</p><p><b>SOS</b> ranks each schedule by the average points per game of the opponents faced, 1st being the hardest. <span class="sos hard">Red</span> is the toughest third and <span class="sos easy">teal</span> the easiest. <b>Rem. SOS</b> does the same for the rest of the regular season. The small number under each rating is how far above or below the league average those opponents score.</p>` },
     match: { sub: () => 'Weekly scores, lineups and win odds', how: () => '<p>Tap a matchup to open it full screen. Tap a player’s name for his profile, or his points to see how they were scored.</p><p>Win probability starts from each starter’s projection in this league’s scoring. Finished games count what was scored, live games count current points plus half of what is left of the projection, and the more players still to play, the less certain the odds. It is an estimate, not Sleeper’s own number.</p>' },
@@ -1683,7 +1726,7 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
 
   // ---------- Phone navigation: bottom bar, "More" sheet, current-section label ----------
   const MORE_GROUPS = [['Overview', ['stand', 'match']], ['Playoffs', ['odds', 'bracket']], ['Tankathon', ['order', 'proj']], ['League', ['news', 'pay', 'rec', 'laws']], ['Managers', ['mgr', 'cards', 'rivals']],
-    ['Teams', ['build', 'inj', 'cmap', 'own']], ['Trades', ['trades', 'tx', 'journey', 'finder', 'calc']]];
+    ['Teams', ['build', 'inj', 'cmap', 'own']], ['Trades', ['trades', 'tx', 'tn', 'journey', 'finder', 'calc']]];
   let TABS_ALL = [];
   function updatePhoneChrome(tabs){
     TABS_ALL = tabs;
@@ -2150,7 +2193,7 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
       myD.tf = { players, picks, f };
     }
     myD.tfLoading = false;
-    if (D === myD && (opts.tab === 'finder' || opts.tab === 'calc')) render();
+    if (D === myD && (opts.tab === 'finder' || opts.tab === 'calc' || opts.tab === 'tn')) render();
   }
 
   function finderModel(){
@@ -2202,6 +2245,7 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
     const mySingles = myTop.map(a => [a]), myPairs = combos(myTop).filter(c => c.length === 2);
     model.teams.forEach((them, rid) => {
       if (rid === me) return;
+      if (opts.tfWith && opts.tfWith !== me && rid !== opts.tfWith) return;
       const th = top(them), thSingles = th.map(a => [a]), thPairs = combos(th).filter(c => c.length === 2);
       const sets = [[mySingles, thSingles], [myPairs, thSingles], [mySingles, thPairs]];
       const found = [];
@@ -2235,7 +2279,7 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
     const teamOpts = ids.map(r => `<option value="${r}" ${r === me ? 'selected' : ''}>${esc(team(r).name)}</option>`).join('');
     const tolOpts = [[5, 'Very even (5%)'], [10, 'Close (10%)'], [20, 'Loose (20%)']].map(([v, l]) => `<option value="${v}" ${v === tolPct ? 'selected' : ''}>${l}</option>`).join('');
     let html = `
-      <div class="controls"><label class="field">Your team<select data-opt="tfTeam">${teamOpts}</select></label><label class="field">Fairness<select data-opt="tfTol">${tolOpts}</select></label>
+      <div class="controls"><label class="field">Your team<select data-opt="tfTeam">${teamOpts}</select></label><label class="field">Trade partner<select data-opt="tfWith"><option value="0">Any team</option>${ids.filter(r => r !== me).map(r => `<option value="${r}" ${r === opts.tfWith ? 'selected' : ''}>${esc(team(r).name)}</option>`).join('')}</select></label><label class="field">Fairness<select data-opt="tfTol">${tolOpts}</select></label>
         <label class="field">Strategy<select data-opt="tfStrat">${[['balanced', 'Balanced'], ['contend', 'Contend now'], ['rebuild', 'Rebuild']].map(([v, l]) => `<option value="${v}" ${(opts.tfStrat || 'balanced') === v ? 'selected' : ''}>${l}</option>`).join('')}</select></label>
         <label class="field">Target position<select data-opt="tfPos">${[['', 'Any'], ...model.POS.map(x => [x, x])].map(([v, l]) => `<option value="${v}" ${(opts.tfPos || '') === v ? 'selected' : ''}>${l}</option>`).join('')}</select></label>
         <label class="field">Picks<select data-opt="tfPicks"><option value="yes" ${opts.tfPicks !== 'no' ? 'selected' : ''}>Include</option><option value="no" ${opts.tfPicks === 'no' ? 'selected' : ''}>Players only</option></select></label></div>
@@ -2243,7 +2287,7 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
     const mt = model.teams.get(me);
     html += `<div class="tfneeds">${model.POS.map(pos => { const n = mt.need[pos]; const lab = n > 0.12 ? 'Need' : n < -0.12 ? 'Surplus' : 'Balanced'; return `<span class="tfn ${lab.toLowerCase()}"><b>${pos}</b> ${lab}</span>`; }).join('')}</div>`;
     const trades = findTrades(model, me, tol);
-    if (!trades.length) return html + '<p class="note">No trades fit those settings. Try a looser fairness range.</p>';
+    if (!trades.length) return html + '<p class="note">No trades fit those settings. Try a looser fairness range, or set Target position or Trade partner to Any.</p>';
     const side = (arr, total) => `<ul>${arr.map(a => `<li>${a.kind === 'p' ? shot(a.id, a.pos, a.p.tm, a.label) : '<span class="hs pick" aria-hidden="true">PK</span>'}<span class="tfn2"><span class="asset-main">${a.kind === 'p' ? PL(a.id, a.label, 'span') : esc(a.label)}</span><span class="asset-sub">${esc(a.sub)}</span></span><b class="tfv">${Math.round(a.v).toLocaleString()}</b></li>`).join('')}</ul><div class="tfsum">Package value <b>${Math.round(total).toLocaleString()}</b></div>`;
     html += '<div class="tflist">' + trades.map(t => {
       const g = t.gap, lab = Math.abs(g) <= 0.03 ? 'Even swap' : g > 0 ? `You gain ~${Math.round(g * 100)}% in value` : `You give ~${Math.round(-g * 100)}% extra value`;
@@ -4433,6 +4477,7 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
     }).catch(() => {}).then(() => { tx.polling = false; });
   }
   setInterval(txPoll, 60000);
+  document.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches('.tn-node')) { e.preventDefault(); e.target.dispatchEvent(new MouseEvent('click', { bubbles: true })); } });
   function txInfo(pid){
     const all = D.tx && D.tx.all, pl = all && all[pid];
     if (pl) return { nm: pl.full_name || [pl.first_name, pl.last_name].filter(Boolean).join(' ') || pid, pos: pl.position || '', tm: pl.team || '' };
@@ -4518,6 +4563,177 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
 
     const flop = scored.filter(x => x.bid > 0).sort((a, b) => b.bid - a.bid || a.pts - b.pts).slice(0, 10).sort((a, b) => a.pts - b.pts || b.bid - a.bid);
     html += `<h3 class="sh3">Waiver Wire Flop<span class="ib-cnt">Priciest duds</span></h3>` + (!ptsReady ? pending : flop.length ? `<p class="note">The ten biggest FAAB bids that have scored, ordered from fewest points.</p><ol class="tx-lb">${flop.map((x, i) => pRow(x, i, { extra: ` · $${x.bid} bid`, val: x.pts.toFixed(1), vsub: `pts · ${x.pts > 0 ? '$' + (x.bid / x.pts).toFixed(2) + '/pt' : 'no return'}` })).join('')}</ol>` : '<p class="note">No FAAB pickups have scored yet.</p>');
+    return html;
+  }
+
+
+  // ---------- Trade Network ----------
+  function tnBuild(){
+    if (D.tn) return D.tn;
+    const byOwner = new Map();
+    (D.rosters || []).forEach(r => { if (r.owner_id && r.roster_id != null) byOwner.set(r.owner_id, r.roster_id); });
+    const cur = new Set(D.ids);
+    const stat = new Map(D.ids.map(r => [r, { rid: r, n: 0, former: 0, partners: new Map(), formerP: new Set(), sentP: 0, sentK: 0, recvP: 0, recvK: 0, sentF: 0, recvF: 0 }]));
+    const pair = new Map(), key = (a, b) => a < b ? a + '|' + b : b + '|' + a;
+    let total = 0;
+    D.trades.list.forEach(({ t, L }) => {
+      const ownerOf = rid => (L.rosters.find(r => r.roster_id === rid) || {}).owner_id || `${L.id}-${rid}`;
+      const map = rid => L.current ? (cur.has(rid) ? rid : null) : (byOwner.has(ownerOf(rid)) ? byOwner.get(ownerOf(rid)) : null);
+      const parts = (t.roster_ids || []).map(r => ({ o: ownerOf(r), m: map(r) }));
+      const cs = [...new Set(parts.map(x => x.m).filter(m => m != null && stat.has(m)))];
+      if (!cs.length) return;
+      total++;
+      cs.forEach(c => {
+        const s = stat.get(c); s.n++;
+        parts.forEach(x => {
+          if (x.m === c) return;
+          if (x.m != null && stat.has(x.m)) s.partners.set(x.m, (s.partners.get(x.m) || 0) + 1);
+          else { s.formerP.add(x.o); }
+        });
+        if (parts.some(x => x.m == null || !stat.has(x.m))) s.former++;
+      });
+      for (let i = 0; i < cs.length; i++) for (let j = i + 1; j < cs.length; j++) { const k = key(cs[i], cs[j]); pair.set(k, (pair.get(k) || 0) + 1); }
+      const bump = (rid, f) => { const m = map(Number(rid)); if (m != null && stat.has(m)) stat.get(m)[f]++; };
+      Object.values(t.adds || {}).forEach(to => bump(to, 'recvP'));
+      Object.values(t.drops || {}).forEach(from => bump(from, 'sentP'));
+      (t.draft_picks || []).forEach(dp => { bump(dp.owner_id, 'recvK'); bump(dp.previous_owner_id, 'sentK'); });
+      (t.waiver_budget || []).forEach(w => {
+        const a = map(Number(w.receiver)), b = map(Number(w.sender));
+        if (a != null && stat.has(a)) stat.get(a).recvF += Number(w.amount) || 0;
+        if (b != null && stat.has(b)) stat.get(b).sentF += Number(w.amount) || 0;
+      });
+    });
+    D.tn = { stat, pair, total, get: (a, b) => pair.get(key(a, b)) || 0, pk: (s) => s.partners.size + s.formerP.size };
+    return D.tn;
+  }
+  // Suggest one trade partner: past trade frequency blended with complementary roster needs (thin at a position vs. deep there).
+  function tnSuggest(me, tn, model){
+    const others = D.ids.filter(r => r !== me);
+    const maxF = Math.max(1, ...others.map(r => tn.get(me, r)));
+    const A = team(me).name;
+    let best = null;
+    others.forEach(pid => {
+      const f = tn.get(me, pid);
+      let comp = 0, get = { v: 0, pos: null }, give = { v: 0, pos: null };
+      const a = model && model.teams.get(me), b = model && model.teams.get(pid);
+      if (a && b) model.POS.forEach(ps => {
+        const x = Math.max(0, a.need[ps]) * Math.max(0, -b.need[ps]), y = Math.max(0, b.need[ps]) * Math.max(0, -a.need[ps]);
+        comp += x + y;
+        if (x > get.v) get = { v: x, pos: ps };
+        if (y > give.v) give = { v: y, pos: ps };
+      });
+      const compN = Math.min(1, comp / 0.2);
+      const score = model ? 0.6 * compN + 0.4 * (f / maxF) : f / maxF;
+      if (!best || score > best.score) best = { pid, f, score, get, give };
+    });
+    if (!best || best.score <= 0) return null;
+    const B = team(best.pid).name, f = best.f, g = best.get, v = best.give;
+    const freq = f ? `, and they’ve traded ${f} time${f === 1 ? '' : 's'} before` : '';
+    let reason, pos = '';
+    if (g.v >= 0.01 && g.v >= v.v) { reason = `${A} is thin at ${g.pos} and ${B} is deep there${freq}.`; pos = g.pos; }
+    else if (v.v >= 0.01) { reason = `${A} is deep at ${v.pos} where ${B} is thin${freq}.`; }
+    else if (f) reason = `${A} and ${B} have traded ${f} time${f === 1 ? '' : 's'} before.`;
+    else reason = `${B} is the closest roster fit for ${A}.`;
+    return { pid: best.pid, reason, pos, score: best.score };
+  }
+  function tnGraph(tn, sel){
+    const W = 800, H = 660, cx = 400, cy = 330, R = 235, nr = 26;
+    const ids = D.ids.slice().sort((a, b) => team(a).name.localeCompare(team(b).name));
+    const at = new Map(ids.map((r, i) => { const a = -Math.PI / 2 + 2 * Math.PI * i / ids.length; return [r, { x: cx + R * Math.cos(a), y: cy + R * Math.sin(a), a }]; }));
+    let maxN = 0; tn.pair.forEach(v => { maxN = Math.max(maxN, v); });
+    let edges = '', badges = '';
+    for (let i = 0; i < ids.length; i++) for (let j = i + 1; j < ids.length; j++) {
+      const a = ids[i], b = ids[j], n = tn.get(a, b); if (!n) continue;
+      const pa = at.get(a), pb = at.get(b), inc = sel && (a === sel || b === sel);
+      edges += `<line class="tn-e${inc ? ' on' : sel ? ' off' : ''}" x1="${pa.x.toFixed(1)}" y1="${pa.y.toFixed(1)}" x2="${pb.x.toFixed(1)}" y2="${pb.y.toFixed(1)}" stroke-width="${Math.min(16, 1.5 + n * 2.5)}"><title>${esc(team(a).name)} and ${esc(team(b).name)}: ${n} trade${n === 1 ? '' : 's'}</title></line>`;
+      if (inc) { const from = a === sel ? pa : pb, to = a === sel ? pb : pa, bx = from.x + (to.x - from.x) * 0.45, by = from.y + (to.y - from.y) * 0.45; badges += `<g class="tn-bd"><circle cx="${bx.toFixed(1)}" cy="${by.toFixed(1)}" r="11"/><text x="${bx.toFixed(1)}" y="${(by + 4).toFixed(1)}" text-anchor="middle">${n}</text></g>`; }
+    }
+    const linked = new Set(sel ? [...tn.stat.get(sel).partners.keys(), sel] : []);
+    const nodes = ids.map(r => {
+      const q = at.get(r), t = team(r), cs = Math.cos(q.a), sn = Math.sin(q.a);
+      const lx = cx + (R + nr + 9) * cs, ly = cy + (R + nr + 9) * sn + (sn > 0.3 ? 12 : sn < -0.3 ? -3 : 4);
+      const anchor = cs > 0.3 ? 'start' : cs < -0.3 ? 'end' : 'middle';
+      const nm = t.name.length > 16 ? t.name.slice(0, 15) + '…' : t.name;
+      const ini = esc((t.name || '?').trim().slice(0, 2).toUpperCase());
+      return `<g class="tn-node${r === sel ? ' sel' : ''}${sel && !linked.has(r) ? ' dim' : ''}" data-tn-pick="${r}" role="button" tabindex="0" aria-label="${esc(t.name)}, ${tn.stat.get(r).n} trades" aria-pressed="${r === sel}">
+        <clipPath id="tnc${r}"><circle cx="${q.x.toFixed(1)}" cy="${q.y.toFixed(1)}" r="${nr}"/></clipPath>
+        <circle class="tn-nc" cx="${q.x.toFixed(1)}" cy="${q.y.toFixed(1)}" r="${nr}"/><text class="tn-ini" x="${q.x.toFixed(1)}" y="${(q.y + 4).toFixed(1)}" text-anchor="middle">${ini}</text>
+        ${t.avatar ? `<image href="${esc(t.avatar)}" x="${(q.x - nr).toFixed(1)}" y="${(q.y - nr).toFixed(1)}" width="${nr * 2}" height="${nr * 2}" clip-path="url(#tnc${r})" preserveAspectRatio="xMidYMid slice" onerror="this.remove()"/>` : ''}
+        <circle class="tn-ring" cx="${q.x.toFixed(1)}" cy="${q.y.toFixed(1)}" r="${nr}"/>
+        <text class="tn-lab" x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="${anchor}">${esc(nm)}</text></g>`;
+    }).join('');
+    return `<svg class="tn-svg" viewBox="55 30 690 600" role="group" aria-label="Trade network graph. Select a manager to see their trades.">${edges}${badges}${nodes}</svg>`;
+  }
+  function tnMatrix(tn, sel){
+    const ids = D.ids.slice().sort((a, b) => team(a).name.localeCompare(team(b).name));
+    let max = 1; tn.pair.forEach(v => { max = Math.max(max, v); });
+    const short = n => n.length > 13 ? n.slice(0, 12) + '…' : n;
+    let h = `<div class="tn-mxw"><table class="tn-mx"><thead><tr><th class="c0"></th>${ids.map(c => `<th scope="col" class="${c === sel ? 'sel' : ''}"><button type="button" data-tn-pick="${c}" title="${esc(team(c).name)}">${avatar(team(c))}<span>${esc(short(team(c).name))}</span></button></th>`).join('')}<th class="tot">Total</th></tr></thead><tbody>`;
+    ids.forEach(r => {
+      h += `<tr class="${r === sel ? 'sel' : ''}"><th scope="row" class="c0"><button type="button" data-tn-pick="${r}">${avatar(team(r))}<span>${esc(team(r).name)}</span></button></th>`;
+      ids.forEach(c => {
+        if (c === r) { h += '<td class="self">–</td>'; return; }
+        const n = tn.get(r, c);
+        h += `<td class="${n ? 'h' : ''}${c === sel ? ' sc' : ''}" ${n ? `style="--a:${(0.18 + 0.7 * n / max).toFixed(2)}"` : ''} title="${esc(team(r).name)} and ${esc(team(c).name)}: ${n} trade${n === 1 ? '' : 's'}">${n || '·'}</td>`;
+      });
+      h += `<td class="tot">${tn.stat.get(r).n}</td></tr>`;
+    });
+    return h + '</tbody></table></div>';
+  }
+  function tnList(tn, sel){
+    const ids = D.ids.slice().sort((a, b) => tn.stat.get(b).n - tn.stat.get(a).n || team(a).name.localeCompare(team(b).name));
+    return `<ul class="tn-list">${ids.map(r => {
+      const s = tn.stat.get(r), top = [...s.partners.entries()].sort((a, b) => b[1] - a[1]).slice(0, 3);
+      return `<li><button type="button" class="tn-lrow${r === sel ? ' sel' : ''}" data-tn-pick="${r}" aria-pressed="${r === sel}">${avatar(team(r))}<span class="tn-ln"><b>${esc(team(r).name)}</b><small>${s.n} trade${s.n === 1 ? '' : 's'} · ${tn.pk(s)} partner${tn.pk(s) === 1 ? '' : 's'}</small>${top.length ? `<span class="tn-chips">${top.map(([p, n]) => `<span class="tn-chip">${esc(team(p).name)} ×${n}</span>`).join('')}</span>` : ''}</span></button></li>`;
+    }).join('')}</ul>`;
+  }
+  function tnPanel(tn, sel, model){
+    if (!sel) return '<div class="tn-empty"><b>Pick a manager</b><p>Select a manager in the graph, matrix or list to see their trades, partners and assets.</p></div>';
+    const s = tn.stat.get(sel), t = team(sel);
+    const ps = [...s.partners.entries()].sort((a, b) => b[1] - a[1] || team(a[0]).name.localeCompare(team(b[0]).name));
+    const top = ps.length ? ps[0][1] : 1;
+    const sug = tnSuggest(sel, tn, model);
+    return `<div class="tn-ph">${avatar(t)}<div class="tn-pt"><b>${esc(t.name)}</b>${t.manager ? `<small>${esc(t.manager)}</small>` : ''}</div><button type="button" class="btn tn-x" data-tn-clear aria-label="Clear selection">Clear</button></div>
+      <dl class="tn-st"><div><dt>Trades</dt><dd>${s.n}</dd></div><div><dt>Partners</dt><dd>${tn.pk(s)}</dd></div></dl>
+      <h4 class="tn-h4">Most Frequent Partners</h4>
+      ${ps.length ? `<ul class="tn-pp">${ps.slice(0, 5).map(([p, n]) => `<li>${avatar(team(p))}<span class="tn-pn">${esc(team(p).name)}<span class="tn-bar"><i style="width:${Math.round(n / top * 100)}%"></i></span></span><b>${n}</b></li>`).join('')}</ul>` : '<p class="tempty">No trades with current managers yet.</p>'}
+      ${s.formerP.size ? `<p class="tn-sm">${s.formerP.size} more partner${s.formerP.size === 1 ? '' : 's'} no longer in the league.</p>` : ''}
+      <h4 class="tn-h4">Assets Traded</h4>
+      <table class="tn-as"><thead><tr><th></th><th>Sent</th><th>Received</th></tr></thead><tbody>
+        <tr><th scope="row">Players</th><td>${s.sentP}</td><td>${s.recvP}</td></tr>
+        <tr><th scope="row">Draft picks</th><td>${s.sentK}</td><td>${s.recvK}</td></tr>
+        ${s.sentF || s.recvF ? `<tr><th scope="row">FAAB</th><td>$${s.sentF}</td><td>$${s.recvF}</td></tr>` : ''}</tbody></table>
+      <h4 class="tn-h4">Most Likely Trade Partner</h4>
+      ${sug ? `<div class="tn-sg">${avatar(team(sug.pid))}<div><b>${esc(team(sug.pid).name)}</b><p>${esc(sug.reason)}</p></div></div><button type="button" class="btn" data-tn-finder="${sel},${sug.pid},${sug.pos}">Open in Trade Finder</button>` : '<p class="tempty">Not enough data yet.</p>'}`;
+  }
+  function renderTn(){
+    if (!D.trades) { loadTrades(); return '<p class="status">Loading trades from Sleeper…</p>'; }
+    if (D.trades.error) return `<div class="error"><strong>${esc(D.trades.error)}</strong><br>Check your connection, then <button class="btn" type="button" data-tn-retry>Try Again</button></div>`;
+    if (!D.tf && !D.tfLoading) loadFinder();
+    const tn = tnBuild();
+    const model = D.tf && !D.tf.error ? finderModel() : null;
+    const view = opts.tnView || (isPhoneUI() ? 'list' : 'graph');
+    const sel = D.ids.includes(opts.tnSel) ? opts.tnSel : 0;
+    const ids = D.ids.slice().sort((a, b) => team(a).name.localeCompare(team(b).name));
+    let html = `<div class="controls">
+      <div class="field"><span class="flabel">View</span><div class="seg" role="group" aria-label="View">${[['graph', 'Graph'], ['matrix', 'Trade Matrix'], ['list', 'List']].map(([k, l]) => `<button type="button" data-tn-view="${k}" aria-pressed="${view === k}">${l}</button>`).join('')}</div></div>
+      <label class="field">Manager<select data-opt="tnSel"><option value="0">None Selected</option>${ids.map(r => `<option value="${r}" ${r === sel ? 'selected' : ''}>${esc(team(r).name)}</option>`).join('')}</select></label>
+    </div>`;
+    html += `<h3 class="sh3">${view === 'matrix' ? 'Trade Matrix' : view === 'list' ? 'Trade Partners' : 'Trade Network'}<span class="ib-cnt">${tn.total} trade${tn.total === 1 ? '' : 's'} across all seasons</span></h3>`;
+    if (!tn.total) html += '<p class="note">No trades have been made in this league yet.</p>';
+    if (view === 'graph' && isPhoneUI()) html += '<p class="note">The graph is small on a phone. List view is easier to read.</p>';
+    html += `<div class="tn-wrap"><div class="tn-main">${view === 'matrix' ? tnMatrix(tn, sel) : view === 'list' ? tnList(tn, sel) : tnGraph(tn, sel)}</div><aside class="tn-panel" aria-label="Manager details">${tnPanel(tn, sel, model)}</aside></div>`;
+
+    const few = ids.filter(r => tn.pk(tn.stat.get(r)) <= 1).sort((a, b) => tn.stat.get(a).n - tn.stat.get(b).n);
+    html += `<h3 class="sh3">Hasn’t Traded Yet<span class="ib-cnt">No trades, or only one trade partner</span></h3>`;
+    html += few.length ? `<ul class="tn-few">${few.map(r => { const s = tn.stat.get(r), only = s.partners.size ? [...s.partners.entries()][0] : null;
+      return `<li><button type="button" class="tn-lrow" data-tn-pick="${r}">${avatar(team(r))}<span class="tn-ln"><b>${esc(team(r).name)}</b><small>${!s.n ? 'Hasn’t traded yet' : only ? `Only trade partner: ${esc(team(only[0]).name)} (${only[1]} trade${only[1] === 1 ? '' : 's'})` : `Only trade partner is no longer in the league (${s.n} trade${s.n === 1 ? '' : 's'})`}</small></span></button></li>`; }).join('')}</ul>`
+      : '<p class="note">Every manager has traded with at least two partners.</p>';
+
+    html += `<h3 class="sh3">Most Likely Trade Partner<span class="ib-cnt">Past trades plus complementary roster needs</span></h3>`;
+    if (!model) html += `<p class="note">${D.tf && D.tf.error ? 'Player values couldn’t load, so these suggestions use trade history only.' : 'Roster needs are still loading. These suggestions update when they arrive.'}</p>`;
+    html += `<ul class="tn-sgl">${ids.map(r => { const sg = tnSuggest(r, tn, model);
+      return `<li class="tn-sgi"><div class="tn-sgh">${avatar(team(r))}<b>${esc(team(r).name)}</b>${sg ? `<span class="tn-arr" aria-hidden="true">→</span>${avatar(team(sg.pid))}<b>${esc(team(sg.pid).name)}</b>` : ''}</div>${sg ? `<p>${esc(sg.reason)}</p><button type="button" class="btn" data-tn-finder="${r},${sg.pid},${sg.pos}">Open in Trade Finder</button>` : '<p class="tempty">Not enough data yet.</p>'}</li>`; }).join('')}</ul>`;
     return html;
   }
 
@@ -5047,7 +5263,7 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
       myD.trades = { error: e.message || 'Couldn’t load trades from Sleeper.' };
     } finally {
       myD.tradesLoading = false;
-      if (D === myD && opts.tab === 'trades') render();
+      if (D === myD && (opts.tab === 'trades' || opts.tab === 'tn')) render();
     }
   }
 
@@ -5538,6 +5754,11 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
     const txr = e.target.closest('[data-tx-retry]'); if (txr) { if (D) D.tx = null; render(); return; }
     const txm = e.target.closest('[data-tx-more]'); if (txm) { const y = window.scrollY; if (D && D.tx) D.tx.shown += TX_PAGE; render(); window.scrollTo(0, y); return; }
     const txf = e.target.closest('[data-tx-failed]'); if (txf) { const y = window.scrollY; opts.txFailed = !opts.txFailed; if (D && D.tx) D.tx.shown = TX_PAGE; render(); window.scrollTo(0, y); return; }
+    const tnr = e.target.closest('[data-tn-retry]'); if (tnr) { if (D) D.trades = null; render(); return; }
+    const tnv = e.target.closest('[data-tn-view]'); if (tnv) { opts.tnView = tnv.dataset.tnView; render(); return; }
+    const tnc = e.target.closest('[data-tn-clear]'); if (tnc) { opts.tnSel = 0; render(); return; }
+    const tnf = e.target.closest('[data-tn-finder]'); if (tnf) { const [a, b, ps] = tnf.dataset.tnFinder.split(','); opts.tfTeam = Number(a); opts.tfWith = Number(b); opts.tfPos = ps || ''; goTab('finder'); return; }
+    const tnp = e.target.closest('[data-tn-pick]'); if (tnp) { const r = Number(tnp.dataset.tnPick); opts.tnSel = opts.tnSel === r ? 0 : r; const y = window.scrollY; render(); window.scrollTo(0, y); return; }
     const ibv = e.target.closest('[data-ib-view]'); if (ibv) { opts.injView = ibv.dataset.ibView; saveOpts(); render(); return; }
     const ibs = e.target.closest('[data-ib-show]'); if (ibs) { opts.injShow = ibs.dataset.ibShow; saveOpts(); render(); return; }
     if (e.target.closest('[data-jm-all]')) { D.jmAll = true; render(); return; }
@@ -5578,7 +5799,7 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
     if (!el) return;
     const k = el.dataset.opt;
     const openDetails = !!e.target.closest('details[open]');
-    opts[k] = (k === 'rounds' || k === 'season' || k === 'tradeTeam' || k === 'week' || k === 'buildTeam' || k === 'tfTeam' || k === 'tfTol' || k === 'mteam') ? Number(el.value) : el.value;
+    opts[k] = (k === 'rounds' || k === 'season' || k === 'tradeTeam' || k === 'week' || k === 'buildTeam' || k === 'tfTeam' || k === 'tfTol' || k === 'mteam' || k === 'tfWith' || k === 'tnSel') ? Number(el.value) : el.value;
     if (k.indexOf('tx') === 0 && D && D.tx) D.tx.shown = TX_PAGE;
     saveOpts();
     if (k === 'tiebreak') runSim();
