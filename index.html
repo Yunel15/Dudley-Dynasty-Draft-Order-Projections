@@ -1299,11 +1299,11 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
 .is-phone .pcard.fold .pc-tog{display:block;width:100%;min-height:44px;margin-top:10px;background:transparent;color:var(--accent);border:1px solid var(--line)}
 .is-phone .pcard.fold:not(.open)>:not(.team):not(.prec):not(.pc-tog){display:none}
 /* ---------- Phone: slim banner off the home tabs, sticky table columns ---------- */
-.is-phone:not([data-tab=stand]):not([data-tab=match]) #cd:not(.open) .cdstage{min-height:40px;height:40px;overflow:hidden}
-.is-phone:not([data-tab=stand]):not([data-tab=match]) #cd:not(.open) .cdp>:not(.cdlabel){display:none}
-.is-phone:not([data-tab=stand]):not([data-tab=match]) #cd .cdlabel{cursor:pointer}
-.is-phone:not([data-tab=stand]):not([data-tab=match]) #cd .cdlabel::after{content:"";width:8px;height:8px;margin-left:10px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg) translateY(-2px);flex:none;transition:transform .15s}
-.is-phone:not([data-tab=stand]):not([data-tab=match]) #cd.open .cdlabel::after{transform:rotate(-135deg)}
+.is-phone:not([data-page=stand]):not([data-page=match]) #cd:not(.open) .cdstage{min-height:40px;height:40px;overflow:hidden}
+.is-phone:not([data-page=stand]):not([data-page=match]) #cd:not(.open) .cdp>:not(.cdlabel){display:none}
+.is-phone:not([data-page=stand]):not([data-page=match]) #cd .cdlabel{cursor:pointer}
+.is-phone:not([data-page=stand]):not([data-page=match]) #cd .cdlabel::after{content:"";width:8px;height:8px;margin-left:10px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg) translateY(-2px);flex:none;transition:transform .15s}
+.is-phone:not([data-page=stand]):not([data-page=match]) #cd.open .cdlabel::after{transform:rotate(-135deg)}
 .is-phone .cdpos{margin-left:auto}
 .is-phone .tablewrap{background:linear-gradient(to right,var(--surface) 30%,rgba(30,38,56,0)) left center/36px 100% no-repeat local,linear-gradient(to left,var(--surface) 30%,rgba(30,38,56,0)) right center/36px 100% no-repeat local,radial-gradient(farthest-side at 0 50%,rgba(0,0,0,.45),rgba(0,0,0,0)) left center/12px 100% no-repeat scroll,radial-gradient(farthest-side at 100% 50%,rgba(0,0,0,.45),rgba(0,0,0,0)) right center/12px 100% no-repeat scroll,var(--surface);-webkit-overflow-scrolling:touch}
 .is-phone .tablewrap :is(th.tl,td.tl){position:sticky;left:0;z-index:2;background:var(--surface);max-width:118px}
@@ -1881,7 +1881,7 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
     $('#app').innerHTML = html;
     tidyPage();
     updatePhoneChrome(tabs);
-    document.documentElement.dataset.tab = opts.tab;
+    document.documentElement.dataset.page = opts.tab;
     refreshBanner(); bannerSwingLoad();
     if (opts.tab === 'match') { const sc = document.getElementById('wkscroll'); if (sc && keep != null) sc.scrollLeft = keep; centerWeek(keep != null); }
   }
@@ -4591,6 +4591,7 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
     const badges = p => `${p.inj ? `<span class="ib-b s${p.sev}" title="${esc(p.note || '')}">${esc(INJ_LABEL[p.inj])}${p.body ? ` · ${esc(p.body)}` : ''}</span>` : ''}${p.bw ? `<span class="ib-b bye${p.d < 0 ? ' past' : p.d === 0 ? ' now' : ''}">Bye W${p.bw}${p.d >= 0 && p.d <= 2 ? ` · ${whenTxt(p.d)}` : ''}</span>` : ''}${p.hp ? '<span class="ib-b hp">High Priority</span>' : ''}`;
     const row = (p, rid, withMgr) => `<li class="ib-row${p.hp ? ' hp' : ''}">${shot(p.id, p.pos, p.tm, p.nm)}<div class="ib-who">${p.pos === 'DEF' ? `<b>${esc(p.nm)}</b>` : PL(p.id, p.nm)}<small>${esc([p.pos, p.tm || 'FA', p.slot, withMgr ? tn(rid) : ''].filter(Boolean).join(' · '))}</small></div><div class="ib-tags">${badges(p)}</div></li>`;
     const list = rows => `<ul class="ib-list">${rows.join('')}</ul>`;
+    const capL = (key, items, mk) => { const lim = isPhoneUI() && !(D.ibOpen && D.ibOpen[key]) ? 8 : Infinity; return list(items.slice(0, lim).map(mk)) + (items.length > lim ? `<button type="button" class="btn ib-more" data-ib-more="${esc(key)}">Show all ${items.length} players</button>` : ''); };
     const scope = teams.filter(t => sel === 'all' || String(t.rid) === sel);
     const none = '<p class="note">No players match these filters.</p>';
     if (view === 'mgr') {
@@ -4602,7 +4603,7 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
     } else if (view === 'sev') {
       const all = scope.flatMap(t => t.players.filter(p => p.inj && keep(p)).map(p => ({ p, rid: t.rid })));
       const buckets = [['IR / PUP', x => x.p.sev === 5], ['Out', x => x.p.sev === 4], ['Doubtful', x => x.p.sev === 3], ['Questionable & Other', x => x.p.sev <= 2]];
-      buckets.forEach(([lab, f]) => { const g = all.filter(f).sort((a, b) => sortP(a.p, b.p) || tn(a.rid).localeCompare(tn(b.rid))); if (g.length) html += `<h3 class="sh3">${lab}<span class="ib-cnt">${g.length} player${g.length === 1 ? '' : 's'}</span></h3>${list(g.map(x => row(x.p, x.rid, true)))}`; });
+      buckets.forEach(([lab, f]) => { const g = all.filter(f).sort((a, b) => sortP(a.p, b.p) || tn(a.rid).localeCompare(tn(b.rid))); if (g.length) html += `<h3 class="sh3">${lab}<span class="ib-cnt">${g.length} player${g.length === 1 ? '' : 's'}</span></h3>${capL('sev' + lab, g, x => row(x.p, x.rid, true))}`; });
       if (!all.length) html += `<h3 class="sh3">Injuries</h3>${none}`;
       const healthy = scope.reduce((n, t) => n + t.players.filter(p => !p.inj).length, 0);
       if (all.length && show === 'all') html += `<p class="note">${healthy} healthy player${healthy === 1 ? '' : 's'} not shown.</p>`;
@@ -4610,7 +4611,7 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
       const all = scope.flatMap(t => t.players.filter(p => p.bw && keep(p)).map(p => ({ p, rid: t.rid })));
       const weeks = [...new Set(all.map(x => x.p.bw))].sort((a, b) => ((a >= cur ? 0 : 1) - (b >= cur ? 0 : 1)) || a - b);
       weeks.forEach(w => { const g = all.filter(x => x.p.bw === w).sort((a, b) => sortP(a.p, b.p) || tn(a.rid).localeCompare(tn(b.rid))), nt = [...bye.entries()].filter(([, bw]) => bw === w).map(([t]) => t).sort();
-        html += `<h3 class="sh3">Week ${w}${w === cur ? ' · This Week' : w === cur + 1 ? ' · Next Week' : w < cur ? ' · Already Passed' : ''}<span class="ib-cnt">${nt.join(', ')} · ${g.length} player${g.length === 1 ? '' : 's'} · ${g.filter(x => x.p.inj).length} injured</span></h3>${list(g.map(x => row(x.p, x.rid, true)))}`; });
+        html += `<h3 class="sh3">Week ${w}${w === cur ? ' · This Week' : w === cur + 1 ? ' · Next Week' : w < cur ? ' · Already Passed' : ''}<span class="ib-cnt">${nt.join(', ')} · ${g.length} player${g.length === 1 ? '' : 's'} · ${g.filter(x => x.p.inj).length} injured</span></h3>${capL('bye' + w, g, x => row(x.p, x.rid, true))}`; });
       if (!all.length) html += `<h3 class="sh3">Bye Weeks</h3>${hasSched ? none : '<p class="note">The NFL schedule isn’t available yet, so bye weeks can’t be shown.</p>'}`;
     }
     return html;
