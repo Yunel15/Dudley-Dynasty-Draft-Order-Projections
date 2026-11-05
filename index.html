@@ -1295,6 +1295,9 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
 .is-phone #pbody :is(select,input[type=text],input[type=number],input[type=search]){min-height:44px;font-size:16px}
 .is-phone #pbody .seg button,.is-phone .phead .seg button{min-height:44px;padding-left:14px;padding-right:14px}
 .is-phone #pbody .controls{gap:12px 14px}
+.pc-tog{display:none}
+.is-phone .pcard.fold .pc-tog{display:block;width:100%;min-height:44px;margin-top:10px;background:transparent;color:var(--accent);border:1px solid var(--line)}
+.is-phone .pcard.fold:not(.open)>:not(.team):not(.prec):not(.pc-tog){display:none}
 /* ---------- Trading Cards ---------- */
 .tc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:var(--space-lg)}
 .tc{--fc:#8C97AD;--fc2:#5B6478;--glow:rgba(140,151,173,.25);container-type:inline-size;display:flex;flex-direction:column;gap:var(--space-sm);min-width:0}
@@ -4553,7 +4556,7 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
 
 
   // ---------- Transaction Wire ----------
-  const TX_PAGE = 40;
+  const TX_PAGE = document.documentElement.classList.contains('is-phone') ? 20 : 40;
   const TX_TYPE = { trade: 'Trade', waiver: 'Waiver', free_agent: 'Free Agent', commissioner: 'Commissioner' };
   // Failed and cancelled moves stay hidden by default. Pending and proposed ones still show.
   const txBad = st => st !== 'complete' && st !== 'pending' && st !== 'proposed';
@@ -4898,7 +4901,7 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
 
 
   // ---------- Draft Report Cards ----------
-  const DR_PAGE = 48;
+  const DR_PAGE = document.documentElement.classList.contains('is-phone') ? 20 : 48;
   const drLetter = g => g >= 3.5 ? 'A' : g >= 2.5 ? 'B' : g >= 1.5 ? 'C' : g >= 0.5 ? 'D' : 'F';
   const drGrade = r => r >= 0.25 ? 'A' : r >= 0.08 ? 'B' : r > -0.08 ? 'C' : r > -0.25 ? 'D' : 'F';
   const DR_PTS = { A: 4, B: 3, C: 2, D: 1, F: 0 };
@@ -5540,8 +5543,8 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
       m.trophies.filter(t => t.type === 'record').forEach(t => {
         trophies += `<li><span class="ticon" aria-hidden="true">${RECORD_ICONS[t.title] || '🎖️'}</span><span><b>League record: ${esc(t.title)}</b><small>${esc(t.detail)}</small></span></li>`;
       });
-      html += `<article class="pcard">${m.current ? tcProfileCard(m.key) : ''}${teamBlock(m.latest, meta)}
-        <div class="prec"><span class="pbig">${m.w}-${m.l}${m.t ? '-' + m.t : ''}</span><span class="psub">All-time record<br>${pct} win pct</span></div>
+      html += `<article class="pcard${isPhoneUI() ? ' fold' : ''}">${m.current ? tcProfileCard(m.key) : ''}${teamBlock(m.latest, meta)}
+        <div class="prec"><span class="pbig">${m.w}-${m.l}${m.t ? '-' + m.t : ''}</span><span class="psub">All-time record<br>${pct} win pct</span></div>${isPhoneUI() ? '<button type="button" class="btn pc-tog" data-pc-tog aria-expanded="false">Show full profile</button>' : ''}
         <dl class="pstats">
           <div><dt>Playoffs</dt><dd>${m.pw}-${m.pl}</dd></div>
           <div><dt>Points for</dt><dd>${m.pf.toFixed(1)}</dd></div>
@@ -6090,6 +6093,7 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
     const jmt = e.target.closest('[data-jm-type]');
     if (jmt) { opts.jmType = jmt.dataset.jmType; saveOpts(); render(); return; }
     if (e.target.closest('[data-load-retry]')) { const rb = document.getElementById('refresh'); if (rb) rb.click(); return; }
+    const pct = e.target.closest('[data-pc-tog]'); if (pct) { const c = pct.closest('.pcard'), o = c.classList.toggle('open'); pct.setAttribute('aria-expanded', o); pct.textContent = o ? 'Hide full profile' : 'Show full profile'; return; }
     const ibm = e.target.closest('[data-ib-more]'); if (ibm) { const y = window.scrollY; (D.ibOpen = D.ibOpen || {})[ibm.dataset.ibMore] = 1; render(); window.scrollTo(0, y); return; }
     const nwm = e.target.closest('[data-news-more]'); if (nwm) { const y = window.scrollY; D.newsShown = (D.newsShown || 20) + 30; render(); window.scrollTo(0, y); return; }
     const txr = e.target.closest('[data-tx-retry]'); if (txr) { if (D) D.tx = null; render(); return; }
