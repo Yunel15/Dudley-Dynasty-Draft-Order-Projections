@@ -1140,6 +1140,33 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
 @media (max-width:820px){.tn-wrap{grid-template-columns:1fr}.tn-panel{order:2}}
 .is-phone .tn-wrap{grid-template-columns:1fr}
 .is-phone .tn-mx .c0{min-width:110px}.is-phone .tn-mx .c0 span{max-width:80px}
+/* ---------- Draft Report Cards ---------- */
+.dr-note{margin:0 0 var(--space-md)}
+.dr-sum{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--space-md)}
+.dr-sum .ib-card .slabel{display:block}.dr-sp{margin:2px 0}
+.dr-cg{font-size:2.6rem}
+.dr-tbl{display:flex;flex-direction:column;gap:6px}
+.dr-row{display:grid;grid-template-columns:52px 130px minmax(0,1fr) 100px 100px 128px;align-items:center;gap:10px;padding:8px var(--space-md);background:var(--surface);border:1px solid var(--line);border-radius:10px;min-width:0}
+.dr-hd{background:none;border:0;padding-top:0;padding-bottom:0;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.dr-pk b{display:block;font-variant-numeric:tabular-nums}.dr-pk small{color:var(--muted);font-size:.72rem}
+.dr-mg{display:flex;align-items:center;gap:8px;min-width:0}.dr-mg .av{width:26px;height:26px;font-size:.6rem;flex:none}.dr-mg span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.86rem}
+.dr-pl{display:flex;align-items:center;gap:10px;min-width:0}
+.dr-v{font-variant-numeric:tabular-nums;font-weight:600}.dr-v.na{color:var(--muted);font-weight:400;font-size:.78rem}
+.dr-p b{display:block;font-variant-numeric:tabular-nums}.dr-p small{display:block;color:var(--muted);font-size:.7rem}
+.dr-k{display:none}
+.dr-gr{display:flex;align-items:center;gap:8px}
+.dr-g{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:8px;font-weight:800;background:var(--line);color:var(--ink)}
+.dr-g.gA{background:var(--accent);color:var(--accent-ink)}.dr-g.gB{background:rgba(0,206,184,.2);color:#2DE0C9}.dr-g.gC{background:rgba(255,255,255,.1)}
+.dr-g.gD{background:rgba(255,169,77,.18);color:#FFC283}.dr-g.gF{background:rgba(255,111,126,.2);color:var(--pylon-ink)}
+.dr-l{font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.04em;padding:2px 8px;border-radius:999px;background:var(--line);color:var(--muted);white-space:nowrap}
+.dr-l.hit{background:rgba(0,206,184,.18);color:#2DE0C9}.dr-l.miss{background:rgba(255,169,77,.16);color:#FFC283}.dr-l.bust{background:rgba(255,111,126,.2);color:var(--pylon-ink)}
+.dr-pass{display:flex;flex-direction:column;gap:4px;margin-top:4px}.dr-pass small{color:var(--muted);font-size:.78rem}
+@media (max-width:900px){.dr-sum{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.is-phone .dr-sum{grid-template-columns:1fr}
+.is-phone .dr-hd{display:none}
+.is-phone .dr-row{grid-template-columns:48px minmax(0,1fr) auto;grid-template-areas:"pk pl gr" "mg mg mg" "v p p";row-gap:6px;gap:8px;padding:9px 10px}
+.is-phone .dr-pk{grid-area:pk}.is-phone .dr-pl{grid-area:pl}.is-phone .dr-gr{grid-area:gr;flex-direction:column;align-items:flex-end;gap:4px}.is-phone .dr-mg{grid-area:mg}.is-phone .dr-v{grid-area:v;font-size:.82rem}.is-phone .dr-p{grid-area:p;display:flex;align-items:baseline;justify-content:flex-end;gap:6px;flex-wrap:wrap;text-align:right}.is-phone .dr-v.na{font-size:.74rem}
+.is-phone .dr-k{display:inline;color:var(--muted);font-size:.68rem;font-weight:700;text-transform:uppercase;margin-right:6px}
 /* ---------- Trading Cards ---------- */
 .tc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:var(--space-lg)}
 .tc{--fc:#8C97AD;--fc2:#5B6478;--glow:rgba(140,151,173,.25);container-type:inline-size;display:flex;flex-direction:column;gap:var(--space-sm);min-width:0}
@@ -1645,8 +1672,8 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
         ? `${season} season hasn’t started. ${D.ids.length} teams.`
         : `${season} season, ${playedWeeks} of ${totalWeeks} weeks played. ${D.ids.length} teams.`;
 
-    const tabs = [['stand', 'Standings'], ['match', 'Matchups'], ['odds', 'Playoff Odds'], ['bracket', 'Playoff Bracket'], ['order', 'Tankathon'], ['proj', 'Tankathon Projections'], ['news', 'News Feed'], ['pay', 'Payouts'], ['rec', 'League Records'], ['laws', 'League Bylaws'], ['mgr', 'Manager Profiles'], ['cards', 'Trading Cards'], ['rivals', 'Rivalries'], ['build', 'Team Construction'], ['inj', 'Injury/Bye Week Dashboard'], ['cmap', 'Contender Map'], ['own', 'Pick Ownership'], ['trades', 'Trade History'], ['tx', 'Transaction Wire'], ['tn', 'Trade Network'], ['journey', 'Journeymen'], ['finder', 'Trade Finder'], ['calc', 'Trade Calculator']];
-    const GROUPS = [{ label: 'Playoffs', keys: ['odds', 'bracket'] }, { label: 'Tankathon', keys: ['order', 'proj'] }, { label: 'League', keys: ['news', 'pay', 'rec', 'laws'] }, { label: 'Managers', keys: ['mgr', 'cards', 'rivals'] }, { label: 'Teams', keys: ['build', 'inj', 'cmap', 'own'] }, { label: 'Trades', keys: ['trades', 'tx', 'tn', 'journey', 'finder', 'calc'] }];
+    const tabs = [['stand', 'Standings'], ['match', 'Matchups'], ['odds', 'Playoff Odds'], ['bracket', 'Playoff Bracket'], ['order', 'Tankathon'], ['proj', 'Tankathon Projections'], ['drc', 'Draft Report Cards'], ['news', 'News Feed'], ['pay', 'Payouts'], ['rec', 'League Records'], ['laws', 'League Bylaws'], ['mgr', 'Manager Profiles'], ['cards', 'Trading Cards'], ['rivals', 'Rivalries'], ['build', 'Team Construction'], ['inj', 'Injury/Bye Week Dashboard'], ['cmap', 'Contender Map'], ['own', 'Pick Ownership'], ['trades', 'Trade History'], ['tx', 'Transaction Wire'], ['tn', 'Trade Network'], ['journey', 'Journeymen'], ['finder', 'Trade Finder'], ['calc', 'Trade Calculator']];
+    const GROUPS = [{ label: 'Playoffs', keys: ['odds', 'bracket'] }, { label: 'Tankathon', keys: ['order', 'proj', 'drc'] }, { label: 'League', keys: ['news', 'pay', 'rec', 'laws'] }, { label: 'Managers', keys: ['mgr', 'cards', 'rivals'] }, { label: 'Teams', keys: ['build', 'inj', 'cmap', 'own'] }, { label: 'Trades', keys: ['trades', 'tx', 'tn', 'journey', 'finder', 'calc'] }];
     const tabBtn = ([k, l]) => `<button class="tab" role="tab" type="button" data-tab="${k}" aria-selected="${opts.tab === k}">${l}</button>`;
     const menuBtn = ([k, l]) => `<button class="tabopt" role="menuitem" type="button" data-tab="${k}" aria-current="${opts.tab === k}">${l}</button>`;
     let html = `<nav class="tabs" role="tablist">${tabs.map(t => {
@@ -1657,7 +1684,7 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
     }).join('')}</nav>`;
     const label = (tabs.find(t => t[0] === opts.tab) || [, ''])[1];
     html += pageHeader(opts.tab, label) + '<div class="pbody" id="pbody">';
-    html += opts.tab === 'tn' ? renderTn() : opts.tab === 'tx' ? renderTx() : opts.tab === 'inj' ? renderInj() : opts.tab === 'cards' ? renderCards() : opts.tab === 'journey' ? renderJourney() : opts.tab === 'rivals' ? renderRivals() : opts.tab === 'cmap' ? renderCmap() : opts.tab === 'stand' ? renderStandings() : opts.tab === 'proj' ? renderProj() : opts.tab === 'odds' ? renderOdds() : opts.tab === 'match' ? renderMatchups() : opts.tab === 'news' ? renderNews() : opts.tab === 'bracket' ? renderBracket() : opts.tab === 'pay' ? renderPayouts() : opts.tab === 'rec' ? renderRecords() : opts.tab === 'mgr' ? renderProfiles() : opts.tab === 'build' ? renderBuild() : opts.tab === 'own' ? renderOwn() : opts.tab === 'trades' ? renderTrades() : opts.tab === 'laws' ? renderBylaws() : opts.tab === 'finder' ? renderFinder() : opts.tab === 'calc' ? renderCalc() : renderOrder();
+    html += opts.tab === 'drc' ? renderDrc() : opts.tab === 'tn' ? renderTn() : opts.tab === 'tx' ? renderTx() : opts.tab === 'inj' ? renderInj() : opts.tab === 'cards' ? renderCards() : opts.tab === 'journey' ? renderJourney() : opts.tab === 'rivals' ? renderRivals() : opts.tab === 'cmap' ? renderCmap() : opts.tab === 'stand' ? renderStandings() : opts.tab === 'proj' ? renderProj() : opts.tab === 'odds' ? renderOdds() : opts.tab === 'match' ? renderMatchups() : opts.tab === 'news' ? renderNews() : opts.tab === 'bracket' ? renderBracket() : opts.tab === 'pay' ? renderPayouts() : opts.tab === 'rec' ? renderRecords() : opts.tab === 'mgr' ? renderProfiles() : opts.tab === 'build' ? renderBuild() : opts.tab === 'own' ? renderOwn() : opts.tab === 'trades' ? renderTrades() : opts.tab === 'laws' ? renderBylaws() : opts.tab === 'finder' ? renderFinder() : opts.tab === 'calc' ? renderCalc() : renderOrder();
     const prevScroll = document.getElementById('wkscroll'), keep = prevScroll ? prevScroll.scrollLeft : null;
     html += '</div>';
     $('#app').innerHTML = html;
@@ -1672,6 +1699,7 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
   // Anything a tab renders inside <div class="controls"> at the very top is moved into the actions row automatically.
   const KEY = '<span class="key"></span>';
   const TAB_META = {
+    drc: { sub: () => 'How every draft pick has turned out', how: () => '<p>Each pick is compared with what its slot normally returns. Players in a class are ranked by <b>current value</b> and by <b>points scored</b> since the draft, and the two ranks are averaged. A pick’s grade comes from how far that rank is above or below where the pick slot says it should be: <b>A</b> well above, <b>B</b> a bit above, <b>C</b> about right, <b>D</b> a bit below, <b>F</b> well below. <b>Hit</b> is clearly above the slot, <b>Bust</b> is far below it.</p><p>Everything graded is an <b>estimate</b>. The slot benchmark comes from the draft itself, not from outside data. Values come from the latest nightly FantasyCalc snapshot, and a player missing from it shows “value unavailable” and is graded on points alone. Points are real totals, including bench weeks, for the team that made the pick. A pick is credited to the manager who actually made it, even if the pick was traded.</p>' },
     tn: { sub: () => 'Who trades with whom, and who should', how: () => '<p>Every completed trade from this season and past seasons counts. Managers are tracked by person, so a trade from an earlier year still counts for the same manager. A line joins two managers who traded, and thicker lines mean more trades. A three-team trade connects all three.</p><p><b>Most Likely Trade Partner</b> blends how often two managers have traded with how well their rosters fit. A fit means one team is thin at a position where the other is deep, using the same roster-need scoring as Trade Finder. If player values can’t load, it uses trade history alone.</p><p>On a phone the List view is easiest to read.</p>' },
     tx: { sub: () => 'Every trade, waiver claim and free-agent move', how: () => '<p>This is Sleeper’s own transaction log for the season, newest first. Failed and cancelled moves are hidden unless you switch them on. All the leaderboards count completed moves only.</p><p><b>Waiver Wire Hero</b> adds up the points an added player scored for the team that added him, from the week of the add until he was dropped or the add was repeated. Only finished weeks count, and bench points count too. <b>Waiver Wire Flop</b> takes the ten biggest FAAB bids and lists them from fewest points up.</p><p>The page checks for new moves about once a minute while it is open.</p>' },
     stand: { sub: () => 'Records, streaks and strength of schedule', how: () => `<p>Teams are ranked by record, then points for. Streaks and Last 5 count regular-season games${D.median ? ', including the weekly median game' : ''}. Tap a streak for the week-by-week games, or a result for that matchup.</p><p><b>SOS</b> ranks each schedule by the average points per game of the opponents faced, 1st being the hardest. <span class="sos hard">Red</span> is the toughest third and <span class="sos easy">teal</span> the easiest. <b>Rem. SOS</b> does the same for the rest of the regular season. The small number under each rating is how far above or below the league average those opponents score.</p>` },
@@ -1725,7 +1753,7 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
   const titleCase = s => String(s).split(' ').map((w, i) => w.split('-').map(p => (i > 0 && SMALL_WORDS.has(p.toLowerCase())) ? p.toLowerCase() : p.charAt(0).toUpperCase() + p.slice(1)).join('-')).join(' ');
 
   // ---------- Phone navigation: bottom bar, "More" sheet, current-section label ----------
-  const MORE_GROUPS = [['Overview', ['stand', 'match']], ['Playoffs', ['odds', 'bracket']], ['Tankathon', ['order', 'proj']], ['League', ['news', 'pay', 'rec', 'laws']], ['Managers', ['mgr', 'cards', 'rivals']],
+  const MORE_GROUPS = [['Overview', ['stand', 'match']], ['Playoffs', ['odds', 'bracket']], ['Tankathon', ['order', 'proj', 'drc']], ['League', ['news', 'pay', 'rec', 'laws']], ['Managers', ['mgr', 'cards', 'rivals']],
     ['Teams', ['build', 'inj', 'cmap', 'own']], ['Trades', ['trades', 'tx', 'tn', 'journey', 'finder', 'calc']]];
   let TABS_ALL = [];
   function updatePhoneChrome(tabs){
@@ -4736,6 +4764,185 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
     return html;
   }
 
+
+  // ---------- Draft Report Cards ----------
+  const DR_PAGE = 48;
+  const drLetter = g => g >= 3.5 ? 'A' : g >= 2.5 ? 'B' : g >= 1.5 ? 'C' : g >= 0.5 ? 'D' : 'F';
+  const drGrade = r => r >= 0.25 ? 'A' : r >= 0.08 ? 'B' : r > -0.08 ? 'C' : r > -0.25 ? 'D' : 'F';
+  const DR_PTS = { A: 4, B: 3, C: 2, D: 1, F: 0 };
+  const drLabel = r => r >= 0.15 ? 'Hit' : r <= -0.35 ? 'Bust' : r <= -0.15 ? 'Miss' : 'On Par';
+  // Percentile of each number among the non-null ones (ties split); null stays null.
+  function drPct(vals){
+    const known = vals.filter(v => v != null), n = known.length;
+    return vals.map(v => { if (v == null) return null; let lo = 0, eq = 0; known.forEach(x => { if (x < v) lo++; else if (x === v) eq++; }); return (lo + 0.5 * eq) / n; });
+  }
+  // Best non-increasing fit of value by pick number (pool adjacent violators): what each slot typically returns in this draft.
+  function drFit(pts){
+    const bl = [];
+    pts.forEach(p => {
+      bl.push({ s: p.v, w: 1, ks: [p.k] });
+      while (bl.length > 1 && bl[bl.length - 2].s / bl[bl.length - 2].w < bl[bl.length - 1].s / bl[bl.length - 1].w) { const b = bl.pop(), a = bl.pop(); bl.push({ s: a.s + b.s, w: a.w + b.w, ks: a.ks.concat(b.ks) }); }
+    });
+    const out = new Map(); bl.forEach(b => b.ks.forEach(k => out.set(k, b.s / b.w)));
+    return out;
+  }
+  async function loadDrc(){
+    if (!D || D.dr || D.drLoading) return;
+    const myD = D; myD.drLoading = true;
+    try {
+      const hist = await loadHistory();
+      const [all, index] = await Promise.all([getOnce('all', `${API}/players/nfl`), cmJSON('data/snapshots/index.json')]);
+      const dates = index && Array.isArray(index.dates) ? index.dates.slice().sort() : [];
+      const snapDate = dates.length ? dates[dates.length - 1] : null;
+      const snap = snapDate ? await cmJSON(`data/snapshots/${snapDate}.json`) : null;
+      const values = snap && snap.values && snap.values.players ? snap.values.players : null;
+      const lists = await Promise.all(hist.map(L => getJSON(`/league/${L.id}/drafts`).catch(() => null)));
+      if (lists.every(l => l === null)) throw new Error('Couldn’t load drafts from Sleeper.');
+      const raw = [];
+      lists.forEach((l, i) => (l || []).forEach(d => { if (d && d.status !== 'pre_draft') raw.push({ d, L: hist[i], li: i }); }));
+      const picksBy = await Promise.all(raw.map(x => getJSON(`/draft/${x.d.draft_id}/picks`).catch(() => null)));
+      if (raw.length && picksBy.every(p => p === null)) throw new Error('Couldn’t load draft picks from Sleeper.');
+      // Points per player, per league season: league-wide, and for each owner.
+      const pm = new Map();
+      hist.forEach(L => {
+        const lg = new Map(), ow = new Map(); let wk = 0;
+        const ownerOfRid = rid => (L.rosters.find(r => r.roster_id === rid) || {}).owner_id;
+        (L.weeks || []).forEach(({ list }) => {
+          if (!list || !list.length) return; wk++;
+          list.forEach(m => { const o = ownerOfRid(m.roster_id), pp = m.players_points || {};
+            Object.keys(pp).forEach(pid => { const v = Number(pp[pid]) || 0; lg.set(pid, (lg.get(pid) || 0) + v); if (o) { const k = pid + '|' + o; ow.set(k, (ow.get(k) || 0) + v); } }); });
+        });
+        pm.set(L.id, { lg, ow, wk });
+      });
+      const byOwner = new Map(); (myD.rosters || []).forEach(r => { if (r.owner_id && r.roster_id != null) byOwner.set(r.owner_id, r.roster_id); });
+      const oldest = hist[hist.length - 1];
+      const firstOfOldest = raw.filter(x => x.L === oldest).sort((a, b) => (a.d.start_time || 0) - (b.d.start_time || 0))[0];
+      const drafts = [];
+      raw.forEach((x, idx) => {
+        const arr = picksBy[idx]; if (!Array.isArray(arr) || !arr.length) return;
+        const { d, L, li } = x, teams = (d.settings && d.settings.teams) || 12;
+        const kind = x === firstOfOldest && ((d.settings && d.settings.rounds) || 0) > 8 ? 'startup' : 'rookie';
+        const rel = hist.filter((h, j) => j <= li);
+        const weeks = rel.reduce((t, h) => t + pm.get(h.id).wk, 0);
+        const ownerOfRid = rid => (L.rosters.find(r => r.roster_id === rid) || {}).owner_id;
+        const picks = arr.filter(pk => pk.player_id).sort((a, b) => a.pick_no - b.pick_no).map(pk => {
+          const pid = String(pk.player_id), pl = all && all[pid], md = pk.metadata || {};
+          const key = pk.picked_by || ownerOfRid(pk.roster_id) || `${L.id}-${pk.roster_id}`;
+          const rid = byOwner.has(key) ? byOwner.get(key) : null;
+          const t = rid != null ? team(rid) : L.teamOf(pk.roster_id);
+          const age = pl && typeof pl.age === 'number' ? pl.age : null;
+          const nm = pl ? (pl.full_name || [pl.first_name, pl.last_name].filter(Boolean).join(' ')) : [md.first_name, md.last_name].filter(Boolean).join(' ');
+          let me = 0, lgp = 0;
+          rel.forEach(h => { const m = pm.get(h.id); lgp += m.lg.get(pid) || 0; me += m.ow.get(pid + '|' + key) || 0; });
+          const v = values && values[pid] != null && Number(values[pid]) > 0 ? Number(values[pid]) : null;
+          return { n: pk.pick_no, round: pk.round, pir: (pk.pick_no - 1) % teams + 1, key, rid, mname: t.name, mavatar: t.avatar, pid, nm: nm || `Player ${pid}`,
+            pos: (pl && pl.position) || md.position || '', tm: (pl && pl.team) || md.team || '', age, value: v, ptsMe: weeks ? me : null, ptsLg: weeks ? lgp : null };
+        });
+        // Rank each pick's current value and points within its class, then compare with where the slot says it should rank.
+        const N = picks.length, pv = drPct(picks.map(q => q.value)), pp = drPct(picks.map(q => q.ptsLg));
+        const fit = drFit(picks.filter(q => q.value != null).map(q => ({ k: q.n, v: q.value })));
+        picks.forEach((q, i) => {
+          const parts = [pv[i], pp[i]].filter(v => v != null);
+          q.comp = parts.length ? parts.reduce((a, b) => a + b, 0) / parts.length : null;
+          q.exp = 1 - (i + 0.5) / N;
+          q.resid = q.comp == null ? null : q.comp - q.exp;
+          q.grade = q.resid == null ? null : drGrade(q.resid);
+          q.label = q.resid == null ? null : drLabel(q.resid);
+          q.gain = q.value != null && fit.has(q.n) ? q.value - fit.get(q.n) : null;
+        });
+        const graded = picks.filter(q => q.grade);
+        const gpa = graded.length ? graded.reduce((t, q) => t + DR_PTS[q.grade], 0) / graded.length : null;
+        const best = graded.slice().sort((a, b) => b.comp - a.comp || (b.value || 0) - (a.value || 0))[0] || null;
+        const steal = graded.slice().sort((a, b) => b.resid - a.resid)[0] || null;
+        const bust = graded.slice().sort((a, b) => a.resid - b.resid)[0] || null;
+        // Regret: for each manager, the later pick (by someone else) that beat their own pick by the widest margin.
+        const regret = new Map();
+        graded.forEach(a => {
+          const later = graded.filter(b => b.n > a.n && b.key !== a.key).sort((x, y) => y.comp - x.comp)[0];
+          if (!later) return;
+          const gap = later.comp - a.comp, cur = regret.get(a.key);
+          if (gap > 0 && (!cur || gap > cur.gap)) regret.set(a.key, { mine: a, passed: later, gap });
+        });
+        drafts.push({ id: d.draft_id, season: Number(d.season) || L.season, kind, rounds: (d.settings && d.settings.rounds) || null, teams, status: d.status, weeks, picks, gpa,
+          graded: graded.length, best, steal, bust, regret, name: `${d.season} ${kind === 'startup' ? 'Startup Draft' : 'Rookie Draft'}` });
+      });
+      drafts.sort((a, b) => b.season - a.season || (a.kind === 'startup' ? 1 : -1));
+      // Best Drafter: across every draft.
+      const ms = new Map();
+      drafts.forEach(dr => dr.picks.forEach(q => {
+        if (!ms.has(q.key)) ms.set(q.key, { key: q.key, rid: q.rid, name: q.mname, avatar: q.mavatar, picks: 0, graded: 0, pts: 0, hits: 0, busts: 0, gain: 0, valued: 0 });
+        const m = ms.get(q.key); m.picks++;
+        if (q.grade) { m.graded++; m.pts += DR_PTS[q.grade]; if (q.label === 'Hit') m.hits++; if (q.label === 'Bust') m.busts++; }
+        if (q.gain != null) { m.gain += q.gain; m.valued++; }
+      }));
+      const board = [...ms.values()].filter(m => m.graded).map(m => ({ ...m, gpa: m.pts / m.graded })).sort((a, b) => b.gpa - a.gpa || b.gain - a.gain);
+      myD.dr = { drafts, board, snapDate, hasValues: !!values, hasPlayers: !!all, shown: DR_PAGE };
+    } catch (e) {
+      myD.dr = { error: e.message || 'Couldn’t build the draft report cards.' };
+    } finally {
+      myD.drLoading = false;
+      if (D === myD && opts.tab === 'drc') render();
+    }
+  }
+  const drNum = v => Math.round(v).toLocaleString();
+  const drPts = v => v == null ? '–' : v.toFixed(1);
+  function drPlayer(q){
+    return `<div class="dr-pl">${shot(q.pid, q.pos, q.tm, q.nm)}<div class="tx-pn">${q.pos === 'DEF' ? `<b>${esc(q.nm)}</b>` : PL(q.pid, q.nm)}<small>${esc([q.pos, q.tm || 'FA', q.age != null ? 'Age ' + Math.floor(q.age) : ''].filter(Boolean).join(' · '))}</small></div></div>`;
+  }
+  const drVal = q => q.value != null ? drNum(q.value) : 'Value unavailable';
+  function renderDrc(){
+    if (!D.dr) { loadDrc(); return '<p class="status">Loading drafts from Sleeper…</p>'; }
+    if (D.dr.error) return `<div class="error"><strong>${esc(D.dr.error)}</strong><br>Check your connection, then <button class="btn" type="button" data-dr-retry>Try Again</button></div>`;
+    const { drafts, board } = D.dr;
+    if (!drafts.length) return '<p class="note">No drafts have been held in this league yet. Report cards appear once a draft has picks.</p>';
+    const dr = drafts.find(x => x.id === opts.drDraft) || drafts[0];
+    const rounds = [...new Set(dr.picks.map(q => q.round))].sort((a, b) => a - b);
+    const mgrs = [...new Map(dr.picks.map(q => [q.key, q.mname])).entries()].sort((a, b) => a[1].localeCompare(b[1]));
+    const fr = opts.drRound && rounds.includes(Number(opts.drRound)) ? String(opts.drRound) : 'all', fm = opts.drMgr && mgrs.some(m => m[0] === opts.drMgr) ? opts.drMgr : 'all';
+    const opt = (v, l, cur) => `<option value="${esc(v)}" ${String(cur) === String(v) ? 'selected' : ''}>${esc(l)}</option>`;
+    const grp = (lab, kind) => { const l = drafts.filter(x => x.kind === kind); return l.length ? `<optgroup label="${lab}">${l.map(x => opt(x.id, x.name, dr.id)).join('')}</optgroup>` : ''; };
+    let html = `<div class="controls">
+      <label class="field">Draft<select data-opt="drDraft">${grp('Rookie Drafts', 'rookie')}${grp('Startup Draft', 'startup')}</select></label>
+      <label class="field">Round<select data-opt="drRound">${opt('all', 'All Rounds', fr)}${rounds.map(r => opt(r, 'Round ' + r, fr)).join('')}</select></label>
+      <label class="field">Manager<select data-opt="drMgr">${opt('all', 'All Managers', fm)}${mgrs.map(([k, n]) => opt(k, n, fm)).join('')}</select></label>
+    </div>`;
+    const noData = dr.weeks === 0 && !D.dr.hasValues;
+    const note = [
+      `<b>Estimates:</b> grades, Hit/Miss labels, value gained and regret are estimates, not facts.`,
+      D.dr.hasValues ? `Values come from the ${esc(D.dr.snapDate)} nightly FantasyCalc snapshot. A player not in it shows “value unavailable” and is graded on points alone.` : 'Nightly values couldn’t be loaded, so picks are graded on points alone.',
+      dr.weeks ? `Points are real totals from ${dr.weeks} finished week${dr.weeks === 1 ? '' : 's'}, bench included, so grades will move as the season goes on.` : 'No weeks have finished yet, so there are no points to show.'
+    ].join(' ');
+    html += `<p class="note dr-note">${note}</p>`;
+
+    // ---- class summary
+    const sc = (lab, q, kind) => q ? `<article class="ib-card"><span class="slabel">${lab}</span><div class="dr-sp">${drPlayer(q)}</div><p class="ib-sub">#${q.n} (${q.round}.${q.pir}) by ${esc(q.mname)}</p><p class="ib-sub">${q.value != null ? 'Value ' + drNum(q.value) : 'Value unavailable'} · ${drPts(q.ptsLg)} pts${kind === 'steal' || kind === 'bust' ? ` · ${q.resid >= 0 ? '+' : '−'}${Math.round(Math.abs(q.resid) * 100)} pts vs slot (est.)` : ''}</p></article>` : `<article class="ib-card"><span class="slabel">${lab}</span><p class="tempty">Not enough data yet.</p></article>`;
+    html += `<h3 class="sh3">${esc(dr.name)} Summary<span class="ib-cnt">${dr.picks.length} picks${dr.status !== 'complete' ? ' · draft in progress' : ''}</span></h3><div class="dr-sum">
+      <article class="ib-card"><span class="slabel">Class Grade (Est.)</span><div class="ib-big dr-cg">${dr.gpa == null ? '–' : drLetter(dr.gpa)}</div><p class="ib-sub">${dr.gpa == null ? 'Not enough data yet.' : `Average of ${dr.graded} pick grades (GPA ${dr.gpa.toFixed(2)} of 4).`}</p></article>
+      ${sc('Best Pick', dr.best, 'best')}${sc('Biggest Steal', dr.steal, 'steal')}${sc('Biggest Bust', dr.bust, 'bust')}</div>`;
+
+    // ---- pick-by-pick
+    const rows = dr.picks.filter(q => (fr === 'all' || String(q.round) === fr) && (fm === 'all' || q.key === fm));
+    html += `<h3 class="sh3">Pick-By-Pick<span class="ib-cnt">Grades compare each pick with what its slot normally returns (estimate)</span></h3>`;
+    html += rows.length ? `<div class="dr-tbl" role="table" aria-label="Draft picks"><div class="dr-row dr-hd" role="row"><span>Pick</span><span>Manager</span><span>Player</span><span>Value</span><span>Points</span><span>Grade (Est.)</span></div>${rows.slice(0, D.dr.shown).map(q => `<div class="dr-row" role="row">
+        <div class="dr-pk"><b>#${q.n}</b><small>${q.round}.${q.pir}</small></div>
+        <div class="dr-mg">${avatar({ name: q.mname, avatar: q.mavatar })}<span>${esc(q.mname)}</span></div>
+        ${drPlayer(q)}
+        <div class="dr-v${q.value == null ? ' na' : ''}"><span class="dr-k">Value</span>${drVal(q)}</div>
+        <div class="dr-p"><span class="dr-k">Points</span><b>${drPts(q.ptsMe)}</b><small>${drPts(q.ptsLg)} league-wide</small></div>
+        <div class="dr-gr">${q.grade ? `<span class="dr-g g${q.grade}">${q.grade}</span><span class="dr-l ${q.label.replace(' ', '').toLowerCase()}">${q.label}</span>` : '<span class="dr-g gx">–</span><span class="dr-l">No data</span>'}</div></div>`).join('')}</div>${rows.length > D.dr.shown ? `<p class="tx-more"><button class="btn" type="button" data-dr-more>Show More (${rows.length - D.dr.shown} left)</button></p>` : ''}`
+      : '<p class="note">No picks match these filters.</p>';
+
+    // ---- best drafter (all drafts)
+    html += `<h3 class="sh3">Best Drafter<span class="ib-cnt">Across all drafts, ranked by average pick grade (estimate)</span></h3>`;
+    html += board.length ? `<ol class="tx-lb">${board.map((m, i) => `<li class="tx-lr"><span class="tx-rk">${i + 1}</span>${avatar({ name: m.name, avatar: m.avatar })}<div class="tx-pn"><b>${esc(m.name)}</b><small>${m.graded} graded pick${m.graded === 1 ? '' : 's'} · ${m.hits} hit${m.hits === 1 ? '' : 's'} · ${m.busts} bust${m.busts === 1 ? '' : 's'} · value gained ${m.valued ? (m.gain >= 0 ? '+' : '−') + drNum(Math.abs(m.gain)) + ` (est., ${m.valued} valued)` : 'unavailable'}</small></div><div class="tx-val"><b>${drLetter(m.gpa)}</b><small>GPA ${m.gpa.toFixed(2)}</small></div></li>`).join('')}</ol>` : '<p class="note">Not enough graded picks yet.</p>';
+
+    // ---- draft day regret (selected draft)
+    const reg = [...dr.regret.values()].filter(x => x.gap >= 0.1).sort((a, b) => b.gap - a.gap);
+    html += `<h3 class="sh3">Draft Day Regret<span class="ib-cnt">${esc(dr.name)} · the best player each manager passed on (estimate)</span></h3>`;
+    html += reg.length ? `<ul class="tn-sgl">${reg.map(x => `<li class="tn-sgi"><div class="tn-sgh">${avatar({ name: x.mine.mname, avatar: x.mine.mavatar })}<b>${esc(x.mine.mname)}</b></div><p>At pick #${x.mine.n} they took ${esc(x.mine.nm)} (${x.mine.value != null ? 'value ' + drNum(x.mine.value) : 'value unavailable'}, ${drPts(x.mine.ptsLg)} pts) and passed on:</p><div class="dr-pass">${drPlayer(x.passed)}<small>Taken #${x.passed.n} by ${esc(x.passed.mname)} · ${drVal(x.passed)} · ${drPts(x.passed.ptsLg)} pts</small></div></li>`).join('')}</ul>` : '<p class="note">No clear regrets yet for this draft.</p>';
+    return html;
+  }
+
   async function loadJourney(){
     if (!D || D.jm || D.jmLoading) return;
     const myD = D; myD.jmLoading = true;
@@ -5753,6 +5960,8 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
     const txr = e.target.closest('[data-tx-retry]'); if (txr) { if (D) D.tx = null; render(); return; }
     const txm = e.target.closest('[data-tx-more]'); if (txm) { const y = window.scrollY; if (D && D.tx) D.tx.shown += TX_PAGE; render(); window.scrollTo(0, y); return; }
     const txf = e.target.closest('[data-tx-failed]'); if (txf) { const y = window.scrollY; opts.txFailed = !opts.txFailed; if (D && D.tx) D.tx.shown = TX_PAGE; render(); window.scrollTo(0, y); return; }
+    const drr = e.target.closest('[data-dr-retry]'); if (drr) { if (D) D.dr = null; render(); return; }
+    const drm = e.target.closest('[data-dr-more]'); if (drm) { const y = window.scrollY; if (D && D.dr) D.dr.shown += DR_PAGE; render(); window.scrollTo(0, y); return; }
     const tnr = e.target.closest('[data-tn-retry]'); if (tnr) { if (D) D.trades = null; render(); return; }
     const tnv = e.target.closest('[data-tn-view]'); if (tnv) { opts.tnView = tnv.dataset.tnView; render(); return; }
     const tnc = e.target.closest('[data-tn-clear]'); if (tnc) { opts.tnSel = 0; render(); return; }
@@ -5800,6 +6009,7 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
     const openDetails = !!e.target.closest('details[open]');
     opts[k] = (k === 'rounds' || k === 'season' || k === 'tradeTeam' || k === 'week' || k === 'buildTeam' || k === 'tfTeam' || k === 'tfTol' || k === 'mteam' || k === 'tfWith' || k === 'tnSel') ? Number(el.value) : el.value;
     if (k.indexOf('tx') === 0 && D && D.tx) D.tx.shown = TX_PAGE;
+    if (k.indexOf('dr') === 0 && D && D.dr) D.dr.shown = DR_PAGE;
     saveOpts();
     if (k === 'tiebreak') runSim();
     if (k === 'buildTeam') { opts.nflFilter = null; opts.posFilter = null; }
