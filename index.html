@@ -154,7 +154,7 @@ td.avgp{font:700 1.15rem "Barlow Condensed","Arial Narrow",sans-serif}
 /* Matchups */
 .btn.ghost{background:var(--surface);color:var(--ink);border:1px solid var(--line);min-height:40px;padding:6px 14px;font-size:1.2rem;line-height:1}
 .btn.ghost:disabled{opacity:.4;cursor:default}
-.mlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;margin-top:14px}
+.mlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr));gap:12px;margin-top:14px}
 .mcard{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 14px 10px;min-width:0}
 .mteam{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px solid var(--line)}
 .mteam:first-child{border-top:0}
@@ -630,11 +630,6 @@ footer input{width:min(100%,260px)}
 .is-phone .mtabname:empty{display:none}
 .is-phone .brand:has(.mtabname:not(:empty)) .sub{display:none}
 .is-phone #refresh{padding:7px 12px;font-size:.8rem;flex:none}
-.is-phone .cd{padding:8px 12px;margin:10px 0 12px;text-align:left}
-.is-phone .cdt{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.is-phone .cdlabel{font-size:.6rem;line-height:1.35}.is-phone .cdt .cdlabel{max-width:38%}
-.is-phone .cdgrid{gap:12px;margin:0}.is-phone .cdgrid>div{min-width:0}
-.is-phone .cdgrid b{font-size:1.3rem}.is-phone .cdgrid span{font-size:.55rem}
 .is-phone .tabs{display:none}
 .is-phone .sech{font-size:1.4rem;margin:4px 0 8px}
 .is-phone .note{font-size:.82rem}
@@ -925,7 +920,7 @@ footer input{width:min(100%,260px)}
 .round:first-of-type > h3{margin-top:var(--space-sm)}
 .round > h3 small{font-size:.85rem;font-weight:500;color:var(--muted)}
 .feedwk.livewk{color:var(--ink)}
-.is-phone .phead{flex-direction:column;align-items:stretch}
+.is-phone .phead{flex-direction:column;flex-wrap:nowrap;align-items:stretch}
 .is-phone .phead-t{flex-basis:auto}
 .is-phone .ptitle{font-size:20px}
 .is-phone .pactions{justify-content:flex-start}
@@ -1006,9 +1001,6 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
 .cdsw-t b{font-size:.95rem}
 .cdsw-t i{font-style:normal;font-size:.85rem;color:#C9D0DC;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .cdsw-t small{color:var(--muted);font-size:.72rem}
-.is-phone .cdscore{display:flex;overflow-x:auto;scroll-snap-type:x proximity;padding-bottom:4px}
-.is-phone .cdm{flex:0 0 200px;scroll-snap-align:start}
-.is-phone .cdsw{gap:10px}.is-phone .cdsw-d{font-size:2rem}.is-phone .cdsw-t b{font-size:.85rem}.is-phone .cdsw-t i{font-size:.78rem}
 /* Win probability momentum chart */
 .wpb{cursor:pointer;border-radius:8px}.wpb:hover .wpb-hint,.wpb:focus-visible .wpb-hint{color:var(--accent);text-decoration:underline}.wpb:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 .wpb-hint{color:var(--accent);font-weight:600;font-size:.68rem;letter-spacing:.02em}
@@ -1167,6 +1159,59 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
 .is-phone .dr-row{grid-template-columns:48px minmax(0,1fr) auto;grid-template-areas:"pk pl gr" "mg mg mg" "v p p";row-gap:6px;gap:8px;padding:9px 10px}
 .is-phone .dr-pk{grid-area:pk}.is-phone .dr-pl{grid-area:pl}.is-phone .dr-gr{grid-area:gr;flex-direction:column;align-items:flex-end;gap:4px}.is-phone .dr-mg{grid-area:mg}.is-phone .dr-v{grid-area:v;font-size:.82rem}.is-phone .dr-p{grid-area:p;display:flex;align-items:baseline;justify-content:flex-end;gap:6px;flex-wrap:wrap;text-align:right}.is-phone .dr-v.na{font-size:.74rem}
 .is-phone .dr-k{display:inline;color:var(--muted);font-size:.68rem;font-weight:700;text-transform:uppercase;margin-right:6px}
+/* ---------- Banner: shared bits ---------- */
+.cdlabel .sh{display:none}
+.cdgrid>div.cds{display:flex}
+.cdm .r i{min-width:0}
+.cdsw-t small .vs{white-space:nowrap}
+.ld{display:flex;flex-direction:column;gap:14px;padding-top:6px;min-height:520px}
+.ld i{display:block;border-radius:8px;background:linear-gradient(90deg,var(--surface) 0,#283249 50%,var(--surface) 100%);background-size:200% 100%;animation:ldsh 1.4s linear infinite}
+.ld-h{height:34px;width:55%}.ld-s{height:20px;width:80%;margin-bottom:10px}.ld-c{height:120px;border:1px solid var(--line)}
+.ld-retry{margin-top:10px;min-height:44px}
+@keyframes ldsh{to{background-position:-200% 0}}
+@media (prefers-reduced-motion:reduce){.ld i{animation:none}.cdp{transition:none}}
+@media (pointer:coarse){
+  .cddots button{padding:19px;margin:0}.cddots{margin:-12px 0 -12px;gap:0}
+  .cddots button{background-clip:content-box;width:6px;height:6px}
+}
+/* ---------- Banner on phones: one compact, fixed-height strip (label + dots on top, one line of content below) ---------- */
+.is-phone .cd{position:relative;padding:0 12px 6px;margin:8px 0 10px;text-align:left;overflow:hidden}
+.is-phone .cdstage{min-height:98px}
+.is-phone .cdp{align-self:start;display:flex;flex-direction:column;min-width:0}
+.is-phone .cdlabel{display:flex;align-items:center;height:40px;padding-right:138px;font-size:.875rem;line-height:1;letter-spacing:.01em;text-transform:none;font-weight:600;color:#A9B3C7;white-space:nowrap}
+.is-phone .cdlabel .lg{display:none}.is-phone .cdlabel .sh{display:block;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.is-phone .cddots{position:absolute;top:-2px;right:2px;height:44px;margin:0;gap:0}
+.is-phone .cddots button{box-sizing:border-box;width:44px;height:44px;padding:0;background:none;display:grid;place-items:center;position:relative}
+.is-phone .cddots button::before{content:"";width:9px;height:9px;border-radius:50%;background:#5F6C88}
+.is-phone .cddots button[aria-pressed="true"]::before{background:var(--accent);width:11px;height:11px}
+.is-phone .cddots button:focus-visible{outline-offset:-4px}
+/* countdown on one line: 175d 18h 08m 52s */
+.is-phone .cdgrid{display:flex;justify-content:flex-start;align-items:center;gap:12px;margin:0;height:54px;white-space:nowrap;overflow:hidden}
+.is-phone .cdgrid>div{flex-direction:row;align-items:baseline;min-width:0;gap:2px}
+.is-phone .cdgrid b{font-size:clamp(1.75rem,9.4vw,2.25rem);line-height:1}
+.is-phone .cdgrid span{font-size:0;margin:0;letter-spacing:0}
+.is-phone .cdgrid span::before{content:attr(data-u);font:600 .95rem/1 Inter,system-ui,sans-serif;text-transform:none;color:#A9B3C7}
+.is-phone .cddone{font-size:2rem}
+@media (max-width:299px){.is-phone .cdgrid>div.cds{display:none}}
+/* scoreboard: swipeable one-matchup-per-card row */
+.is-phone .cdscore{display:flex;gap:8px;margin:0 -12px;padding:0 12px 2px;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;scroll-padding:0 12px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.is-phone .cdscore::-webkit-scrollbar{display:none}
+.is-phone .cdm{flex:0 0 min(214px,64%);scroll-snap-align:start;min-height:54px;padding:5px 10px 9px;gap:1px}
+.is-phone .cdm .r{font-size:.875rem;line-height:20px;gap:8px;color:#B7C0D2}
+.is-phone .cdm .r b{font-size:1.05rem;font-weight:700}
+.is-phone .cdm .r.win i{color:#fff}
+/* momentum swing */
+.is-phone .cdsw{display:flex;align-items:center;justify-content:flex-start;gap:12px;width:100%;margin:0;padding:0;min-height:54px}
+.is-phone .cdsw-d{font-size:2.2rem;min-width:62px}.is-phone .cdsw-d small{font-size:.875rem;letter-spacing:0;text-transform:none;margin-top:1px;font-weight:500;color:#A9B3C7}
+.is-phone .cdsw-t{gap:0;max-width:none;flex:1}
+.is-phone .cdsw-t b,.is-phone .cdsw-t i,.is-phone .cdsw-t small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.875rem;line-height:1.3}
+.is-phone .cdsw-t b{font-size:.95rem}.is-phone .cdsw-t i{-webkit-line-clamp:unset;color:#D5DBE6}.is-phone .cdsw-t small{color:#A9B3C7}.is-phone .cdsw-t .vs{display:none}
+/* keep grid/flex children from forcing the page wider than a 320px screen */
+.is-phone #app,.is-phone .pbody>*,.is-phone .sect>*,.is-phone .sect,.is-phone .tflist>*,.is-phone .pgrid>*,.is-phone .mlist>*,.is-phone .tfcols>*,.is-phone .jm-row>*{min-width:0}
+.is-phone .jm-who,.is-phone .jm-badges{overflow-wrap:anywhere}.is-phone .psub{max-width:100%}
+/* header: bigger Refresh target, title shrinks before it collides */
+.is-phone #refresh{min-height:44px;min-width:44px;padding:0 14px;font-size:.875rem}
+@media (max-width:359px){.is-phone h1{font-size:1.25rem}.is-phone .logo{width:36px}.is-phone #refresh{padding:0 10px}}
 /* ---------- Trading Cards ---------- */
 .tc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:var(--space-lg)}
 .tc{--fc:#8C97AD;--fc2:#5B6478;--glow:rgba(140,151,173,.25);container-type:inline-size;display:flex;flex-direction:column;gap:var(--space-sm);min-width:0}
@@ -1246,9 +1291,9 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
   <section class="cd" id="cd" aria-label="League banner: draft countdown, weekly scoreboard and biggest momentum swing">
     <div class="cdstage">
       <div class="cdp cdt on" data-panel="timer">
-        <div class="cdlabel">NFL 2027 Draft · April 29, 8:00 PM ET</div>
+        <div class="cdlabel"><span class="lg">NFL 2027 Draft · April 29, 8:00 PM ET</span><span class="sh">NFL Draft · Apr 29</span></div>
         <div class="cdgrid" id="cdgrid" role="timer">
-          <div><b id="cdD">--</b><span>days</span></div><div><b id="cdH">--</b><span>hours</span></div><div><b id="cdM">--</b><span>min</span></div><div><b id="cdS">--</b><span>sec</span></div>
+          <div><b id="cdD">--</b><span data-u="d">days</span></div><div><b id="cdH">--</b><span data-u="h">hours</span></div><div><b id="cdM">--</b><span data-u="m">min</span></div><div class="cds"><b id="cdS">--</b><span data-u="s">sec</span></div>
         </div>
       </div>
       <div class="cdp" data-panel="score" id="cdscore" inert></div>
@@ -1256,7 +1301,7 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
     </div>
     <div class="cddots" id="cddots"></div>
   </section>
-  <main id="app"><p class="status">Loading league from Sleeper…</p></main>
+  <main id="app"><div class="ld" role="status" aria-label="Loading league from Sleeper"><i class="ld-h"></i><i class="ld-s"></i><i class="ld-c"></i><i class="ld-c"></i><i class="ld-c"></i></div></main>
   <footer>
     <div id="updated"></div>
     <form id="leagueForm">
@@ -1444,7 +1489,7 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
     } catch (err) {
       $('#title').textContent = 'Dudley Dynasty';
       $('#sub').textContent = 'Couldn’t load the league.';
-      $('#app').innerHTML = `<div class="error"><strong>${esc(err.message || 'Something went wrong loading from Sleeper.')}</strong><br>Check the league ID below, then try Refresh.</div>`;
+      $('#app').innerHTML = `<div class="error"><strong>${esc(err.message || 'Something went wrong loading from Sleeper.')}</strong><br>Check the league ID below, or try again in a moment.<br><button class="btn ld-retry" type="button" data-load-retry>Refresh</button></div>`;
     } finally {
       $('#refresh').disabled = false;
     }
@@ -5957,6 +6002,7 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
       render(); const it = document.querySelector('.jm-item.open'); if (it && (fromHl || isPhoneUI())) it.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
     const jmt = e.target.closest('[data-jm-type]');
     if (jmt) { opts.jmType = jmt.dataset.jmType; saveOpts(); render(); return; }
+    if (e.target.closest('[data-load-retry]')) { const rb = document.getElementById('refresh'); if (rb) rb.click(); return; }
     const txr = e.target.closest('[data-tx-retry]'); if (txr) { if (D) D.tx = null; render(); return; }
     const txm = e.target.closest('[data-tx-more]'); if (txm) { const y = window.scrollY; if (D && D.tx) D.tx.shown += TX_PAGE; render(); window.scrollTo(0, y); return; }
     const txf = e.target.closest('[data-tx-failed]'); if (txf) { const y = window.scrollY; opts.txFailed = !opts.txFailed; if (D && D.tx) D.tx.shown = TX_PAGE; render(); window.scrollTo(0, y); return; }
@@ -6051,6 +6097,7 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
 
   // ---------- Top banner: rotates draft timer / weekly scoreboard / biggest momentum swing (every minute) ----------
   const BN = { cur: 'timer', hover: false, label: { timer: 'draft countdown', score: 'weekly scoreboard', swing: 'biggest momentum swing' } };
+  const bnReduce = () => !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   const bnAvail = () => ['timer', ...(D && D.bnScore ? ['score'] : []), ...(D && D.bsw && D.bsw.data ? ['swing'] : [])];
   function bnShow(k){
     const av = bnAvail(); if (!av.includes(k)) k = 'timer';
@@ -6083,15 +6130,15 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
         return `<button type="button" class="cdm" data-bn-match="${pairs.indexOf(pairs.find(q => q.mid === a.matchup_id))}" data-bn-mid="${a.matchup_id}" aria-label="${esc(ta.name)} ${anyPts ? pa.toFixed(2) : ''} versus ${esc(tb.name)} ${anyPts ? pb.toFixed(2) : ''}. Open matchup">
           <span class="r${anyPts && pa > pb ? ' win' : ''}"><i>${esc(ta.name)}</i><b>${anyPts ? pa.toFixed(2) : '–'}</b></span><span class="r${anyPts && pb > pa ? ' win' : ''}"><i>${esc(tb.name)}</i><b>${anyPts ? pb.toFixed(2) : '–'}</b></span>${wp != null ? `<span class="wpm" title="${esc(ta.name)} ${wp}% to win"><i style="width:${wp}%"></i></span>` : ''}</button>`;
       }).join('');
-      sc.innerHTML = `<div class="cdlabel">Week ${w} Scoreboard${live ? ' · Live' : allDone ? ' · Final' : ''}</div><div class="cdscore">${tiles}</div>`;
+      sc.innerHTML = `<div class="cdlabel"><span class="lg">Week ${w} Scoreboard${live ? ' · Live' : allDone ? ' · Final' : ''}</span><span class="sh">Week ${w}${live ? ' · Live' : allDone ? ' · Final' : ''}</span></div><div class="cdscore">${tiles}</div>`;
       D.bnScore = true;
     }
     const sw = document.getElementById('cdswing'), d = D.bsw && D.bsw.data;
     if (sw && d) {
       const ta = team(d.a), tb = team(d.b), helped = team(d.helped), pts = Math.abs(Math.round(d.d * 100));
-      sw.innerHTML = `<div class="cdlabel">Biggest Momentum Swing · Week ${d.w}${d.final ? ' · Final' : ' · Live'}</div>
+      sw.innerHTML = `<div class="cdlabel"><span class="lg">Biggest Momentum Swing · Week ${d.w}${d.final ? ' · Final' : ' · Live'}</span><span class="sh">Swing · Wk ${d.w}${d.final ? ' · Final' : ' · Live'}</span></div>
         <button type="button" class="cdsw" data-bn-swing aria-label="Open the momentum chart for ${esc(ta.name)} versus ${esc(tb.name)}"><span class="cdsw-d">+${pts}<small>win prob</small></span>
-        <span class="cdsw-t"><b>${esc(helped.name)}</b><i>${esc(d.text)}</i><small>${esc(ta.name)} vs ${esc(tb.name)} · Q${d.per} ${esc(d.clk)}${d.who ? ` · ${esc(d.who)}` : ''}</small></span></button>`;
+        <span class="cdsw-t"><b>${esc(helped.name)}</b><i>${esc(d.text)}</i><small><span class="vs">${esc(ta.name)} vs ${esc(tb.name)} · </span>Q${d.per} ${esc(d.clk)}${d.who ? ` · ${esc(d.who)}` : ''}</small></span></button>`;
     }
     bnShow(BN.cur);
   }
@@ -6132,11 +6179,14 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
     const w = D.defWeek, ctx = D.wctx && D.wctx.get(w), live = ctx && [...ctx.sched.values()].some(x => x.status === 'in_game');
     if (live) { D.wctx.delete(w); D.kick && D.kick.delete(w); D.gmeta && D.gmeta.delete(w); D.weekData.delete(w); weekContext(w); fetchWeek(w).then(() => refreshBanner()); if (D.bsw) D.bsw.ts = 0; }
     bannerSwingLoad();
-    if (BN.hover) return;
+    if (BN.hover || Date.now() < (BN.pauseUntil || 0) || bnReduce()) return;
     const av = bnAvail(); bnShow(av[(Math.max(0, av.indexOf(BN.cur)) + 1) % av.length]);
   }
   setInterval(bnTick, 60000);
   (() => { const cd = document.getElementById('cd'); if (!cd) return;
+    const pause = () => { BN.pauseUntil = Date.now() + 45000; };
+    cd.addEventListener('touchstart', pause, { passive: true }); cd.addEventListener('pointerdown', pause);
+    cd.addEventListener('focusin', e => { if (e.target.matches && e.target.matches(':focus-visible')) BN.hover = true; }); cd.addEventListener('focusout', () => { BN.hover = false; });
     cd.addEventListener('mouseenter', () => { BN.hover = true; }); cd.addEventListener('mouseleave', () => { BN.hover = false; });
     cd.addEventListener('click', e => {
       const go = e.target.closest('[data-bn-go]'); if (go) { bnShow(go.dataset.bnGo); return; }
