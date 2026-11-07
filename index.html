@@ -2105,7 +2105,7 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
       const last5 = x.gm.slice(-5).map(gm => `<button type="button" class="dot dotbtn ${gm.res.toLowerCase()}" ${go(gm)} data-tip="${esc(gameLine(gm) + '<span class="tip-f">Click to open this matchup</span>')}" aria-label="${gm.res}, week ${gm.w}. Open matchup">${gm.res}</button>`).join('');
       if (phone) {
         const l5g = x.gm.slice(-5), l5w = l5g.filter(g => g.res === 'W').length, l5l = l5g.filter(g => g.res === 'L').length, l5t = l5g.length - l5w - l5l;
-        const l5rec = l5g.length ? `<span class="l5rec"><em>Last ${l5g.length}</em><b>${l5w}-${l5l}${l5t ? '-' + l5t : ''}</b></span>` : '';
+        const l5rec = l5g.length ? `<span class="l5rec"><em>L${l5g.length}</em><b>${l5w}-${l5l}${l5t ? '-' + l5t : ''}</b></span>` : '';
         const sosChip = (m, label) => { const v = sosCell(m, r, sos.lg, label); return v === '–' ? '' : `<span class="mst-sos"><em>${label === 'Played' ? 'SOS' : 'Rem'}</em>${v.replace(/<small class="sosd">[^<]*<\/small>/, '')}</span>`; };
         mrows += `<div class="mst-row"><span class="mst-rk">${i + 1}</span><button type="button" class="tlink mst-team" data-build-team="${r}">${teamBlock(t, `${record(t)} · ${t.pf.toFixed(1)} PF`)}</button><span class="mst-stk">${streak}</span>
           <div class="mst-sub">${l5rec}${sosChip(sos.played, 'Played')}${sos.hasRem ? sosChip(sos.remaining, 'Remaining') : ''}</div></div>`;
