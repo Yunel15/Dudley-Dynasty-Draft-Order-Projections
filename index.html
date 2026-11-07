@@ -1370,6 +1370,9 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
 .wx-tog{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 10px}
 .wx-gp{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding-top:8px;border-top:1px solid var(--line)}.wx-gp small{flex:0 0 100%;color:var(--muted);font-size:.8125rem}
 .wx-pchip{padding:2px 9px;border-radius:999px;font-size:.8125rem;background:var(--bg);border:1px solid var(--line)}.wx-pchip i{font-style:normal;color:var(--muted);font-size:.75rem}.wx-pchip.down{border-color:rgba(255,111,126,.55)}
+.l5rec{display:inline-flex;align-items:baseline;gap:6px;padding:4px 12px;border-radius:999px;background:var(--bg);border:1px solid var(--line)}
+.l5rec em{font-style:normal;font-size:.8125rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+.l5rec b{font:700 1.15rem/1 "Barlow Condensed","Arial Narrow",sans-serif;font-variant-numeric:tabular-nums;color:var(--ink)}
 /* ---------- Trading Cards ---------- */
 .tc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:var(--space-lg)}
 .tc{--fc:#8C97AD;--fc2:#5B6478;--glow:rgba(140,151,173,.25);container-type:inline-size;display:flex;flex-direction:column;gap:var(--space-sm);min-width:0}
@@ -2101,9 +2104,11 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
       const streak = c.n ? `<button type="button" class="stk stkbtn ${c.t === 'W' ? 'w' : c.t === 'L' ? 'l' : 't'}" data-streak="${r}" data-tip="${esc(`<span class="tip-h">${c.t === 'W' ? 'Win' : c.t === 'L' ? 'Losing' : 'Tie'} streak: ${c.n}</span>${sGames.slice().reverse().map(gameLine).join('')}<span class="tip-f">Click for the week-by-week matchups</span>`)}" aria-label="${c.t}${c.n} streak. Show week-by-week matchups">${c.t}${c.n}</button>` : '–';
       const last5 = x.gm.slice(-5).map(gm => `<button type="button" class="dot dotbtn ${gm.res.toLowerCase()}" ${go(gm)} data-tip="${esc(gameLine(gm) + '<span class="tip-f">Click to open this matchup</span>')}" aria-label="${gm.res}, week ${gm.w}. Open matchup">${gm.res}</button>`).join('');
       if (phone) {
+        const l5g = x.gm.slice(-5), l5w = l5g.filter(g => g.res === 'W').length, l5l = l5g.filter(g => g.res === 'L').length, l5t = l5g.length - l5w - l5l;
+        const l5rec = l5g.length ? `<span class="l5rec"><em>Last ${l5g.length}</em><b>${l5w}-${l5l}${l5t ? '-' + l5t : ''}</b></span>` : '';
         const sosChip = (m, label) => { const v = sosCell(m, r, sos.lg, label); return v === '–' ? '' : `<span class="mst-sos"><em>${label === 'Played' ? 'SOS' : 'Rem'}</em>${v.replace(/<small class="sosd">[^<]*<\/small>/, '')}</span>`; };
         mrows += `<div class="mst-row"><span class="mst-rk">${i + 1}</span><button type="button" class="tlink mst-team" data-build-team="${r}">${teamBlock(t, `${record(t)} · ${t.pf.toFixed(1)} PF`)}</button><span class="mst-stk">${streak}</span>
-          <div class="mst-sub"><span class="l5">${last5}</span>${sosChip(sos.played, 'Played')}${sos.hasRem ? sosChip(sos.remaining, 'Remaining') : ''}</div></div>`;
+          <div class="mst-sub">${l5rec}${sosChip(sos.played, 'Played')}${sos.hasRem ? sosChip(sos.remaining, 'Remaining') : ''}</div></div>`;
         return;
       }
       html += `<tr><td>${i + 1}</td><td class="tl"><button type="button" class="tlink" data-build-team="${r}" title="View ${esc(t.name)} in Team Construction">${teamBlock(t, '')}</button></td><td>${record(t)}</td><td>${t.pf.toFixed(2)}</td><td>${x.pa ? x.pa.toFixed(2) : '–'}</td><td>${streak}</td><td class="l5">${last5}</td><td>${sosCell(sos.played, r, sos.lg, 'Played')}</td>${sos.hasRem ? `<td>${sosCell(sos.remaining, r, sos.lg, 'Remaining')}</td>` : ''}</tr>`;
