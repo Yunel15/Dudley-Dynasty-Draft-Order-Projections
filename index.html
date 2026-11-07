@@ -1358,6 +1358,18 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
 .wx-flags{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;font-size:.875rem}
 .wx-flags li{padding:6px 10px;border-radius:8px;background:rgba(255,200,87,.1);border-left:3px solid #FFC857}.wx-flags li.bad{background:rgba(255,111,126,.1);border-left-color:var(--pylon)}
 .wx-flags b{color:var(--ink)}
+/* ---------- Game Weather: player impact ---------- */
+.wx-ex,.wx-pls{list-style:none;margin:0 0 8px;padding:0;display:flex;flex-direction:column;gap:8px}
+.wx-ex button{all:unset;box-sizing:border-box;width:100%;min-height:44px;display:flex;flex-direction:column;gap:2px;padding:9px 12px;background:var(--surface);border:1px solid var(--line);border-radius:10px;cursor:pointer}
+.wx-ex button:hover,.wx-ex button:focus-visible{border-color:var(--accent)}.wx-ex span{color:var(--muted);font-size:.875rem}
+.wx-pls li{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:var(--surface);border:1px solid var(--line);border-radius:10px}
+.wx-pn{display:flex;flex-direction:column;gap:3px;min-width:0}.wx-pn>span{color:var(--muted);font-size:.875rem}
+.wx-imps{display:flex;flex-wrap:wrap;gap:6px}
+.wx-imp{display:inline-flex;align-items:center;gap:5px;padding:2px 9px;border-radius:999px;font-size:.8125rem;font-weight:700;background:rgba(255,200,87,.14);color:#FFC857}
+.wx-imp i{font-style:normal;font-size:.7rem}.wx-imp.down{background:rgba(255,111,126,.16);color:var(--pylon-ink)}.wx-imp.up{background:rgba(0,206,184,.14);color:var(--accent)}
+.wx-tog{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 10px}
+.wx-gp{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding-top:8px;border-top:1px solid var(--line)}.wx-gp small{flex:0 0 100%;color:var(--muted);font-size:.8125rem}
+.wx-pchip{padding:2px 9px;border-radius:999px;font-size:.8125rem;background:var(--bg);border:1px solid var(--line)}.wx-pchip i{font-style:normal;color:var(--muted);font-size:.75rem}.wx-pchip.down{border-color:rgba(255,111,126,.55)}
 /* ---------- Trading Cards ---------- */
 .tc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:var(--space-lg)}
 .tc{--fc:#8C97AD;--fc2:#5B6478;--glow:rgba(140,151,173,.25);container-type:inline-size;display:flex;flex-direction:column;gap:var(--space-sm);min-width:0}
@@ -4540,7 +4552,7 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
       myD.inj = { error: e.message || 'Couldn’t load injuries from Sleeper.' };
     } finally {
       myD.injLoading = false;
-      if (D === myD && opts.tab === 'inj') render();
+      if (D === myD && (opts.tab === 'inj' || opts.tab === 'wx')) render();
     }
   }
   function injRows(){
@@ -4660,6 +4672,33 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
     if (f.temp >= 92) out.push({ k: 'warn', t: 'Heat', d: 'Fatigue and cramping risk.' });
     return out;
   }
+
+  const WX_NORM = t => ({ WSH: 'WAS', JAC: 'JAX', LA: 'LAR' }[t] || t);
+  function wxImpact(pos, g){
+    const out = [], pass = pos === 'QB' || pos === 'WR' || pos === 'TE', k = pos === 'K', rb = pos === 'RB';
+    (g.flags || []).forEach(f => {
+      const t = f.t;
+      if (t === 'Thunderstorms') out.push({ d: 'warn', x: 'Delay risk' });
+      else if (t === 'High wind' || t === 'Breezy') { if (pos === 'QB') out.push({ d: 'down', x: 'Deep passing hurt' }); else if (pass) out.push({ d: 'down', x: 'Fewer deep targets' }); else if (k) out.push({ d: 'down', x: 'Kicks harder' }); else if (rb) out.push({ d: 'up', x: 'More run volume' }); }
+      else if (t === 'Snow' || t === 'Rain') { if (pass) out.push({ d: 'down', x: 'Passing efficiency down' }); else if (k) out.push({ d: 'down', x: 'Kicks harder' }); else if (rb) out.push({ d: 'up', x: 'Run-heavy, fumble risk' }); }
+      else if (t === 'Freezing') { if (k) out.push({ d: 'down', x: 'Cold hurts kicking' }); else if (pos === 'QB') out.push({ d: 'down', x: 'Cold hurts grip' }); }
+      else if (t === 'Heat') out.push({ d: 'warn', x: 'Fatigue risk' });
+    });
+    return out;
+  }
+  // Rostered players (not IR/taxi) whose NFL team is in a game, with what the weather means for them.
+  function wxPlayers(games){
+    if (!D.inj || D.inj.error) return null;
+    const byTm = new Map();
+    games.forEach(g => { [g.hab, g.aab].forEach(a => { byTm.set(WX_NORM(a), g); }); });
+    const out = [];
+    injRows().forEach(t => t.players.forEach(p => {
+      if (p.slot === 'IR slot' || p.slot === 'Taxi') return;
+      const g = byTm.get(WX_NORM(p.tm)); if (!g) return;
+      out.push({ ...p, rid: t.rid, g, imp: wxImpact(p.pos, g) });
+    }));
+    return out;
+  }
   async function loadWx(w){
     const myD = D; myD.wx = myD.wx || {};
     if (myD.wx[w]) return;
@@ -4689,12 +4728,18 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
     const last = (D.playoff && D.playoff.lastWeek) || 18;
     const w = Math.max(1, Math.min(18, Number(opts.wxWeek) || D.defWeek || 1));
     const wk = `<label class="field">Week<select data-opt="wxWeek">${Array.from({ length: 18 }, (_, i) => `<option value="${i + 1}" ${i + 1 === w ? 'selected' : ''}>Week ${i + 1}${i + 1 === D.defWeek ? ' (this week)' : ''}</option>`).join('')}</select></label>`;
-    let html = `<div class="controls">${wk}</div>`;
+    if (!D.inj) loadInj();
+    const rosterTeams = D.inj && D.inj.rosters ? D.inj.rosters.map(r => r.roster_id) : [];
+    const selT = rosterTeams.includes(Number(opts.wxTeam)) ? Number(opts.wxTeam) : 0;
+    const tsel = rosterTeams.length ? `<label class="field">Team<select data-opt="wxTeam"><option value="0">All teams</option>${rosterTeams.slice().sort((a, b) => team(a).name.localeCompare(team(b).name)).map(r => `<option value="${r}" ${r === selT ? 'selected' : ''}>${esc(team(r).name)}</option>`).join('')}</select></label>` : '';
+    let html = `<div class="controls">${wk}${tsel}</div>`;
     const d = D.wx && D.wx[w];
     if (!d || d.loading) { loadWx(w); return html + '<p class="status" role="status">Loading games and forecasts…</p>'; }
     if (d.error) return html + `<div class="error"><strong>${esc(d.error)}</strong><br>Check your connection, then <button class="btn" type="button" data-wx-retry>Try Again</button></div>`;
     const games = d.games;
     if (!games.length) return html + '<p class="note">No NFL games found for this week yet.</p>';
+    const pl = wxPlayers(games), mine = pl && selT ? pl.filter(p => p.rid === selT) : [];
+    const onlyMine = selT && !opts.wxAll;
     const tm = g => new Date(g.t).toLocaleString([], { weekday: 'short', hour: 'numeric', minute: '2-digit' });
     const sev = g => g.flags.reduce((n, f) => n + (f.k === 'bad' ? 2 : 1), 0);
     const watch = games.filter(g => g.flags.length).sort((a, b) => sev(b) - sev(a) || a.t - b.t);
@@ -4702,8 +4747,24 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
     if (d.wxErr) html += `<p class="note">The forecast service isn’t answering right now, so only stadium details are shown.</p>`;
     else if (watch.length) html += `<ul class="wx-watch">${watch.map(g => `<li><b>${esc(g.away)} @ ${esc(g.home)}</b><span class="wx-when">${esc(tm(g))}</span>${g.flags.map(f => `<span class="wx-chip ${f.k}">${esc(f.t)}</span>`).join('')}</li>`).join('')}</ul>`;
     else html += `<p class="note">${games.some(g => g.f) ? 'No games with notable weather this week.' : 'Forecasts aren’t available for this week yet.'}</p>`;
-    html += `<h3 class="sh3">All Games<span class="ib-cnt">${games.length} game${games.length === 1 ? '' : 's'}</span></h3><div class="wx-grid">`;
-    games.forEach(g => {
+    const dirIco = { down: '▼', up: '▲', warn: '⚠' };
+    const impHtml = p => p.imp.map(i => `<span class="wx-imp ${i.d}"><i aria-hidden="true">${dirIco[i.d]}</i>${esc(i.x)}</span>`).join('');
+    if (!pl) html += D.inj && D.inj.error ? '' : '<p class="status" role="status">Loading rosters to match players to games…</p>';
+    else if (selT) {
+      const hit = mine.filter(p => p.imp.length).sort((a, b) => (a.slot === 'Starter' ? 0 : 1) - (b.slot === 'Starter' ? 0 : 1) || a.g.t - b.g.t);
+      const clear = mine.filter(p => !p.imp.length);
+      html += `<h3 class="sh3">${esc(team(selT).name)}: Affected Players<span class="ib-cnt">${hit.length} of ${mine.length} playing</span></h3>`;
+      html += hit.length ? `<ul class="wx-pls">${hit.map(p => `<li>${shot(p.id, p.pos, p.tm, p.nm)}<div class="wx-pn"><b>${esc(p.nm)}</b><span>${esc(p.pos)} · ${esc(p.tm)} · ${esc(p.slot)} · ${esc(p.g.away)} @ ${esc(p.g.home)}</span><div class="wx-imps">${impHtml(p)}</div></div></li>`).join('')}</ul>` : `<p class="note">${mine.length ? 'None of this team’s players have a weather concern this week.' : 'This team has no players in games this week.'}</p>`;
+      if (clear.length && hit.length) html += `<p class="note">No concern: ${clear.map(p => esc(p.nm)).join(', ')}.</p>`;
+      html += `<div class="wx-tog"><button type="button" class="btn" data-wx-all>${opts.wxAll ? 'Show only this team’s games' : 'Show all games'}</button><button type="button" class="btn" data-wx-team="0">Clear team</button></div>`;
+    } else if (pl && pl.length) {
+      const rows = rosterTeams.map(r => { const m = pl.filter(p => p.rid === r), h = m.filter(p => p.imp.length), st = h.filter(p => p.slot === 'Starter'); return { r, n: m.length, hit: h.length, st: st.length }; }).filter(x => x.hit).sort((a, b) => b.st - a.st || b.hit - a.hit);
+      html += `<h3 class="sh3">Who’s Exposed<span class="ib-cnt">tap a team to filter</span></h3>`;
+      html += rows.length ? `<ul class="wx-ex">${rows.map(x => `<li><button type="button" data-wx-team="${x.r}"><b>${esc(team(x.r).name)}</b><span>${x.st} starter${x.st === 1 ? '' : 's'} · ${x.hit} player${x.hit === 1 ? '' : 's'} affected</span></button></li>`).join('')}</ul>` : '<p class="note">No rostered players are in games with weather concerns.</p>';
+    }
+    html += `<h3 class="sh3">${selT ? 'Games' : 'All Games'}<span class="ib-cnt">${(onlyMine ? games.filter(g => mine.some(p => p.g === g)) : games).length} game${(onlyMine ? games.filter(g => mine.some(p => p.g === g)) : games).length === 1 ? '' : 's'}</span></h3><div class="wx-grid">`;
+    const shown = onlyMine ? games.filter(g => mine.some(p => p.g === g)) : games;
+    shown.forEach(g => {
       const f = g.f, state = g.state === 'post' ? '<span class="wx-st">Final</span>' : g.state === 'in' ? '<span class="wx-st live">Live</span>' : '';
       let body;
       if (g.roof === 'dome') body = `<div class="wx-in"><span class="wx-ico" aria-hidden="true">🏟️</span><div><b>Indoors</b><span>Climate-controlled dome</span></div></div>`;
@@ -4716,9 +4777,12 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
       } else if (g.espn && g.espn.txt) body = `<div class="wx-main"><b class="wx-t">${g.espn.temp != null ? esc(g.espn.temp) + '°' : ''}</b><span class="wx-cond">${esc(g.espn.txt)}</span></div>`;
       else body = `<p class="wx-note">${d.wxErr ? 'Forecast unavailable right now.' : g.loc ? 'No forecast yet for this kickoff.' : 'No weather data for this venue.'}</p>`;
       const flags = g.flags.length ? `<ul class="wx-flags">${g.flags.map(x => `<li class="${x.k}"><b>${esc(x.t)}:</b> ${esc(x.d)}</li>`).join('')}</ul>` : '';
+      const gp = pl ? pl.filter(p => p.g === g && (selT ? p.rid === selT : p.slot === 'Starter')) : [];
+      const gpHtml = gp.length ? `<div class="wx-gp"><small>${selT ? 'Your players' : 'Starters in this game'} (${gp.length})</small>${gp.slice(0, selT ? 12 : 6).map(p => `<span class="wx-pchip${p.imp.some(i => i.d === 'down') ? ' down' : ''}">${esc(p.nm)} <i>${esc(p.pos)}</i></span>`).join('')}${gp.length > (selT ? 12 : 6) ? `<span class="wx-pchip">+${gp.length - (selT ? 12 : 6)}</span>` : ''}</div>` : '';
       html += `<article class="wx-c${g.flags.some(x => x.k === 'bad') ? ' bad' : g.flags.length ? ' warn' : ''}"><div class="wx-top"><b>${esc(g.away)} <i>@</i> ${esc(g.home)}</b>${state}</div>
-        <div class="wx-sub"><span>${esc(tm(g))}</span><span class="wx-ven">${esc(g.vname)}${g.city ? ' · ' + esc(g.city) : ''}</span></div>${body}${flags}</article>`;
+        <div class="wx-sub"><span>${esc(tm(g))}</span><span class="wx-ven">${esc(g.vname)}${g.city ? ' · ' + esc(g.city) : ''}</span></div>${body}${flags}${gpHtml}</article>`;
     });
+    if (!shown.length) html += '<p class="note">This team has no players in this week’s games.</p>';
     html += `</div><p class="note">Conditions run from kickoff to about three hours later. Forecasts shift as game day gets closer. Weather data by <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo.com</a>.</p>`;
     return html;
   }
@@ -6264,6 +6328,8 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
     const pct = e.target.closest('[data-pc-tog]'); if (pct) { const c = pct.closest('.pcard'), o = c.classList.toggle('open'); pct.setAttribute('aria-expanded', o); pct.textContent = o ? 'Hide full profile' : 'Show full profile'; return; }
     const ibm = e.target.closest('[data-ib-more]'); if (ibm) { const y = window.scrollY; (D.ibOpen = D.ibOpen || {})[ibm.dataset.ibMore] = 1; render(); window.scrollTo(0, y); return; }
     const nwm = e.target.closest('[data-news-more]'); if (nwm) { const y = window.scrollY; D.newsShown = (D.newsShown || 20) + 30; render(); window.scrollTo(0, y); return; }
+    const wxt = e.target.closest('[data-wx-team]'); if (wxt) { opts.wxTeam = Number(wxt.dataset.wxTeam); opts.wxAll = false; saveOpts(); render(); window.scrollTo(0, 0); return; }
+    if (e.target.closest('[data-wx-all]')) { opts.wxAll = !opts.wxAll; const y = window.scrollY; render(); window.scrollTo(0, y); return; }
     const wxr = e.target.closest('[data-wx-retry]'); if (wxr) { if (D && D.wx) D.wx = {}; render(); return; }
     const txr = e.target.closest('[data-tx-retry]'); if (txr) { if (D) D.tx = null; render(); return; }
     const txm = e.target.closest('[data-tx-more]'); if (txm) { const y = window.scrollY; if (D && D.tx) D.tx.shown += TX_PAGE; render(); window.scrollTo(0, y); return; }
@@ -6315,7 +6381,7 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
     if (!el) return;
     const k = el.dataset.opt;
     const openDetails = !!e.target.closest('details[open]');
-    opts[k] = (k === 'rounds' || k === 'season' || k === 'tradeTeam' || k === 'week' || k === 'buildTeam' || k === 'tfTeam' || k === 'tfTol' || k === 'mteam' || k === 'tfWith' || k === 'tnSel' || k === 'wxWeek') ? Number(el.value) : el.value;
+    opts[k] = (k === 'rounds' || k === 'season' || k === 'tradeTeam' || k === 'week' || k === 'buildTeam' || k === 'tfTeam' || k === 'tfTol' || k === 'mteam' || k === 'tfWith' || k === 'tnSel' || k === 'wxWeek' || k === 'wxTeam') ? Number(el.value) : el.value;
     if (k.indexOf('tx') === 0 && D && D.tx) D.tx.shown = TX_PAGE;
     if (k.indexOf('dr') === 0 && D && D.dr) D.dr.shown = DR_PAGE;
     saveOpts();
