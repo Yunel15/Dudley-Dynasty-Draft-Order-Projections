@@ -1422,6 +1422,9 @@ button.jm-hl{cursor:pointer}button.jm-hl:hover{border-color:var(--accent)}
 html[data-theme=light] #themeBtn .i-sun{display:none}html[data-theme=light] #themeBtn .i-moon{display:block}
 html[data-theme=light] .logo{background:#141B2B;border-radius:12px;padding:3px}
 .is-phone .top-actions{flex:none;gap:6px}
+.is-phone .top{gap:8px}.is-phone .brand{gap:8px}.is-phone .logo{width:38px}.is-phone h1{font-size:1.2rem}
+.is-phone .top-actions{gap:5px}.is-phone .iconbtn{width:40px;height:40px}.is-phone #refresh{min-width:40px;min-height:40px;padding:0 10px}
+@media (max-width:379px){.is-phone .logo{width:30px}.is-phone h1{font-size:1.02rem}.is-phone .top-actions{gap:4px}.is-phone .iconbtn{width:38px;height:38px}.is-phone #refresh{font-size:0;width:38px;min-width:38px;min-height:38px;padding:0}.is-phone #refresh::before{content:"\21BB";font-size:1.25rem;line-height:1}}
 html{transition:none}
 /* ---------- Trading Cards ---------- */
 .tc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:var(--space-lg)}
@@ -1484,6 +1487,36 @@ html{transition:none}
 .tc-exp .tc-frame::after{display:none}
 .tc-exp-foot{position:absolute;right:44px;bottom:40px;display:flex;align-items:center;gap:16px;font-size:30px;font-weight:700;color:#E4E8F0;letter-spacing:.02em}
 .tc-exp-foot img{width:92px;height:auto}
+
+/* ---- Favorite team pin ---- */
+.iconbtn.wide{width:auto;padding:0 12px;display:inline-flex;align-items:center;gap:7px;font-weight:600;font-size:.85rem}
+.iconbtn.wide .tb-t{white-space:nowrap}
+#teamBtn.on{border-color:var(--accent);color:var(--accent)}
+.is-phone .iconbtn.wide{width:44px;padding:0;display:grid}
+.is-phone .iconbtn.wide .tb-t{display:none}
+.mine{position:relative}
+.mcard.mine,.ocard.mine,.trade.mine,.mst-row.mine{background:linear-gradient(rgba(var(--heat),.11),rgba(var(--heat),.11)),var(--surface);border-color:var(--accent)}
+.stbl tr.mine td{background:rgba(var(--heat),.12)}
+.stbl tr.mine td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
+.youtag{display:inline-block;margin-left:6px;padding:1px 6px;border-radius:999px;background:var(--accent);color:var(--accent-ink);font-size:.62rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;vertical-align:middle}
+.yt{background:var(--surface);border:1px solid var(--accent);border-radius:10px;padding:12px 14px;margin:10px 0 14px;box-shadow:inset 4px 0 0 var(--accent)}
+.yt-h{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:space-between}
+.yt-k{font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--teal-t)}
+.yt-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px 16px;margin-top:10px}
+.yt-c{min-width:0}.yt-c em{display:block;font-style:normal;font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:2px}
+.yt-c b{font-size:1.02rem}.yt-c small{display:block;color:var(--muted);font-size:.78rem}
+.yt-act{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.yt-act .btn{padding:7px 12px;font-size:.85rem}
+.tmodal{position:fixed;inset:0;z-index:300;background:rgba(8,12,22,.62);display:flex;align-items:center;justify-content:center;padding:16px}
+.tmodal .box{background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:14px;width:min(440px,100%);max-height:min(640px,100%);display:flex;flex-direction:column;overflow:hidden;box-shadow:0 18px 50px rgba(0,0,0,.4)}
+.tmodal h2{margin:0;font-size:1.15rem}
+.tmodal .th{padding:16px 16px 6px}.tmodal .th p{margin:6px 0 0;color:var(--muted);font-size:.85rem}
+.tmodal .tl2{overflow:auto;padding:6px 10px;display:flex;flex-direction:column;gap:4px;-webkit-overflow-scrolling:touch}
+.tmodal .topt{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;cursor:pointer;border:1px solid transparent;min-height:48px}
+.tmodal .topt:hover,.tmodal .topt:focus-visible{background:rgba(var(--heat),.12);border-color:var(--accent)}
+.tmodal .topt[aria-pressed=true]{border-color:var(--accent);background:rgba(var(--heat),.12)}
+.tmodal .topt .mg{color:var(--muted);font-size:.78rem}
+.tmodal .tf{display:flex;gap:8px;justify-content:flex-end;padding:10px 16px 14px;border-top:1px solid var(--line)}
 </style>
 </head>
 <body>
@@ -1502,6 +1535,7 @@ html{transition:none}
         <svg class="i-sun" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.3M12 19.2v2.3M2.5 12h2.3M19.2 12h2.3M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg>
         <svg class="i-moon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.3 14.6A8.4 8.4 0 1 1 9.4 3.7a6.7 6.7 0 0 0 10.9 10.9z"/></svg>
       </button>
+      <button class="iconbtn wide" id="teamBtn" type="button" aria-label="Pick your team" title="Pick your team"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.8"/><path d="M4.5 20.5c.8-4 3.8-6 7.5-6s6.7 2 7.5 6"/></svg><span class="tb-t">Pick team</span></button>
       <button class="btn" id="refresh" type="button">Refresh</button>
     </div>
   </header>
@@ -1571,6 +1605,89 @@ html{transition:none}
   const ordinal = n => { const s = ['th','st','nd','rd'], v = n % 100; return n + (s[(v - 20) % 10] || s[v] || s[0]); };
   const avg = a => a.reduce((s, x) => s + x, 0) / a.length;
 
+  // ---------- Favorite team pin (saved on this device only) ----------
+  let pinId = null;
+  const pinKey = () => 'dd:team:' + leagueId, askKey = () => 'dd:teamAsk:' + leagueId;
+  function loadPin(){ const v = store.get(pinKey()); pinId = v ? Number(v) || null : null; }
+  const pinned = () => (D && pinId != null && D.ids.includes(pinId)) ? pinId : null;
+  const youTag = rid => pinned() != null && rid === pinned() ? '<span class="youtag">You</span>' : '';
+  const mineCls = rid => pinned() != null && rid === pinned() ? ' mine' : '';
+  function syncTeamBtn(){
+    const b = $('#teamBtn'); if (!b) return;
+    const r = pinned(), t = r != null ? team(r) : null;
+    b.classList.toggle('on', r != null);
+    const lab = t ? 'Change team (pinned: ' + t.name + ')' : 'Pick your team';
+    b.setAttribute('aria-label', lab); b.title = lab;
+    b.querySelector('.tb-t').textContent = t ? 'Change team' : 'Pick team';
+  }
+  function setPin(rid){
+    pinId = rid || null;
+    store.set(pinKey(), pinId ? String(pinId) : '');
+    store.set(askKey(), '1');
+    if (pinId && D) { opts.tfTeam = pinId; opts.tfWith = 0; saveOpts(); }
+    syncTeamBtn(); if (D) render();
+  }
+  function closeTeamPicker(markAsked){
+    const m = document.getElementById('teamModal'); if (m) m.remove();
+    if (markAsked) store.set(askKey(), '1');
+    document.removeEventListener('keydown', teamKey, true);
+    const b = $('#teamBtn'); if (b && document.activeElement === document.body) b.focus();
+  }
+  function teamKey(e){ if (e.key === 'Escape') { e.preventDefault(); closeTeamPicker(true); } }
+  function openTeamPicker(first){
+    if (!D || document.getElementById('teamModal')) return;
+    const cur = pinned();
+    const list = D.ids.slice().sort((a, b) => team(a).name.localeCompare(team(b).name));
+    const m = document.createElement('div');
+    m.className = 'tmodal'; m.id = 'teamModal';
+    m.innerHTML = `<div class="box" role="dialog" aria-modal="true" aria-labelledby="tmH"><div class="th"><h2 id="tmH">${first ? 'Which team is yours?' : 'Change your team'}</h2><p>Pin your team to see it first and highlighted around the site. Saved on this device only.</p></div>
+      <div class="tl2">${list.map(r => { const t = team(r); return `<button type="button" class="topt" data-pick="${r}" aria-pressed="${r === cur}">${avatar(t)}<span class="tx"><span class="tname">${esc(t.name)}</span><span class="mg" style="display:block">${esc(t.manager || '')}</span></span></button>`; }).join('')}</div>
+      <div class="tf">${cur != null ? '<button type="button" class="btn ghost" data-pick-clear>Clear pin</button>' : ''}<button type="button" class="btn ghost" data-pick-close>${first ? 'Not now' : 'Close'}</button></div></div>`;
+    m.addEventListener('click', e => {
+      if (e.target === m) return closeTeamPicker(true);
+      const pk = e.target.closest('[data-pick]');
+      if (pk) { const rid = Number(pk.dataset.pick); closeTeamPicker(false); setPin(rid); return; }
+      if (e.target.closest('[data-pick-clear]')) { closeTeamPicker(false); setPin(null); return; }
+      if (e.target.closest('[data-pick-close]')) closeTeamPicker(true);
+    });
+    document.body.appendChild(m);
+    document.addEventListener('keydown', teamKey, true);
+    const f = m.querySelector('.topt[aria-pressed=true]') || m.querySelector('.topt'); if (f) f.focus();
+  }
+  function maybeAskTeam(){
+    if (!D || pinned() != null || store.get(askKey())) return;
+    openTeamPicker(true);
+  }
+  function yourTeamCard(order, info){
+    const rid = pinned(); if (rid == null) return '';
+    const t = team(rid), rank = order.indexOf(rid) + 1, w = D.defWeek;
+    let mu = '<b>Loading…</b>';
+    if (!D.weekData.has(w)) { if (!D.weekLoading.has(w)) fetchWeek(w).then(() => { if (opts.tab === 'stand') render(); }); }
+    else {
+      const list = D.weekData.get(w) || [];
+      const me = list.find(m => m.roster_id === rid);
+      const opp = me && me.matchup_id != null ? list.find(m => m.matchup_id === me.matchup_id && m.roster_id !== rid) : null;
+      if (!opp) mu = '<b>No game this week</b>';
+      else {
+        const any = (me.points || 0) > 0 || (opp.points || 0) > 0;
+        mu = `<b>vs ${esc(team(opp.roster_id).name)}</b><small>${any ? `${(me.points || 0).toFixed(2)} to ${(opp.points || 0).toFixed(2)} · ` : ''}${esc(record(team(opp.roster_id)))} · <button type="button" class="tlink" data-goto-match="${w}:${me.matchup_id}" style="color:var(--teal-t);text-decoration:underline">Open matchup</button></small>`;
+      }
+    }
+    let val = '<b>Loading…</b>';
+    if (!D.tf) loadFinder();
+    else if (D.tf.error) val = '<b>Unavailable</b><small>FantasyCalc couldn’t be reached</small>';
+    else {
+      const tm = [...finderModel().teams.values()].sort((a, b) => b.total - a.total), mt = tm.find(x => x.rid === rid);
+      if (mt) val = `<b>${Math.round(mt.total).toLocaleString()}</b><small>#${tm.indexOf(mt) + 1} of ${tm.length} · players and picks</small>`;
+      else val = '<b>Not available</b>';
+    }
+    return `<section class="yt" aria-label="Your team"><div class="yt-h"><div><span class="yt-k">Your Team</span>${teamBlock(t, esc(t.manager || ''))}</div></div>
+      <div class="yt-grid"><div class="yt-c"><em>Record</em><b>${record(t)}</b><small>${rank ? ordinal(rank) + ' of ' + order.length + ' · ' : ''}${t.pf.toFixed(1)} PF</small></div>
+      <div class="yt-c"><em>Week ${w} matchup</em>${mu}</div>
+      <div class="yt-c"><em>Roster value</em>${val}</div></div>
+      <div class="yt-act"><button type="button" class="btn" data-own-team="${rid}">My Picks</button><button type="button" class="btn ghost" data-tab="finder">Trade Ideas</button><button type="button" class="btn ghost" data-build-team="${rid}">My Roster</button></div></section>`;
+  }
+
   const urlLeague = new URLSearchParams(location.search).get('league');
   let leagueId = urlLeague || store.get('leagueId') || DEFAULT_LEAGUE;
 
@@ -1594,7 +1711,7 @@ html{transition:none}
   }
 
   async function load(){
-    loadOpts();
+    loadOpts(); loadPin();
     $('#leagueInput').value = leagueId;
     $('#refresh').disabled = true;
     if (!D) $('#app').innerHTML = '<p class="status">Loading league from Sleeper…</p>';
@@ -1700,7 +1817,7 @@ html{transition:none}
         playoff: { teams: pTeams, rounds: pRounds, type: pType, start: pws, lastWeek }, defWeek, weekData, weekLoading: new Set(), bracket: null, bracketLoading: false, players, namesLoading: false };
       if (!seasons.includes(opts.season)) opts.season = D.draftSeason;
       runSim();
-      render();
+      render(); syncTeamBtn(); maybeAskTeam();
       D.live = []; D.liveSeen = null; pollLive();
       $('#updated').textContent = `Updated ${new Date().toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}. Data from Sleeper.`;
     } catch (err) {
@@ -2146,6 +2263,7 @@ html{transition:none}
     let html = '';
     const sos = sosData(info);
     if (!any) return html + '<p class="note">Standings appear once the season starts.</p>';
+    html += yourTeamCard(order, info);
     html += `<div class="scards">${card('Longest active win streak', hot, 'wins', 'good')}${card('Longest active losing streak', cold, 'losses', 'bad')}${card('Best win streak this season', bestW, 'wins', 'good')}${card('Worst losing streak this season', bestL, 'losses', 'bad')}</div>`;
     const phone = isPhoneUI();
     let mrows = '';
@@ -2163,11 +2281,11 @@ html{transition:none}
         const l5g = x.gm.slice(-5), l5w = l5g.filter(g => g.res === 'W').length, l5l = l5g.filter(g => g.res === 'L').length, l5t = l5g.length - l5w - l5l;
         const l5rec = l5g.length ? `<span class="l5rec"><em>L${l5g.length}</em><b>${l5w}-${l5l}${l5t ? '-' + l5t : ''}</b></span>` : '';
         const sosChip = (m, label) => { const v = sosCell(m, r, sos.lg, label); return v === '–' ? '' : `<span class="mst-sos"><em>${label === 'Played' ? 'SOS' : 'Rem'}</em>${v.replace(/<small class="sosd">[^<]*<\/small>/, '')}</span>`; };
-        mrows += `<div class="mst-row"><span class="mst-rk">${i + 1}</span><button type="button" class="tlink mst-team" data-build-team="${r}">${teamBlock(t, `${record(t)} · ${t.pf.toFixed(1)} PF`)}</button><span class="mst-stk">${streak}</span>
+        mrows += `<div class="mst-row${mineCls(r)}"><span class="mst-rk">${i + 1}</span><button type="button" class="tlink mst-team" data-build-team="${r}">${teamBlock(t, `${record(t)} · ${t.pf.toFixed(1)} PF${youTag(r)}`)}</button><span class="mst-stk">${streak}</span>
           <div class="mst-sub">${l5rec}${sosChip(sos.played, 'Played')}${sos.hasRem ? sosChip(sos.remaining, 'Remaining') : ''}</div></div>`;
         return;
       }
-      html += `<tr><td>${i + 1}</td><td class="tl"><button type="button" class="tlink" data-build-team="${r}" title="View ${esc(t.name)} in Team Construction">${teamBlock(t, '')}</button></td><td>${record(t)}</td><td>${t.pf.toFixed(2)}</td><td>${x.pa ? x.pa.toFixed(2) : '–'}</td><td>${streak}</td><td class="l5">${last5}</td><td>${sosCell(sos.played, r, sos.lg, 'Played')}</td>${sos.hasRem ? `<td>${sosCell(sos.remaining, r, sos.lg, 'Remaining')}</td>` : ''}</tr>`;
+      html += `<tr class="${mineCls(r).trim()}"><td>${i + 1}</td><td class="tl"><button type="button" class="tlink" data-build-team="${r}" title="View ${esc(t.name)} in Team Construction">${teamBlock(t, youTag(r))}</button></td><td>${record(t)}</td><td>${t.pf.toFixed(2)}</td><td>${x.pa ? x.pa.toFixed(2) : '–'}</td><td>${streak}</td><td class="l5">${last5}</td><td>${sosCell(sos.played, r, sos.lg, 'Played')}</td>${sos.hasRem ? `<td>${sosCell(sos.remaining, r, sos.lg, 'Remaining')}</td>` : ''}</tr>`;
     });
     html += (phone ? `<div class="mst">${mrows}</div>` : '</tbody></table></div>') + '';
     return html;
@@ -2487,7 +2605,7 @@ html{transition:none}
       myD.tf = { players, picks, f };
     }
     myD.tfLoading = false;
-    if (D === myD && (opts.tab === 'finder' || opts.tab === 'calc' || opts.tab === 'tn')) render();
+    if (D === myD && (opts.tab === 'finder' || opts.tab === 'calc' || opts.tab === 'tn' || (opts.tab === 'stand' && pinned() != null))) render();
   }
 
   function finderModel(){
@@ -2567,7 +2685,7 @@ html{transition:none}
     const model = finderModel();
     const ids = [...model.teams.keys()];
     if (!ids.length) return '<p class="note">Rosters are empty so far.</p>';
-    const me = ids.includes(opts.tfTeam) ? opts.tfTeam : ids[0];
+    const me = ids.includes(opts.tfTeam) ? opts.tfTeam : (pinned() != null && ids.includes(pinned()) ? pinned() : ids[0]);
     const tolPct = opts.tfTol || 10, tol = tolPct / 100;
     const f = D.tf.f;
     const teamOpts = ids.map(r => `<option value="${r}" ${r === me ? 'selected' : ''}>${esc(team(r).name)}</option>`).join('');
@@ -2722,12 +2840,12 @@ html{transition:none}
       }
     });
     const per = opts.rounds * D.seasons.length;
-    let html = `<div class="controls">${D.seasons.length ? basisToggle() : ''}</div>${settingsBlock()}
+    let html = `<div class="controls">${D.seasons.length ? basisToggle() : ''}${pinned() != null ? `<button type="button" class="btn" data-own-team="${pinned()}">My Picks</button>` : ''}</div>${settingsBlock()}
       <div class="owners">`;
     const cards = D.ids.slice().sort((a, b) => team(a).name.localeCompare(team(b).name));
     cards.forEach(rid => {
       const items = (own.get(rid) || []).sort((a, b) => a.y - b.y || a.r - b.r || (a.slot ?? 0) - (b.slot ?? 0) || team(a.orig).name.localeCompare(team(b.orig).name));
-      html += `<article class="ocard" id="own-${rid}"><header>${teamBlock(team(rid), esc(team(rid).manager))}<span class="count">${items.length}<small>picks</small></span></header>`;
+      html += `<article class="ocard${mineCls(rid)}" id="own-${rid}"><header>${teamBlock(team(rid), esc(team(rid).manager) + youTag(rid))}<span class="count">${items.length}<small>picks</small></span></header>`;
       D.seasons.forEach(y => {
         const yi = items.filter(it => it.y === y);
         html += `<div class="yr">${y}</div><div class="chips">`;
@@ -3824,7 +3942,7 @@ html{transition:none}
       const winA = anyPts && pa > pb, winB = anyPts && pb > pa;
       const row = (m, pts, win) => {
         const t = team(m.roster_id);
-        return `<div class="mteam${win ? ' win' : ''}"${open ? '' : ` data-open-match="${g.mid}" role="button" tabindex="0"`}>${teamBlock(t, `${record(t)}`)}<span class="mscore">${anyPts ? pts.toFixed(2) : '–'}</span></div>`;
+        return `<div class="mteam${win ? ' win' : ''}"${open ? '' : ` data-open-match="${g.mid}" role="button" tabindex="0"`}>${teamBlock(t, `${record(t)}${youTag(m.roster_id)}`)}<span class="mscore">${anyPts ? pts.toFixed(2) : '–'}</span></div>`;
       };
       let lineup = '';
       const n = Math.max(slots.length, (a.starters || []).length, (b.starters || []).length);
@@ -3850,7 +3968,7 @@ html{transition:none}
       const bigHead = `<div class="mhead">${side(ta, pa, winA, 'l')}<div class="mvs">vs</div>${side(tb, pb, winB, 'r')}</div>`;
       const tableOpen = `<div class="lwrap"><table class="ltable"><tbody>${lineup}</tbody></table></div>`;
       const wp = ctx && !done && (ctx.hasProj || anyPts) ? wpBar(winProb(a, b, ctx, false), ta, tb, w, g.mid) : '';
-      html += `<article class="mcard" data-card="${g.mid}">${open ? bigHead : row(a, pa, winA) + row(b, pb, winB)}${wp}
+      html += `<article class="mcard${g.some(m => mineCls(m.roster_id)) ? ' mine' : ''}" data-card="${g.mid}">${open ? bigHead : row(a, pa, winA) + row(b, pb, winB)}${wp}
         ${open ? `<button type="button" class="lutoggle open" data-close-match aria-expanded="true"><span class="lucar">▸</span> Lineups</button>${tableOpen}` : `<button type="button" class="lutoggle" data-open-match="${g.mid}" aria-expanded="false"><span class="lucar">▸</span> Lineups</button>`}</article>`;
     });
     html += open ? '</div></div>' : '</div>';
@@ -5926,7 +6044,7 @@ html{transition:none}
     list.forEach(({ t, L }) => {
       const ts = t.status_updated || t.created;
       const date = ts ? new Date(ts).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' }) : `${L.season} season`;
-      html += `<article class="trade"><time>${esc(date)}</time><div class="sides">`;
+      html += `<article class="trade${pinned() != null && (t.roster_ids || []).includes(pinned()) ? ' mine' : ''}"><time>${esc(date)}</time><div class="sides">`;
       (t.roster_ids || []).forEach(rid => {
         const items = [];
         Object.entries(t.adds || {}).forEach(([pid, to]) => {
@@ -6477,6 +6595,7 @@ html{transition:none}
     if (e.key === 'Escape') { document.querySelectorAll('.csug').forEach(u => { u.hidden = true; }); }
   });
   $('#refresh').addEventListener('click', load);
+  $('#teamBtn').addEventListener('click', () => openTeamPicker(false));
   // ---------- Light / dark theme toggle ----------
   (function(){
     const root = document.documentElement, btn = $('#themeBtn'), meta = document.querySelector('meta[name="theme-color"]');
