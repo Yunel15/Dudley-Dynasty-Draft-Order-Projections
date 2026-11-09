@@ -1637,6 +1637,8 @@ html[data-page=zone] #cd,html[data-page=zone] #cd.open{display:none!important}
   const BIG_PLAY_PTS = 4.0;
   // A 2-point conversion is only worth 2 points, so under the rule above it would never show. Keep this true to list them anyway.
   const SHOW_TWO_POINT_CONVERSIONS = true;
+  // Also list every touchdown and 2-point conversion by a QB, RB, WR or TE, whatever its fantasy value. Set false to use only BIG_PLAY_PTS.
+  const SHOW_ALL_SCORING_PLAYS = true;
   // Banner slides, in order. Add ['K', 'Kickers'] or ['DEF', 'Defenses'] here once play parsing / stats cover them.
   const ZONE_BANNER_POS = [['QB', 'Quarterbacks'], ['RB', 'Running Backs'], ['WR', 'Wide Receivers'], ['TE', 'Tight Ends']];
   const DEFAULT_LEAGUE = '1389350335302078464';
@@ -2142,7 +2144,7 @@ html[data-page=zone] #cd,html[data-page=zone] #cd.open{display:none!important}
   // Anything a tab renders inside <div class="controls"> at the very top is moved into the actions row automatically.
   const KEY = '<span class="key"></span>';
   const TAB_META = {
-    zone: { sub: () => 'Big plays as they happen, spoiler-delayed to match your TV', how: () => `<p>Dudley Zone lists every play worth more than ${BIG_PLAY_PTS} fantasy points to any one player, using this league’s scoring. Play-by-play comes from ESPN, matched to Sleeper players by name, team and position. A play that can’t be matched confidently is skipped.</p><p>Set the delay to how far behind your TV or stream is. Plays, the Top 5 banner and the counts only use plays older than the delay.</p>` },
+    zone: { sub: () => 'Every scoring play and big play, spoiler-delayed to match your TV', how: () => `<p>Dudley Zone lists every touchdown and 2-point conversion, plus any other play worth more than ${BIG_PLAY_PTS} fantasy points to one player, using this league’s scoring. Play-by-play comes from ESPN, matched to Sleeper players by name, team and position. A play that can’t be matched confidently is skipped.</p><p>Set the delay to how far behind your TV or stream is. Plays, the Top 5 banner and the counts only use plays older than the delay.</p>` },
     wx: { sub: () => 'Forecasts for every NFL game this week', how: () => '<p>Pick a week to see the weather at each stadium for kickoff through about three hours later. Domes are marked indoors. <b>Weather Watch</b> lists games where wind, rain, snow or temperature could change how players score, such as deep passes, kickers and fumbles. Forecasts change, so check again closer to game time.</p>' },
     drc: { sub: () => 'How every draft pick has turned out', how: () => '<p>Each pick is compared with what its slot normally returns. Players in a class are ranked by <b>current value</b> and by <b>points scored</b> since the draft, and the two ranks are averaged. A pick’s grade comes from how far that rank is above or below where the pick slot says it should be: <b>A</b> well above, <b>B</b> a bit above, <b>C</b> about right, <b>D</b> a bit below, <b>F</b> well below. <b>Hit</b> is clearly above the slot, <b>Bust</b> is far below it.</p><p>Everything graded is an <b>estimate</b>. The slot benchmark comes from the draft itself, not from outside data. Values come from the latest nightly FantasyCalc snapshot, and a player missing from it shows “value unavailable” and is graded on points alone. Points are real totals, including bench weeks, for the team that made the pick. A pick is credited to the manager who actually made it, even if the pick was traded.</p>' },
     tn: { sub: () => 'Who trades with whom, and who should', how: () => '<p>Every completed trade from this season and past seasons counts. Managers are tracked by person, so a trade from an earlier year still counts for the same manager. A line joins two managers who traded, and thicker lines mean more trades. A three-team trade connects all three.</p><p><b>Most Likely Trade Partner</b> blends how often two managers have traded with how well their rosters fit. A fit means one team is thin at a position where the other is deep, using the same roster-need scoring as Trade Finder. If player values can’t load, it uses trade history alone.</p><p>On a phone the List view is easiest to read.</p>' },
@@ -2460,6 +2462,7 @@ html[data-page=zone] #cd,html[data-page=zone] #cd.open{display:none!important}
     } else return null;
     const c2 = credits.filter(c => Math.abs(c.pts) > 1e-9);
     if (two) c2.two = true;
+    if (td && !two) c2.td = true;
     return c2.length ? c2 : null;
   }
 
@@ -2487,7 +2490,7 @@ html[data-page=zone] #cd,html[data-page=zone] #cd.open{display:none!important}
       try { credits = zoneScorePlay(p, off, def); } catch (e) { credits = null; }
       if (!credits && /touchdown|two[- ]point/i.test(p.text || '') && !/punt|kickoff/i.test(((p.type && p.type.text) || '') + (p.text || ''))) console.debug('Dudley Zone: could not match players for play', p.text);
       const top = credits ? Math.max(...credits.map(c => c.pts)) : 0;
-      game.plays.set(key, { key, gid: game.id, seq: seq++, ts, q: p.period && p.period.number, clock: p.clock && p.clock.displayValue, text: String(p.text || ''), credits, two: !!(credits && credits.two), big: top > BIG_PLAY_PTS || !!(SHOW_TWO_POINT_CONVERSIONS && credits && credits.two) });
+      game.plays.set(key, { key, gid: game.id, seq: seq++, ts, q: p.period && p.period.number, clock: p.clock && p.clock.displayValue, text: String(p.text || ''), credits, two: !!(credits && (credits.two || credits.td)), big: top > BIG_PLAY_PTS || !!(credits && ((SHOW_TWO_POINT_CONVERSIONS && credits.two) || (SHOW_ALL_SCORING_PLAYS && (credits.td || credits.two)))) });
     });
     game.seq = seq;
   }
