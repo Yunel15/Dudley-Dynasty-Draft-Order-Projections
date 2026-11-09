@@ -1517,6 +1517,62 @@ html{transition:none}
 .tmodal .topt[aria-pressed=true]{border-color:var(--accent);background:rgba(var(--heat),.12)}
 .tmodal .topt .mg{color:var(--muted);font-size:.78rem}
 .tmodal .tf{display:flex;gap:8px;justify-content:flex-end;padding:10px 16px 14px;border-top:1px solid var(--line)}
+
+/* ---- Dudley Zone ---- */
+html[data-page=zone] #cd,html[data-page=zone] #cd.open{display:none!important}
+.zone{display:flex;flex-direction:column;gap:12px;margin-top:6px}
+.zban{background:var(--section-bg);border:1px solid var(--line);border-radius:12px;padding:12px 14px;border-top:3px solid var(--accent)}
+.zbh{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.zbh h3{margin:0;font-size:1rem;letter-spacing:.02em}.zwk{font-size:.75rem;font-weight:700;color:var(--teal-t);text-transform:uppercase;letter-spacing:.08em}
+.zslides{position:relative;min-height:216px;margin-top:8px}
+.zsl{display:none}.zsl.on{display:block;animation:zfade .45s ease}
+@keyframes zfade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.zsl h3{margin:0 0 6px;font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.zsl ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
+.zsl li{display:grid;grid-template-columns:22px 36px minmax(0,1fr) auto;align-items:center;gap:8px;padding:4px 8px;border-radius:8px;background:var(--surface);border:1px solid var(--line)}
+.zsl li.zq{display:block;color:var(--muted);font-size:.85rem}
+.zrk{font-weight:700;color:var(--muted);font-size:.85rem;text-align:center}
+.zbn{min-width:0;display:flex;flex-direction:column}.zbn b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.92rem}.zbn small{color:var(--muted);font-size:.72rem}
+.zbp{font-weight:800;font-variant-numeric:tabular-nums;color:var(--teal-t)}
+.zdots{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.zdot{all:unset;box-sizing:border-box;cursor:pointer;min-width:44px;min-height:32px;display:grid;place-items:center;padding:0 10px;border-radius:999px;border:1px solid var(--line);color:var(--muted);font-size:.75rem;font-weight:700}
+.zdot.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}.zdot:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.znote{margin:8px 0 0;font-size:.72rem;color:var(--muted)}
+.zdel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:0}
+.zdel summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 14px;font-weight:600;min-height:44px}
+.zdel summary::-webkit-details-marker{display:none}.zdel summary::after{content:"▾";color:var(--muted);margin-left:6px}.zdel[open] summary::after{content:"▴"}
+.zbeh{margin-left:auto;font-size:.78rem;color:var(--muted);font-weight:500}
+.zdc{display:flex;flex-wrap:wrap;gap:10px 12px;align-items:center;padding:0 14px 12px}
+.zlab{display:flex;align-items:center;gap:8px;font-weight:600}
+.zlab input{width:76px;padding:8px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;font-weight:700;text-align:center;min-height:40px}
+.zbtns{display:flex;gap:6px}.zbtns .btn{padding:8px 12px;min-height:40px}
+.zpres{display:flex;gap:6px;flex-wrap:wrap}
+.zpre{all:unset;box-sizing:border-box;cursor:pointer;min-height:36px;min-width:44px;display:grid;place-items:center;padding:0 10px;border-radius:999px;border:1px solid var(--line);font-size:.8rem;font-weight:600}
+.zpre[aria-pressed=true]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}.zpre:focus-visible{outline:2px solid var(--accent)}
+.zhelp{flex-basis:100%;margin:0;font-size:.78rem;color:var(--muted)}
+.zbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:.8rem;color:var(--muted)}
+.zst{font-weight:700;border-radius:999px;padding:3px 10px;border:1px solid var(--line);color:var(--ink)}
+.zst.live{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}.zst.live::before{content:"● ";animation:zpulse 1.4s infinite}
+@keyframes zpulse{50%{opacity:.25}}
+.zhid{margin-left:auto;font-style:italic}
+.zerr{margin:0;font-size:.85rem;color:var(--pylon-ink)}
+.zfil{display:flex;gap:6px;flex-wrap:wrap}
+.zf{all:unset;box-sizing:border-box;cursor:pointer;min-height:36px;min-width:44px;display:grid;place-items:center;padding:0 12px;border-radius:999px;border:1px solid var(--line);font-size:.8rem;font-weight:600}
+.zf[aria-pressed=true]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}.zf:focus-visible{outline:2px solid var(--accent)}
+.zfeed{display:flex;flex-direction:column;gap:8px}
+.zp{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:10px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.zp.ros{border-left:3px solid var(--accent)}.zp.mine{background:linear-gradient(rgba(var(--heat),.11),rgba(var(--heat),.11)),var(--surface);border-color:var(--accent)}
+.zin{animation:zin .5s ease}@keyframes zin{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+.zp .hs{width:44px;height:44px}
+.zph{display:flex;flex-wrap:wrap;gap:2px 8px;align-items:baseline}.zn{font-size:.98rem}.zt{font-size:.74rem;color:var(--muted)}
+.zown{all:unset;cursor:pointer;font-size:.68rem;font-weight:700;padding:1px 7px;border-radius:999px;background:rgba(var(--heat),.18);color:var(--teal-t)}.zown:focus-visible{outline:2px solid var(--accent)}
+.zmg{display:none}.zown.open .zmg,.zown:hover .zmg{display:inline}
+.zd{margin:3px 0 0;font-size:.85rem;color:var(--t2);overflow-wrap:anywhere}.zm{font-size:.72rem;color:var(--muted);margin-top:3px}
+.zpts{font-weight:800;font-size:1.15rem;color:var(--teal-t);text-align:right;font-variant-numeric:tabular-nums}.zpts small{display:block;font-size:.6rem;letter-spacing:.08em;color:var(--muted);font-weight:600}
+.zempty{margin:8px 0}
+@media (prefers-reduced-motion:reduce){.zsl.on,.zin,.zst.live::before{animation:none}}
+.is-phone .zban{padding:10px 12px}.is-phone .zslides{min-height:206px}.is-phone .zsl li{grid-template-columns:18px 30px minmax(0,1fr) auto;gap:6px;padding:3px 6px}.is-phone .zsl li .hs{width:30px;height:30px}
+.is-phone .zp{grid-template-columns:36px minmax(0,1fr) auto;gap:8px;padding:8px 10px}.is-phone .zp .hs{width:36px;height:36px}.is-phone .zpts{font-size:1rem}
 </style>
 </head>
 <body>
@@ -1566,7 +1622,7 @@ html{transition:none}
 <nav class="mnav" id="mnav" aria-label="Sections">
   <button type="button" data-go="stand"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Standings</button>
   <button type="button" data-go="match"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/><circle cx="12" cy="12" r="3"/></svg>Matchups</button>
-  <button type="button" data-go="news"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M8 9h8M8 13h8M8 16h5"/></svg>News</button>
+  <button type="button" data-go="zone"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2.5L5 13.5h6l-1 8 8-11h-6z"/></svg>Zone</button>
   <button type="button" data-go="build"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 19c0-3 3-5 6-5s6 2 6 5M16 5a3 3 0 010 6M18 14c2 .6 3 2.4 3 5"/></svg>Teams</button>
   <button type="button" data-more><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>More</button>
 </nav>
@@ -1577,6 +1633,12 @@ html{transition:none}
 
 <script>
 (() => {
+  // Dudley Zone settings: a play shows in the live feed when any player earns MORE than this many fantasy points from it.
+  const BIG_PLAY_PTS = 4.0;
+  // A 2-point conversion is only worth 2 points, so under the rule above it would never show. Keep this true to list them anyway.
+  const SHOW_TWO_POINT_CONVERSIONS = true;
+  // Banner slides, in order. Add ['K', 'Kickers'] or ['DEF', 'Defenses'] here once play parsing / stats cover them.
+  const ZONE_BANNER_POS = [['QB', 'Quarterbacks'], ['RB', 'Running Backs'], ['WR', 'Wide Receivers'], ['TE', 'Tight Ends']];
   const DEFAULT_LEAGUE = '1389350335302078464';
   const API = 'https://api.sleeper.app/v1';
   // Trade Finder values come from FantasyCalc. If browsers block the direct call, set VALUES_PROXY to your Worker URL.
@@ -2041,6 +2103,7 @@ html{transition:none}
 
   function render(){
     const { league, season } = D;
+    if (opts.tab !== 'zone') zoneStop();
     $('#title').textContent = 'Dudley Dynasty';
     document.title = 'Dudley Dynasty';
     const totalWeeks = D.lastReg - D.startWeek + 1;
@@ -2051,7 +2114,7 @@ html{transition:none}
         ? `${season} season hasn’t started. ${D.ids.length} teams.`
         : `${season} season, ${playedWeeks} of ${totalWeeks} weeks played. ${D.ids.length} teams.`;
 
-    const tabs = [['stand', 'Standings'], ['match', 'Matchups'], ['wx', 'Game Weather'], ['odds', 'Playoff Odds'], ['bracket', 'Playoff Bracket'], ['order', 'Tankathon'], ['proj', 'Tankathon Projections'], ['drc', 'Draft Report Cards'], ['news', 'News Feed'], ['pay', 'Payouts'], ['rec', 'League Records'], ['laws', 'League Bylaws'], ['mgr', 'Manager Profiles'], ['cards', 'Trading Cards'], ['rivals', 'Rivalries'], ['build', 'Team Construction'], ['inj', 'Injury/Bye Week Dashboard'], ['cmap', 'Contender Map'], ['own', 'Pick Ownership'], ['trades', 'Trade History'], ['tx', 'Transaction Wire'], ['tn', 'Trade Network'], ['journey', 'Journeymen'], ['finder', 'Trade Finder'], ['calc', 'Trade Calculator']];
+    const tabs = [['stand', 'Standings'], ['match', 'Matchups'], ['wx', 'Game Weather'], ['odds', 'Playoff Odds'], ['bracket', 'Playoff Bracket'], ['order', 'Tankathon'], ['proj', 'Tankathon Projections'], ['drc', 'Draft Report Cards'], ['zone', 'Dudley Zone'], ['news', 'News Feed'], ['pay', 'Payouts'], ['rec', 'League Records'], ['laws', 'League Bylaws'], ['mgr', 'Manager Profiles'], ['cards', 'Trading Cards'], ['rivals', 'Rivalries'], ['build', 'Team Construction'], ['inj', 'Injury/Bye Week Dashboard'], ['cmap', 'Contender Map'], ['own', 'Pick Ownership'], ['trades', 'Trade History'], ['tx', 'Transaction Wire'], ['tn', 'Trade Network'], ['journey', 'Journeymen'], ['finder', 'Trade Finder'], ['calc', 'Trade Calculator']];
     const GROUPS = [{ label: 'Playoffs', keys: ['odds', 'bracket'] }, { label: 'Tankathon', keys: ['order', 'proj', 'drc'] }, { label: 'League', keys: ['news', 'pay', 'rec', 'laws'] }, { label: 'Managers', keys: ['mgr', 'cards', 'rivals'] }, { label: 'Teams', keys: ['build', 'inj', 'cmap', 'own'] }, { label: 'Trades', keys: ['trades', 'tx', 'tn', 'journey', 'finder', 'calc'] }];
     const tabBtn = ([k, l]) => `<button class="tab" role="tab" type="button" data-tab="${k}" aria-selected="${opts.tab === k}">${l}</button>`;
     const menuBtn = ([k, l]) => `<button class="tabopt" role="menuitem" type="button" data-tab="${k}" aria-current="${opts.tab === k}">${l}</button>`;
@@ -2063,7 +2126,7 @@ html{transition:none}
     }).join('')}</nav>`;
     const label = (tabs.find(t => t[0] === opts.tab) || [, ''])[1];
     html += pageHeader(opts.tab, label) + '<div class="pbody" id="pbody">';
-    html += opts.tab === 'wx' ? renderWx() : opts.tab === 'drc' ? renderDrc() : opts.tab === 'tn' ? renderTn() : opts.tab === 'tx' ? renderTx() : opts.tab === 'inj' ? renderInj() : opts.tab === 'cards' ? renderCards() : opts.tab === 'journey' ? renderJourney() : opts.tab === 'rivals' ? renderRivals() : opts.tab === 'cmap' ? renderCmap() : opts.tab === 'stand' ? renderStandings() : opts.tab === 'proj' ? renderProj() : opts.tab === 'odds' ? renderOdds() : opts.tab === 'match' ? renderMatchups() : opts.tab === 'news' ? renderNews() : opts.tab === 'bracket' ? renderBracket() : opts.tab === 'pay' ? renderPayouts() : opts.tab === 'rec' ? renderRecords() : opts.tab === 'mgr' ? renderProfiles() : opts.tab === 'build' ? renderBuild() : opts.tab === 'own' ? renderOwn() : opts.tab === 'trades' ? renderTrades() : opts.tab === 'laws' ? renderBylaws() : opts.tab === 'finder' ? renderFinder() : opts.tab === 'calc' ? renderCalc() : renderOrder();
+    html += opts.tab === 'zone' ? renderZone() : opts.tab === 'wx' ? renderWx() : opts.tab === 'drc' ? renderDrc() : opts.tab === 'tn' ? renderTn() : opts.tab === 'tx' ? renderTx() : opts.tab === 'inj' ? renderInj() : opts.tab === 'cards' ? renderCards() : opts.tab === 'journey' ? renderJourney() : opts.tab === 'rivals' ? renderRivals() : opts.tab === 'cmap' ? renderCmap() : opts.tab === 'stand' ? renderStandings() : opts.tab === 'proj' ? renderProj() : opts.tab === 'odds' ? renderOdds() : opts.tab === 'match' ? renderMatchups() : opts.tab === 'news' ? renderNews() : opts.tab === 'bracket' ? renderBracket() : opts.tab === 'pay' ? renderPayouts() : opts.tab === 'rec' ? renderRecords() : opts.tab === 'mgr' ? renderProfiles() : opts.tab === 'build' ? renderBuild() : opts.tab === 'own' ? renderOwn() : opts.tab === 'trades' ? renderTrades() : opts.tab === 'laws' ? renderBylaws() : opts.tab === 'finder' ? renderFinder() : opts.tab === 'calc' ? renderCalc() : renderOrder();
     const prevScroll = document.getElementById('wkscroll'), keep = prevScroll ? prevScroll.scrollLeft : null;
     html += '</div>';
     $('#app').innerHTML = html;
@@ -2079,6 +2142,7 @@ html{transition:none}
   // Anything a tab renders inside <div class="controls"> at the very top is moved into the actions row automatically.
   const KEY = '<span class="key"></span>';
   const TAB_META = {
+    zone: { sub: () => 'Big plays as they happen, spoiler-delayed to match your TV', how: () => `<p>Dudley Zone lists every play worth more than ${BIG_PLAY_PTS} fantasy points to any one player, using this league’s scoring. Play-by-play comes from ESPN, matched to Sleeper players by name, team and position. A play that can’t be matched confidently is skipped.</p><p>Set the delay to how far behind your TV or stream is. Plays, the Top 5 banner and the counts only use plays older than the delay.</p>` },
     wx: { sub: () => 'Forecasts for every NFL game this week', how: () => '<p>Pick a week to see the weather at each stadium for kickoff through about three hours later. Domes are marked indoors. <b>Weather Watch</b> lists games where wind, rain, snow or temperature could change how players score, such as deep passes, kickers and fumbles. Forecasts change, so check again closer to game time.</p>' },
     drc: { sub: () => 'How every draft pick has turned out', how: () => '<p>Each pick is compared with what its slot normally returns. Players in a class are ranked by <b>current value</b> and by <b>points scored</b> since the draft, and the two ranks are averaged. A pick’s grade comes from how far that rank is above or below where the pick slot says it should be: <b>A</b> well above, <b>B</b> a bit above, <b>C</b> about right, <b>D</b> a bit below, <b>F</b> well below. <b>Hit</b> is clearly above the slot, <b>Bust</b> is far below it.</p><p>Everything graded is an <b>estimate</b>. The slot benchmark comes from the draft itself, not from outside data. Values come from the latest nightly FantasyCalc snapshot, and a player missing from it shows “value unavailable” and is graded on points alone. Points are real totals, including bench weeks, for the team that made the pick. A pick is credited to the manager who actually made it, even if the pick was traded.</p>' },
     tn: { sub: () => 'Who trades with whom, and who should', how: () => '<p>Every completed trade from this season and past seasons counts. Managers are tracked by person, so a trade from an earlier year still counts for the same manager. A line joins two managers who traded, and thicker lines mean more trades. A three-team trade connects all three.</p><p><b>Most Likely Trade Partner</b> blends how often two managers have traded with how well their rosters fit. A fit means one team is thin at a position where the other is deep, using the same roster-need scoring as Trade Finder. If player values can’t load, it uses trade history alone.</p><p>On a phone the List view is easiest to read.</p>' },
@@ -2134,14 +2198,14 @@ html{transition:none}
   const titleCase = s => String(s).split(' ').map((w, i) => w.split('-').map(p => (i > 0 && SMALL_WORDS.has(p.toLowerCase())) ? p.toLowerCase() : p.charAt(0).toUpperCase() + p.slice(1)).join('-')).join(' ');
 
   // ---------- Phone navigation: bottom bar, "More" sheet, current-section label ----------
-  const MORE_GROUPS = [['Overview', ['stand', 'match', 'wx']], ['Playoffs', ['odds', 'bracket']], ['Tankathon', ['order', 'proj', 'drc']], ['League', ['news', 'pay', 'rec', 'laws']], ['Managers', ['mgr', 'cards', 'rivals']],
+  const MORE_GROUPS = [['Overview', ['stand', 'match', 'wx']], ['Playoffs', ['odds', 'bracket']], ['Tankathon', ['order', 'proj', 'drc']], ['Dudley Zone', ['zone']], ['League', ['news', 'pay', 'rec', 'laws']], ['Managers', ['mgr', 'cards', 'rivals']],
     ['Teams', ['build', 'inj', 'cmap', 'own']], ['Trades', ['trades', 'tx', 'tn', 'journey', 'finder', 'calc']]];
   let TABS_ALL = [];
   function updatePhoneChrome(tabs){
     TABS_ALL = tabs;
     const label = (tabs.find(t => t[0] === opts.tab) || [, ''])[1];
     const lab = document.getElementById('mtabname'); if (lab) lab.textContent = label;
-    const main = ['stand', 'match', 'news', 'build'];
+    const main = ['stand', 'match', 'zone', 'build'];
     document.querySelectorAll('#mnav [data-go]').forEach(b => b.setAttribute('aria-current', String(b.dataset.go === opts.tab)));
     const more = document.querySelector('#mnav [data-more]'); if (more) more.setAttribute('aria-current', String(!main.includes(opts.tab)));
   }
@@ -2290,6 +2354,350 @@ html{transition:none}
     html += (phone ? `<div class="mst">${mrows}</div>` : '</tbody></table></div>') + '';
     return html;
   }
+
+  // ---------- Dudley Zone: live big plays, spoiler delay and a top-5 banner ----------
+  // Data: ESPN's unofficial scoreboard + summary endpoints (play-by-play) and Sleeper (players, state, stats, league scoring).
+  const ZONE_ESPN = 'https://site.api.espn.com/apis/site/v2/sports/football/nfl';
+  const ZONE_TEAM_FIX = { WSH: 'WAS', JAC: 'JAX', LA: 'LAR' };       // ESPN abbreviation -> Sleeper abbreviation
+  const ZONE_FALLBACK_SCORING = { pass_yd: 0.04, pass_td: 4, pass_int: -2, pass_2pt: 2, rush_yd: 0.1, rush_td: 6, rush_2pt: 2, rec: 1, rec_yd: 0.1, rec_td: 6, rec_2pt: 2, fum_lost: -2 };
+  const ZONE_LIVE_MS = 15000, ZONE_IDLE_MS = 300000, ZONE_ROTATE_MS = 8000, ZONE_FEED_MAX = 100;
+  const Z = { delay: 0, shown: new Set(), games: new Map(), pos: 'ALL', mine: false, fails: 0, loaded: false, ban: null, banKey: '', banIdx: 0, animated: new Set(), firstSeen: new Map(), stats: new Map(), scoring: null, state: null, timers: {} };
+  try { const v = Number(store.get('dd:zoneDelay')); if (Number.isFinite(v)) Z.delay = Math.max(0, Math.min(300, Math.round(v))); } catch (e) {}
+  const zNorm = s => String(s || '').toLowerCase().replace(/[^a-z]/g, '');
+  const zTm = a => { a = String(a || '').toUpperCase(); return ZONE_TEAM_FIX[a] || a; };
+  const zFmt = n => (Math.round(n * 10) / 10).toFixed(1);
+
+  // Sleeper players: keep only what matching and the banner need, indexed by team.
+  function zoneLoadPlayers(){
+    if (Z.pidxP) return Z.pidxP;
+    const want = new Set(ZONE_BANNER_POS.map(p => p[0]).concat(['QB', 'RB', 'WR', 'TE']));
+    Z.pidxP = getOnce('all', `${API}/players/nfl`).then(all => {
+      if (!all || typeof all !== 'object') throw new Error('players');
+      const byTeam = new Map(), byId = new Map();
+      Object.keys(all).forEach(id => {
+        const p = all[id]; if (!p || !want.has(p.position)) return;
+        const tm = zTm(p.team); if (!tm) return;
+        const nm = p.full_name || `${p.first_name || ''} ${p.last_name || ''}`.trim();
+        const rec = { id, first: String(p.first_name || ''), last: String(p.last_name || '').replace(/\s+(jr|sr|ii|iii|iv|v)\.?$/i, ''), pos: p.position, tm, name: nm };
+        byId.set(id, rec);
+        if (!rec.first || !rec.last) return;
+        if (!byTeam.has(tm)) byTeam.set(tm, []);
+        byTeam.get(tm).push(rec);
+      });
+      Z.pidx = { byTeam, byId };
+      return Z.pidx;
+    }).catch(e => { Z.pidxP = null; throw e; });
+    return Z.pidxP;
+  }
+  function zoneCands(text, off){
+    const list = (Z.pidx && Z.pidx.byTeam.get(off)) || [], hits = [];
+    list.forEach(c => {
+      if (!c.re) {
+        const lp = c.last.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/[\s.'’\-]+/g, "[\\s.'’\\-]*");
+        c.re = new RegExp(`(?:^|[^A-Za-z])${c.first[0]}\\.\\s?(?:[A-Z]\\.)?\\s?${lp}(?![A-Za-z])`, 'i');
+      }
+      const m = c.re.exec(text);
+      if (m) hits.push({ c, idx: m.index + (/^[A-Za-z]/.test(m[0]) ? 0 : 1) });
+    });
+    hits.sort((a, b) => a.idx - b.idx);
+    // Two players matching the same spot (e.g. two "D.Moore"s on a team) can't be told apart: don't guess.
+    const out = [];
+    for (let i = 0; i < hits.length; i++) {
+      const same = hits.filter(h => Math.abs(h.idx - hits[i].idx) < 2);
+      if (same.length > 1) { if (same[0] === hits[i]) console.debug('Dudley Zone: ambiguous name, skipped', text); continue; }
+      out.push(hits[i]);
+    }
+    return out;
+  }
+  const zScoring = () => (Z.scoring && Object.keys(Z.scoring).length) ? Z.scoring : ZONE_FALLBACK_SCORING;
+  function zoneYards(t, from){
+    const s = from ? t.slice(from) : t;
+    if (/\bfor no gain\b/i.test(s)) return 0;
+    let m = /\bfor a loss of (\d+) yards?/i.exec(s); if (m) return -Number(m[1]);
+    m = /\bfor (-?\d+) yards?/i.exec(s); return m ? Number(m[1]) : null;
+  }
+  // Turn one ESPN play into fantasy credits for the offense's players. Returns null when nothing can be scored confidently.
+  function zoneScorePlay(play, off, def){
+    const txt = String(play.text || '').replace(/\s+/g, ' ').trim(), ty = String((play.type && play.type.text) || '');
+    if (!txt || !off) return null;
+    if (/no play|nullified|reversed/i.test(txt)) return null;
+    const two = /two[- ]point|2[- ]?pt/i.test(txt);
+    if (!two && /punt|kickoff|field goal|extra point|timeout|end (of|period|game)|coin toss|kneel|spike|penalty$/i.test(ty)) return null;
+    const sc = zScoring(), g = k => Number(sc[k]) || 0, g2 = k => sc[k] == null ? ZONE_FALLBACK_SCORING[k] : Number(sc[k]);
+    const cands = zoneCands(txt, off); if (!cands.length) return null;
+    const td = /touchdown/i.test(txt) && play.scoringPlay !== false;
+    const iPass = txt.search(/\bpass(es)?\b/i);
+    const credit = (h, pts, role) => ({ id: h.c.id, name: h.c.name, pos: h.c.pos, tm: h.c.tm, pts, role });
+    const credits = [], lost = /fumbles/i.test(txt) && (() => { const m = /recovered by ([A-Z]{2,3})-/i.exec(txt); return !!(m && zTm(m[1]) === def); })();
+    if (two) {
+      const ok = /(attempt succeeds|is good|conversion succeeds|is successful)/i.test(txt) && !/(fails|no good|is no good|attempt fails|unsuccessful)/i.test(txt);
+      if (!ok) return null;
+      if (iPass >= 0) {
+        const qb = cands.find(h => h.idx < iPass), mt = /\bto\s+(?=[A-Z]\.)/.exec(txt.slice(iPass)), rc = mt ? cands.find(h => h.idx >= iPass + mt.index + mt[0].length) : null;
+        if (qb) credits.push(credit(qb, g2('pass_2pt'), 'pass')); if (rc) credits.push(credit(rc, g2('rec_2pt'), 'rec'));
+      } else credits.push(credit(cands[0], g2('rush_2pt'), 'rush'));
+    } else if (iPass >= 0 && !/\bsacked\b/i.test(txt)) {
+      const qb = cands.find(h => h.idx < iPass); if (!qb) return null;
+      if (/intercepted/i.test(txt)) credits.push(credit(qb, g('pass_int') + g('pass_att'), 'pass'));
+      else if (/incomplete/i.test(txt)) { const p = g('pass_inc') + g('pass_att'); if (p) credits.push(credit(qb, p, 'pass')); }
+      else {
+        const mt = /\bto\s+(?=[A-Z]\.)/.exec(txt.slice(iPass)); if (!mt) return null;
+        const at = iPass + mt.index + mt[0].length, rc = cands.find(h => h.idx >= at); if (!rc) return null;
+        const y = zoneYards(txt, at); if (y == null) return null;
+        let qp = y * g('pass_yd') + g('pass_cmp') + g('pass_att'), rp = y * g('rec_yd') + g('rec') + (rc.c.pos === 'TE' ? g('bonus_rec_te') : 0);
+        if (y >= 40) { qp += g('pass_cmp_40p'); rp += g('rec_40p'); }
+        if (td) { qp += g('pass_td') + (y >= 40 ? g('pass_td_40p') : 0) + (y >= 50 ? g('pass_td_50p') : 0); rp += g('rec_td') + (y >= 40 ? g('rec_td_40p') : 0) + (y >= 50 ? g('rec_td_50p') : 0); }
+        if (lost) rp += g('fum_lost');
+        credits.push(credit(qb, qp, 'pass'), credit(rc, rp, 'rec'));
+      }
+    } else if (!/\bsacked\b/i.test(txt) && (/rush|run/i.test(ty) || /(left|right) (end|tackle|guard)|up the middle|scrambles|rushes/i.test(txt))) {
+      const rb = cands[0], y = zoneYards(txt); if (y == null) return null;
+      let p = y * g('rush_yd') + g('rush_att');
+      if (y >= 40) p += g('rush_40p');
+      if (td) p += g('rush_td') + (y >= 40 ? g('rush_td_40p') : 0) + (y >= 50 ? g('rush_td_50p') : 0);
+      if (lost) p += g('fum_lost');
+      credits.push(credit(rb, p, 'rush'));
+    } else return null;
+    const c2 = credits.filter(c => Math.abs(c.pts) > 1e-9);
+    if (two) c2.two = true;
+    return c2.length ? c2 : null;
+  }
+
+  function zonePlayRows(game, j){
+    let drives = [];
+    if (j && j.drives) drives = (j.drives.previous || []).concat(j.drives.current ? [j.drives.current] : []);
+    const rows = [];
+    drives.forEach(d => (d.plays || []).forEach(p => rows.push([p, d])));
+    if (!rows.length && j && Array.isArray(j.plays)) j.plays.forEach(p => rows.push([p, null]));
+    return rows;
+  }
+  function zoneIngest(game, j){
+    const abbrOf = id => { const t = game.teams.find(x => String(x.id) === String(id)); return t ? t.abbr : null; };
+    let seq = game.seq || 0;
+    zonePlayRows(game, j).forEach(([p, d]) => {
+      if (p.id == null) return;
+      const key = game.id + ':' + p.id; if (game.plays.has(key)) return;
+      let ts = Date.parse(p.wallclock || '');
+      if (!Number.isFinite(ts)) { if (!Z.firstSeen.has(key)) Z.firstSeen.set(key, Date.now()); ts = Z.firstSeen.get(key); }  // no real timestamp: never earlier than when we first saw it
+      const offId = (p.start && p.start.team && p.start.team.id) || (p.team && p.team.id) || (d && d.team && (d.team.id));
+      let off = (d && d.team && d.team.abbreviation) ? zTm(d.team.abbreviation) : zTm(abbrOf(offId));
+      const o2 = zTm(abbrOf(offId)); if (o2 && game.teams.some(t => t.abbr === o2)) off = o2;
+      const def = (game.teams.map(t => t.abbr).find(a => a !== off)) || '';
+      let credits = null;
+      try { credits = zoneScorePlay(p, off, def); } catch (e) { credits = null; }
+      if (!credits && /touchdown|two[- ]point/i.test(p.text || '') && !/punt|kickoff/i.test(((p.type && p.type.text) || '') + (p.text || ''))) console.debug('Dudley Zone: could not match players for play', p.text);
+      const top = credits ? Math.max(...credits.map(c => c.pts)) : 0;
+      game.plays.set(key, { key, gid: game.id, seq: seq++, ts, q: p.period && p.period.number, clock: p.clock && p.clock.displayValue, text: String(p.text || ''), credits, two: !!(credits && credits.two), big: top > BIG_PLAY_PTS || !!(SHOW_TWO_POINT_CONVERSIONS && credits && credits.two) });
+    });
+    game.seq = seq;
+  }
+
+  async function zoneFetchJSON(url){ const r = await fetch(url, { cache: 'no-store' }); if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }
+  async function zonePoll(){
+    if (Z.polling) return; Z.polling = true;
+    try {
+      await zoneLoadPlayers();
+      if (D && D.league && D.league.scoring_settings) Z.scoring = D.league.scoring_settings;
+      if (!Z.state || Date.now() - (Z.stateAt || 0) > 600000) { Z.state = await getJSON('/state/nfl').catch(() => Z.state || {}); Z.stateAt = Date.now(); }
+      const st = Z.state || {}, season = st.season || (D && D.season), reg = !st.season_type || st.season_type === 'regular';
+      Z.season = season; Z.week = reg ? Math.max(1, Number(st.week) || 1) : 18;
+      const sb = await zoneFetchJSON(`${ZONE_ESPN}/scoreboard?seasontype=2&week=${Z.week}&dates=${season}`);
+      const evs = sb.events || [];
+      evs.forEach(ev => {
+        const comp = (ev.competitions || [])[0] || {}, state = ev.status && ev.status.type && ev.status.type.state;
+        let g = Z.games.get(ev.id);
+        if (!g) { g = { id: ev.id, plays: new Map(), seq: 0, done: false }; Z.games.set(ev.id, g); }
+        g.state = state; g.start = Date.parse(ev.date);
+        g.teams = (comp.competitors || []).map(c => ({ id: c.id || (c.team && c.team.id), abbr: zTm(c.team && c.team.abbreviation) }));
+      });
+      const need = [...Z.games.values()].filter(g => g.state === 'in' || (g.state === 'post' && !g.done));
+      const res = await Promise.allSettled(need.map(g => zoneFetchJSON(`${ZONE_ESPN}/summary?event=${g.id}`).then(j => { zoneIngest(g, j); if (g.state === 'post') g.done = true; })));
+      const bad = res.filter(r => r.status === 'rejected').length;
+      Z.loaded = true; Z.fails = bad && bad === res.length && res.length ? Z.fails + 1 : 0; Z.err = bad && bad === res.length && res.length ? 'Reconnecting…' : '';
+      Z.updated = Date.now();
+    } catch (e) {
+      Z.fails++; Z.err = Z.loaded ? 'Reconnecting…' : 'warming';
+    } finally { Z.polling = false; }
+    zoneUpdate(); zoneSchedule();
+  }
+  const zoneAnyLive = now => [...Z.games.values()].some(g => g.state === 'in' || (g.state === 'post' && (!g.done || (g.lastTs && now - Z.delay * 1000 < g.lastTs + 5000))));
+  function zoneSchedule(){
+    clearTimeout(Z.timers.poll);
+    if (opts.tab !== 'zone' || document.hidden) return;
+    const base = zoneAnyLive(Date.now()) ? ZONE_LIVE_MS : ZONE_IDLE_MS;
+    const wait = Z.fails ? Math.min(ZONE_IDLE_MS, 5000 * Math.pow(2, Math.min(Z.fails, 6))) : base;
+    Z.timers.poll = setTimeout(zonePoll, wait);
+  }
+  function zoneStop(){ if (!Z.running) return; Z.running = false; ['poll', 'tick', 'rot'].forEach(k => { clearTimeout(Z.timers[k]); clearInterval(Z.timers[k]); }); }
+  function zoneStart(){
+    if (Z.running) return; Z.running = true;
+    zonePoll();
+    Z.timers.tick = setInterval(() => { if (!document.hidden) zoneUpdate(true); }, 1000);
+    Z.timers.rot = setInterval(zoneRotate, ZONE_ROTATE_MS);
+  }
+  document.addEventListener('visibilitychange', () => {
+    if (opts && opts.tab === 'zone' && Z.running) { if (document.hidden) clearTimeout(Z.timers.poll); else { zonePoll(); } }
+  });
+
+  // Reveal everything older than (now - delay). A play once shown stays shown, so raising the delay never hides it again.
+  function zoneVisible(now){
+    const cut = now - Z.delay * 1000, vis = [], hidden = { n: 0 };
+    Z.games.forEach(g => {
+      let last = 0;
+      g.plays.forEach(p => { last = Math.max(last, p.ts); if (Z.shown.has(p.key) || p.ts <= cut) { Z.shown.add(p.key); vis.push(p); } else hidden.n++; });
+      g.lastTs = last;
+    });
+    return { vis, hidden: hidden.n };
+  }
+  const zoneOwner = pid => { const r = (D && D.rosters || []).find(x => (x.players || []).map(String).includes(String(pid))); return r ? r.roster_id : null; };
+
+  async function zoneStatsFor(week){
+    const c = Z.stats.get(week), cur = week === Z.week;
+    if (c && c.data && !(cur && Date.now() - c.t > 60000)) return c.data;
+    if (c && c.p) return c.p;
+    const p = zoneFetchJSON(`${API}/stats/nfl/regular/${Z.season}/${week}`).then(d => { Z.stats.set(week, { t: Date.now(), data: d || {} }); return d || {}; }).catch(() => { Z.stats.delete(week); return null; });
+    Z.stats.set(week, { t: 0, p, data: c && c.data }); return p;
+  }
+  function zoneTopFromStats(data){
+    const by = {}; ZONE_BANNER_POS.forEach(([p]) => { by[p] = []; });
+    if (!data || !Z.pidx) return by;
+    Object.keys(data).forEach(id => { const s = data[id], r = Z.pidx.byId.get(id); if (!r || !by[r.pos] || !s) return; const v = Number(s.pts_ppr); if (v > 0) by[r.pos].push({ id, name: r.name, pos: r.pos, tm: r.tm, pts: v }); });
+    Object.keys(by).forEach(k => { by[k] = by[k].sort((a, b) => b.pts - a.pts).slice(0, 5); });
+    return by;
+  }
+  const zoneHasAny = by => Object.values(by).some(l => l.length);
+  async function zoneBannerBuild(info){
+    const now = Date.now(), week = Z.week; if (!week || !Z.pidx) return null;
+    const live = info.anyLive || info.hidden > 0;
+    if (Z.delay > 0 && live) {                       // delayed and games still in play: only what you've been allowed to see
+      const tot = new Map();
+      info.vis.forEach(p => (p.credits || []).forEach(c => { const t = tot.get(c.id) || { id: c.id, name: c.name, pos: c.pos, tm: c.tm, pts: 0 }; t.pts += c.pts; tot.set(c.id, t); }));
+      const by = {}; ZONE_BANNER_POS.forEach(([p]) => { by[p] = []; });
+      tot.forEach(t => { if (by[t.pos] && t.pts > 0) by[t.pos].push(t); });
+      Object.keys(by).forEach(k => { by[k] = by[k].sort((a, b) => b.pts - a.pts).slice(0, 5); });
+      if (zoneHasAny(by)) return { by, label: `Week ${week}`, note: 'Based on revealed plays (passing, rushing and receiving, scored with this league’s settings).' };
+    } else {
+      const d = await zoneStatsFor(week), by = zoneTopFromStats(d);
+      if (zoneHasAny(by)) return { by, label: info.finalWeek ? `Week ${week} Final` : `Week ${week}`, note: info.finalWeek ? 'Final week stats (Sleeper, PPR).' : 'Week stats so far (Sleeper, PPR). Switch on a delay to build this from revealed plays only.' };
+    }
+    if (week > 1) { const d = await zoneStatsFor(week - 1), by = zoneTopFromStats(d); if (zoneHasAny(by)) return { by, label: `Week ${week - 1} Final`, note: 'Final week stats (Sleeper, PPR).' }; }
+    return null;
+  }
+
+  function zoneItem(p, mineRid){
+    const cs = p.credits.slice().sort((a, b) => b.pts - a.pts), top = cs[0], rest = cs.slice(1);
+    const rid = zoneOwner(top.id), t = rid != null && D.ids.includes(rid) ? team(rid) : null;
+    const ro = cs.map(c => zoneOwner(c.id)).some(r => r != null && r === mineRid);
+    const anim = Z.animated.has(p.key) ? '' : ' zin';
+    return `<article class="zp${t ? ' ros' : ''}${ro ? ' mine' : ''}${anim}" data-k="${esc(p.key)}">${shot(top.id, top.pos, top.tm, top.name)}
+      <div class="zpx"><div class="zph"><b class="zn">${esc(top.name)}</b><span class="zt">${esc(top.pos)} · ${esc(top.tm)}</span>${t ? `<button type="button" class="zown" data-z-own title="${esc(t.manager || '')}">${esc(t.name)}<span class="zmg"> · ${esc(t.manager || '')}</span></button>` : ''}</div>
+      <p class="zd">${esc(p.text)}</p><div class="zm">${p.q ? 'Q' + esc(p.q) : ''}${p.clock ? ' · ' + esc(p.clock) : ''}${rest.length ? ` · ${rest.map(c => `${esc(c.name)} ${c.pts >= 0 ? '+' : ''}${zFmt(c.pts)}`).join(', ')}` : ''}</div></div>
+      <span class="zpts" aria-label="${zFmt(top.pts)} PPR points">+${zFmt(top.pts)}<small>PPR</small></span></article>`;
+  }
+
+  let zoneLast = '';
+  function zoneUpdate(fromTick){
+    const root = document.getElementById('zone'); if (!root || opts.tab !== 'zone') return;
+    const now = Date.now(), info = zoneVisible(now);
+    info.anyLive = zoneAnyLive(now);
+    const gs = [...Z.games.values()], playing = gs.some(g => g.state === 'in');
+    info.finalWeek = gs.length > 0 && gs.every(g => g.state === 'post') && !info.anyLive && info.hidden === 0;
+    // status (never reveals scores; stays "Live" until the delay has run out on each game's last play)
+    const st = info.anyLive ? 'Live' : gs.some(g => g.state === 'pre') || !gs.length ? 'Waiting for kickoff' : 'Final';
+    const stEl = root.querySelector('#zst'); stEl.textContent = st; stEl.className = 'zst ' + (st === 'Live' ? 'live' : st === 'Final' ? 'fin' : 'wait');
+    root.querySelector('#zupd').textContent = Z.updated ? 'Updated ' + new Date(Z.updated).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', second: '2-digit' }) : '';
+    const err = root.querySelector('#zerr'); err.textContent = Z.err === 'warming' ? 'Dudley Zone is warming up… retrying shortly.' : Z.err || ''; err.hidden = !Z.err;
+    root.querySelector('#zbeh').textContent = Z.delay ? `Feed is ${Z.delay}s behind live` : 'Feed is live';
+    root.querySelector('#zdv').textContent = Z.delay + 's';
+    const hid = root.querySelector('#zhid'); hid.textContent = Z.delay && info.hidden ? `${info.hidden} play${info.hidden === 1 ? '' : 's'} hidden` : ''; hid.hidden = !(Z.delay && info.hidden);
+    // feed
+    const mineRid = pinned();
+    let list = info.vis.filter(p => p.big).sort((a, b) => b.ts - a.ts || b.seq - a.seq).slice(0, ZONE_FEED_MAX);
+    if (Z.pos !== 'ALL') list = list.filter(p => p.credits.some(c => (c.pts > BIG_PLAY_PTS || p.two) && c.pos === Z.pos));
+    if (Z.mine && mineRid != null) list = list.filter(p => p.credits.some(c => zoneOwner(c.id) === mineRid));
+    const sig = list.map(p => p.key).join('|') + '#' + Z.pos + Z.mine + mineRid + '#' + (D && D.rosters ? D.rosters.length : 0);
+    if (sig !== zoneLast) {
+      zoneLast = sig;
+      root.querySelector('#zfeed').innerHTML = list.length ? list.map(p => zoneItem(p, mineRid)).join('') : `<p class="note zempty">${st === 'Waiting for kickoff' && !info.vis.length ? 'No big plays yet. They show up here once games kick off.' : 'No big plays yet.'}</p>`;
+      list.forEach(p => Z.animated.add(p.key));
+    }
+    // banner (async; only repaint when its inputs change)
+    const bkey = [Z.delay, info.vis.length, info.hidden, st, Z.week, Z.stats.size, Z.pidx ? 1 : 0, Z.delay === 0 && info.anyLive ? Math.floor(now / 60000) : 0].join('|');
+    Z.banWant = bkey;
+    if (bkey !== Z.banKey && !Z.banBusy) {
+      Z.banKey = bkey; Z.banBusy = true;
+      zoneBannerBuild(info).then(b => { Z.ban = b; Z.banBusy = false; zonePaintBanner(); if (Z.banWant !== bkey) zoneUpdate(); }).catch(() => { Z.banBusy = false; });
+    }
+  }
+  function zonePaintBanner(){
+    const el = document.getElementById('zslides'); if (!el) return;
+    const b = Z.ban;
+    document.getElementById('zwk').textContent = b ? b.label : (Z.week ? `Week ${Z.week}` : '');
+    document.getElementById('znote').textContent = b ? b.note : '';
+    if (!b) { el.innerHTML = `<p class="note" style="margin:8px 0">${Z.loaded ? 'No scoring data yet this season.' : 'Dudley Zone is warming up…'}</p>`; document.getElementById('zdots').innerHTML = ''; return; }
+    el.innerHTML = ZONE_BANNER_POS.map(([pos, label], i) => `<div class="zsl${i === Z.banIdx ? ' on' : ''}" data-pos="${pos}" role="group" aria-label="${esc(label)}, top 5"><h3>${esc(label)}</h3><ol>${(b.by[pos] || []).map((r, k) => `<li><span class="zrk">${k + 1}</span>${shot(r.id, r.pos, r.tm, r.name)}<span class="zbn"><b>${esc(r.name)}</b><small>${esc(r.tm)}</small></span><span class="zbp">${zFmt(r.pts)}</span></li>`).join('') || '<li class="zq">No players yet</li>'}</ol></div>`).join('');
+    document.getElementById('zdots').innerHTML = ZONE_BANNER_POS.map(([pos], i) => `<button type="button" class="zdot${i === Z.banIdx ? ' on' : ''}" data-z-slide="${i}" aria-pressed="${i === Z.banIdx}" aria-label="Show ${pos}">${pos}</button>`).join('');
+  }
+  function zoneShowSlide(i){
+    Z.banIdx = (i + ZONE_BANNER_POS.length) % ZONE_BANNER_POS.length;
+    document.querySelectorAll('#zslides .zsl').forEach((s, k) => s.classList.toggle('on', k === Z.banIdx));
+    document.querySelectorAll('#zdots .zdot').forEach((d, k) => { d.classList.toggle('on', k === Z.banIdx); d.setAttribute('aria-pressed', String(k === Z.banIdx)); });
+  }
+  function zoneRotate(){ if (Z.hold || document.hidden || opts.tab !== 'zone') return; zoneShowSlide(Z.banIdx + 1); }
+  function zoneSetDelay(v){
+    v = Math.max(0, Math.min(300, Math.round(Number(v) || 0)));
+    Z.delay = v; store.set('dd:zoneDelay', String(v));
+    const inp = document.getElementById('zdin'); if (inp && Number(inp.value) !== v) inp.value = v;
+    document.querySelectorAll('#zone .zpre').forEach(b => b.setAttribute('aria-pressed', String(Number(b.dataset.zSet) === v)));
+    zoneUpdate();
+  }
+
+  function renderZone(){
+    setTimeout(zoneMount, 0);
+    const mine = pinned() != null;
+    const openDel = Z.delOpen != null ? Z.delOpen : !isPhoneUI();
+    return `<div class="zone" id="zone">
+      <section class="zban" id="zban" aria-label="Dudley Zone: Top 5 by Position">
+        <div class="zbh"><h3>Dudley Zone: Top 5 by Position</h3><span class="zwk" id="zwk"></span></div>
+        <div class="zslides" id="zslides" aria-live="off"><p class="note" style="margin:8px 0">Dudley Zone is warming up…</p></div>
+        <div class="zdots" id="zdots" role="group" aria-label="Choose a position"></div>
+        <p class="znote" id="znote"></p>
+      </section>
+      <details class="zdel" id="zdel" ${openDel ? 'open' : ''}><summary><span>Delay: <b id="zdv">${Z.delay}s</b></span><span class="zbeh" id="zbeh"></span></summary>
+        <div class="zdc"><label class="zlab" for="zdin">Delay: <input id="zdin" type="number" inputmode="numeric" min="0" max="300" step="1" value="${Z.delay}"> seconds</label>
+          <div class="zbtns"><button type="button" class="btn ghost" data-z-step="-10" aria-label="Decrease delay by 10 seconds">−10s</button><button type="button" class="btn ghost" data-z-step="10" aria-label="Increase delay by 10 seconds">+10s</button></div>
+          <div class="zpres" role="group" aria-label="Delay presets">${[0, 30, 60, 90, 120].map(v => `<button type="button" class="zpre" data-z-set="${v}" aria-pressed="${Z.delay === v}">${v}s</button>`).join('')}</div>
+          <p class="zhelp">Match this to how far behind your TV or stream is. Lowering the delay reveals held plays right away; raising it never hides plays you’ve already seen.</p></div></details>
+      <div class="zbar"><span class="zst wait" id="zst" role="status">Waiting for kickoff</span><span class="zupd" id="zupd"></span><span class="zhid" id="zhid" hidden></span></div>
+      <p class="zerr" id="zerr" role="status" hidden></p>
+      <div class="zfil" role="group" aria-label="Filter big plays">${['ALL', 'QB', 'RB', 'WR', 'TE'].map(p => `<button type="button" class="zf" data-z-pos="${p}" aria-pressed="${Z.pos === p}">${p === 'ALL' ? 'All' : p}</button>`).join('')}${mine ? `<button type="button" class="zf zmine" data-z-mine aria-pressed="${Z.mine}">Only my team</button>` : ''}</div>
+      <div class="zfeed" id="zfeed" aria-live="polite"></div>
+    </div>`;
+  }
+  function zoneMount(){
+    const root = document.getElementById('zone'); if (!root) return;
+    if (!Z.mine && pinned() == null) Z.mine = false;
+    zoneLast = ''; Z.banKey = '';
+    zonePaintBanner(); zoneUpdate(); zoneStart(); zoneSchedule();
+    const sl = document.getElementById('zban');
+    const hold = v => () => { Z.hold = v; };
+    sl.addEventListener('mouseenter', hold(true)); sl.addEventListener('mouseleave', hold(false));
+    sl.addEventListener('touchstart', hold(true), { passive: true }); sl.addEventListener('focusin', hold(true)); sl.addEventListener('focusout', hold(false));
+    sl.addEventListener('touchend', () => setTimeout(() => { Z.hold = false; }, 12000), { passive: true });
+    document.getElementById('zdel').addEventListener('toggle', e => { Z.delOpen = e.target.open; });
+    document.getElementById('zdin').addEventListener('input', e => { if (e.target.value !== '') zoneSetDelay(e.target.value); });
+    document.getElementById('zdin').addEventListener('change', e => zoneSetDelay(e.target.value));
+    zoneSetDelay(Z.delay);
+  }
+  $('#app').addEventListener('click', e => {
+    const z = e.target.closest('#zone'); if (!z) return;
+    const stp = e.target.closest('[data-z-step]'); if (stp) { zoneSetDelay(Z.delay + Number(stp.dataset.zStep)); return; }
+    const set = e.target.closest('[data-z-set]'); if (set) { zoneSetDelay(Number(set.dataset.zSet)); return; }
+    const sl = e.target.closest('[data-z-slide]'); if (sl) { zoneShowSlide(Number(sl.dataset.zSlide)); Z.hold = true; setTimeout(() => { Z.hold = false; }, 12000); return; }
+    const ps = e.target.closest('[data-z-pos]'); if (ps) { Z.pos = ps.dataset.zPos; z.querySelectorAll('[data-z-pos]').forEach(b => { if (b.classList.contains('zf')) b.setAttribute('aria-pressed', String(b.dataset.zPos === Z.pos)); }); zoneUpdate(); return; }
+    const mn = e.target.closest('[data-z-mine]'); if (mn) { Z.mine = !Z.mine; mn.setAttribute('aria-pressed', String(Z.mine)); zoneUpdate(); return; }
+    const ow = e.target.closest('[data-z-own]'); if (ow) { ow.classList.toggle('open'); return; }
+  });
 
   // ---------- League Bylaws ----------
   const BYLAWS = [
