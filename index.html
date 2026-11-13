@@ -1516,6 +1516,7 @@ html{transition:none}
 .tmodal .topt:hover,.tmodal .topt:focus-visible{background:rgba(var(--heat),.12);border-color:var(--accent)}
 .tmodal .topt[aria-pressed=true]{border-color:var(--accent);background:rgba(var(--heat),.12)}
 .tmodal .topt .mg{color:var(--muted);font-size:.78rem}
+.tmodal .btn{font-size:.9rem;font-weight:600}
 .tmodal .tf{display:flex;gap:8px;justify-content:flex-end;padding:10px 16px 14px;border-top:1px solid var(--line)}
 
 /* ---- Dudley Zone ---- */
@@ -1573,6 +1574,16 @@ html[data-page=zone] #cd,html[data-page=zone] #cd.open{display:none!important}
 @media (prefers-reduced-motion:reduce){.zsl.on,.zin,.zst.live::before{animation:none}}
 .is-phone .zban{padding:10px 12px}.is-phone .zslides{min-height:206px}.is-phone .zsl li{grid-template-columns:18px 30px minmax(0,1fr) auto;gap:6px;padding:3px 6px}.is-phone .zsl li .hs{width:30px;height:30px}
 .is-phone .zp{grid-template-columns:36px minmax(0,1fr) auto;gap:8px;padding:8px 10px}.is-phone .zp .hs{width:36px;height:36px}.is-phone .zpts{font-size:1rem}
+
+/* ---- Sign-in ---- */
+.is-phone #acctBtn{display:none}
+#acctBtn[hidden]{display:none}
+.aform{padding:6px 16px 10px;gap:6px}
+.alab{font-size:.78rem;font-weight:600;color:var(--muted);margin-top:6px}
+.afield{box-sizing:border-box;width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;min-height:44px}
+.afield:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.amsg{min-height:1.2em;margin:6px 0 0;font-size:.85rem;color:var(--muted)}.amsg.bad{color:var(--pylon-ink)}
+.alink{all:unset;cursor:pointer;color:var(--teal-t);font-size:.85rem;text-decoration:underline;margin-top:4px;min-height:32px;display:inline-flex;align-items:center}.alink:focus-visible{outline:2px solid var(--accent)}
 </style>
 </head>
 <body>
@@ -1591,6 +1602,7 @@ html[data-page=zone] #cd,html[data-page=zone] #cd.open{display:none!important}
         <svg class="i-sun" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.3M12 19.2v2.3M2.5 12h2.3M19.2 12h2.3M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg>
         <svg class="i-moon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.3 14.6A8.4 8.4 0 1 1 9.4 3.7a6.7 6.7 0 0 0 10.9 10.9z"/></svg>
       </button>
+      <button class="iconbtn wide" id="acctBtn" type="button" hidden aria-label="Sign in" title="Sign in"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg><span class="tb-t">Sign in</span></button>
       <button class="iconbtn wide" id="teamBtn" type="button" aria-label="Pick your team" title="Pick your team"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.8"/><path d="M4.5 20.5c.8-4 3.8-6 7.5-6s6.7 2 7.5 6"/></svg><span class="tb-t">Pick team</span></button>
       <button class="btn" id="refresh" type="button">Refresh</button>
     </div>
@@ -1641,6 +1653,8 @@ html[data-page=zone] #cd,html[data-page=zone] #cd.open{display:none!important}
   const SHOW_ALL_SCORING_PLAYS = true;
   // Banner slides, in order. Add ['K', 'Kickers'] or ['DEF', 'Defenses'] here once play parsing / stats cover them.
   const ZONE_BANNER_POS = [['QB', 'Quarterbacks'], ['RB', 'Running Backs'], ['WR', 'Wide Receivers'], ['TE', 'Tight Ends']];
+  // Website sign-in (optional). Paste your Supabase project URL and anon (public) key to turn it on; leave empty to hide it. See supabase-setup.md.
+  const AUTH_URL = '', AUTH_KEY = '';
   const DEFAULT_LEAGUE = '1389350335302078464';
   const API = 'https://api.sleeper.app/v1';
   // Trade Finder values come from FantasyCalc. If browsers block the direct call, set VALUES_PROXY to your Worker URL.
@@ -1690,6 +1704,7 @@ html[data-page=zone] #cd,html[data-page=zone] #cd.open{display:none!important}
     store.set(askKey(), '1');
     if (pinId && D) { opts.tfTeam = pinId; opts.tfWith = 0; saveOpts(); }
     syncTeamBtn(); if (D) render();
+    if (window.__ddPush) window.__ddPush();
   }
   function closeTeamPicker(markAsked){
     const m = document.getElementById('teamModal'); if (m) m.remove();
@@ -1881,7 +1896,7 @@ html[data-page=zone] #cd,html[data-page=zone] #cd.open{display:none!important}
         playoff: { teams: pTeams, rounds: pRounds, type: pType, start: pws, lastWeek }, defWeek, weekData, weekLoading: new Set(), bracket: null, bracketLoading: false, players, namesLoading: false };
       if (!seasons.includes(opts.season)) opts.season = D.draftSeason;
       runSim();
-      render(); syncTeamBtn(); maybeAskTeam();
+      render(); syncTeamBtn(); maybeAskTeam(); if (window.__ddAuthReady) { const f = window.__ddAuthReady; window.__ddAuthReady = null; f(); }
       D.live = []; D.liveSeen = null; pollLive();
       $('#updated').textContent = `Updated ${new Date().toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}. Data from Sleeper.`;
     } catch (err) {
@@ -2213,7 +2228,7 @@ html[data-page=zone] #cd,html[data-page=zone] #cd.open{display:none!important}
   }
   function openSheet(){
     const lab = k => (TABS_ALL.find(t => t[0] === k) || [, k])[1];
-    document.getElementById('msheetbody').innerHTML = MORE_GROUPS.map(([g, keys]) => `<h3>${g}</h3><div class="msheet-grid">${keys.map(k => `<button type="button" data-go="${k}" aria-current="${opts.tab === k}">${esc(lab(k))}</button>`).join('')}</div>`).join('');
+    document.getElementById('msheetbody').innerHTML = MORE_GROUPS.map(([g, keys]) => `<h3>${g}</h3><div class="msheet-grid">${keys.map(k => `<button type="button" data-go="${k}" aria-current="${opts.tab === k}">${esc(lab(k))}</button>`).join('')}</div>`).join('') + (window.__ddHasAuth ? `<h3>Account</h3><div class="msheet-grid"><button type="button" data-acct>${document.getElementById('acctBtn').querySelector('.tb-t').textContent}</button></div>` : '');
     const sh = document.getElementById('msheet'); sh.hidden = false; requestAnimationFrame(() => sh.classList.add('open'));
     document.body.classList.add('sk-lock');
   }
@@ -7010,11 +7025,121 @@ html[data-page=zone] #cd,html[data-page=zone] #cd.open{display:none!important}
   // ---------- Light / dark theme toggle ----------
   (function(){
     const root = document.documentElement, btn = $('#themeBtn'), meta = document.querySelector('meta[name="theme-color"]');
-    const sync = () => { const light = root.getAttribute('data-theme') === 'light'; btn.setAttribute('aria-label', light ? 'Switch to dark theme' : 'Switch to light theme'); btn.title = light ? 'Switch to dark theme' : 'Switch to light theme'; if (meta) meta.setAttribute('content', light ? '#F1F4F9' : '#0A0A0A'); };
+    const sync = () => { const light = root.getAttribute('data-theme') === 'light'; btn.setAttribute('aria-label', light ? 'Switch to dark theme' : 'Switch to light theme'); btn.title = light ? 'Switch to dark theme' : 'Switch to light theme'; if (meta) meta.setAttribute('content', light ? '#FAF6EE' : '#0A0A0A'); };
+    window.__ddSetTheme = t => { root.setAttribute('data-theme', t); try { localStorage.setItem('dd:theme', t); } catch (e) {} sync(); };
     const saved = () => { try { const t = localStorage.getItem('dd:theme'); return t === 'light' || t === 'dark'; } catch (e) { return false; } };
-    btn.addEventListener('click', () => { const next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light'; root.setAttribute('data-theme', next); try { localStorage.setItem('dd:theme', next); } catch (e) {} sync(); });
+    btn.addEventListener('click', () => { const next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light'; root.setAttribute('data-theme', next); try { localStorage.setItem('dd:theme', next); } catch (e) {} sync(); if (window.__ddPush) window.__ddPush(); });
     try { const mq = window.matchMedia('(prefers-color-scheme: light)'); const onc = e => { if (!saved()) { root.setAttribute('data-theme', e.matches ? 'light' : 'dark'); sync(); } }; mq.addEventListener ? mq.addEventListener('change', onc) : mq.addListener && mq.addListener(onc); } catch (e) {}
     sync();
+  })();
+  // ---------- Website sign-in (Supabase Auth + one prefs table; hidden until AUTH_URL / AUTH_KEY are set) ----------
+  (function(){
+    const btn = $('#acctBtn');
+    if (!AUTH_URL || !AUTH_KEY) return;
+    btn.hidden = false;
+    const SK = 'dd:auth', base = AUTH_URL.replace(/\/$/, '');
+    let S = null;
+    try { S = JSON.parse(localStorage.getItem(SK) || 'null'); } catch (e) {}
+    const save = s => { S = s; try { s ? localStorage.setItem(SK, JSON.stringify(s)) : localStorage.removeItem(SK); } catch (e) {} paint(); };
+    async function api(path, o){
+      o = o || {};
+      const r = await fetch(base + path, { method: o.method || 'GET', headers: Object.assign({ apikey: AUTH_KEY, 'content-type': 'application/json' }, o.token ? { authorization: 'Bearer ' + o.token } : {}, o.headers || {}), body: o.body ? JSON.stringify(o.body) : undefined });
+      let j = null; try { j = await r.json(); } catch (e) {}
+      if (!r.ok) throw Object.assign(new Error((j && (j.msg || j.error_description || j.message || j.error)) || ('Request failed (' + r.status + ')')), { status: r.status });
+      return j;
+    }
+    const adopt = j => ({ access_token: j.access_token, refresh_token: j.refresh_token, expires_at: j.expires_at ? j.expires_at * 1000 : Date.now() + (j.expires_in || 3600) * 1000, user: { id: j.user.id, email: j.user.email } });
+    async function token(){
+      if (!S) return null;
+      if (S.expires_at - Date.now() > 60000) return S.access_token;
+      try { save(adopt(await api('/auth/v1/token?grant_type=refresh_token', { method: 'POST', body: { refresh_token: S.refresh_token } }))); return S.access_token; }
+      catch (e) { if (e.status && e.status < 500) save(null); return null; }
+    }
+    const curTheme = () => document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+    async function pull(){
+      const t = await token(); if (!t) return;
+      const rows = await api('/rest/v1/user_prefs?select=league_id,team,theme&limit=1', { token: t });
+      return rows && rows[0] || null;
+    }
+    async function push(){
+      const t = await token(); if (!t || !S) return;
+      await api('/rest/v1/user_prefs?on_conflict=user_id', { method: 'POST', token: t, headers: { Prefer: 'resolution=merge-duplicates,return=minimal' }, body: { user_id: S.user.id, league_id: leagueId, team: pinId || null, theme: curTheme(), updated_at: new Date().toISOString() } });
+    }
+    let pushT = null;
+    window.__ddPush = () => { if (!S) return; clearTimeout(pushT); pushT = setTimeout(() => { push().catch(() => {}); }, 800); };
+    // On sign-in: saved settings win if this account has any; otherwise this device's settings become the account's.
+    async function syncDown(){
+      try {
+        const row = await pull();
+        if (!row) { await push(); return; }
+        if (row.theme && row.theme !== curTheme() && window.__ddSetTheme) window.__ddSetTheme(row.theme);
+        if (row.league_id === leagueId && (row.team || null) !== (pinId || null)) { pinId = row.team || null; store.set(pinKey(), pinId ? String(pinId) : ''); store.set(askKey(), '1'); if (D) { if (pinId) { opts.tfTeam = pinId; opts.tfWith = 0; saveOpts(); } syncTeamBtn(); render(); } }
+      } catch (e) { console.debug('Dudley sign-in: sync failed', e); }
+    }
+    const runSync = () => { if (D) syncDown(); else window.__ddAuthReady = syncDown; };
+    function paint(){
+      const label = S ? 'Account' : 'Sign in';
+      btn.setAttribute('aria-label', S ? 'Account (' + S.user.email + ')' : 'Sign in'); btn.title = btn.getAttribute('aria-label');
+      btn.classList.toggle('on', !!S); btn.querySelector('.tb-t').textContent = label;
+      document.querySelectorAll('[data-acct]').forEach(b => { b.textContent = label; });
+    }
+    function closeAcct(){ const m = document.getElementById('acctModal'); if (m) m.remove(); document.removeEventListener('keydown', acctKey, true); btn.focus(); }
+    function acctKey(e){ if (e.key === 'Escape') { e.preventDefault(); closeAcct(); } }
+    function openAcct(mode){
+      if (document.getElementById('acctModal')) return;
+      mode = mode || (S ? 'account' : 'in');
+      const m = document.createElement('div'); m.className = 'tmodal'; m.id = 'acctModal';
+      const msg = '<p class="amsg" id="amsg" role="status" aria-live="polite"></p>';
+      const fields = (pw, ac) => `<label class="alab" for="aem">Email</label><input class="afield" id="aem" type="email" autocomplete="email" required>${pw ? `<label class="alab" for="apw">${pw}</label><input class="afield" id="apw" type="password" autocomplete="${ac}" minlength="8" required>` : ''}`;
+      let h;
+      if (mode === 'account') h = `<div class="th"><h2 id="amH">Your account</h2><p>Signed in as <b>${esc(S.user.email)}</b>. Your pinned team and theme sync to every device you sign in on.</p></div><div class="tf"><button type="button" class="btn ghost" data-a-out>Sign out</button><button type="button" class="btn ghost" data-a-close>Close</button></div>`;
+      else if (mode === 'reset') h = `<form id="aform" data-mode="reset"><div class="th"><h2 id="amH">Choose a new password</h2></div><div class="tl2 aform">${fields('New password (8+ characters)', 'new-password').replace(/<label class="alab" for="aem">Email<\/label><input[^>]*id="aem"[^>]*>/, '')}${msg}</div><div class="tf"><button class="btn" type="submit">Save password</button></div></form>`;
+      else if (mode === 'forgot') h = `<form id="aform" data-mode="forgot"><div class="th"><h2 id="amH">Reset your password</h2><p>We’ll email you a link to choose a new one.</p></div><div class="tl2 aform">${fields('', '')}${msg}</div><div class="tf"><button type="button" class="btn ghost" data-a-mode="in">Back</button><button class="btn" type="submit">Send link</button></div></form>`;
+      else h = `<form id="aform" data-mode="${mode}"><div class="th"><h2 id="amH">${mode === 'up' ? 'Create your account' : 'Sign in'}</h2><p>${mode === 'up' ? 'Use any email and a password of 8 or more characters.' : 'Sync your pinned team and theme across devices.'}</p></div><div class="tl2 aform">${fields('Password', mode === 'up' ? 'new-password' : 'current-password')}${msg}${mode === 'in' ? '<button type="button" class="alink" data-a-mode="forgot">Forgot password?</button>' : ''}</div><div class="tf"><button type="button" class="btn ghost" data-a-mode="${mode === 'up' ? 'in' : 'up'}">${mode === 'up' ? 'I have an account' : 'Create account'}</button><button class="btn" type="submit">${mode === 'up' ? 'Create account' : 'Sign in'}</button></div></form>`;
+      m.innerHTML = `<div class="box" role="dialog" aria-modal="true" aria-labelledby="amH">${h}</div>`;
+      document.body.appendChild(m); document.addEventListener('keydown', acctKey, true);
+      const say = (t, bad) => { const el = m.querySelector('#amsg'); if (el) { el.textContent = t; el.className = 'amsg' + (bad ? ' bad' : ''); } };
+      m.addEventListener('click', e => {
+        if (e.target === m) return closeAcct();
+        const md = e.target.closest('[data-a-mode]'); if (md) { closeAcct(); openAcct(md.dataset.aMode); return; }
+        if (e.target.closest('[data-a-close]')) return closeAcct();
+        if (e.target.closest('[data-a-out]')) { const t = S && S.access_token; save(null); if (t) api('/auth/v1/logout', { method: 'POST', token: t }).catch(() => {}); closeAcct(); }
+      });
+      const f = m.querySelector('#aform');
+      if (f) f.addEventListener('submit', async e => {
+        e.preventDefault();
+        const em = (m.querySelector('#aem') || {}).value, pw = (m.querySelector('#apw') || {}).value, sub = f.querySelector('[type=submit]');
+        sub.disabled = true; say('One moment…');
+        try {
+          if (f.dataset.mode === 'forgot') { await api('/auth/v1/recover', { method: 'POST', body: { email: em } }); say('If that email has an account, a reset link is on its way.'); }
+          else if (f.dataset.mode === 'reset') { await api('/auth/v1/user', { method: 'PUT', token: S.access_token, body: { password: pw } }); closeAcct(); }
+          else if (f.dataset.mode === 'up') {
+            const j = await api('/auth/v1/signup', { method: 'POST', body: { email: em, password: pw } });
+            if (j && j.access_token) { save(adopt(j)); closeAcct(); runSync(); } else say('Check your email to confirm your account, then sign in.');
+          } else { save(adopt(await api('/auth/v1/token?grant_type=password', { method: 'POST', body: { email: em, password: pw } }))); closeAcct(); runSync(); }
+        } catch (err) { say(/invalid login/i.test(err.message) ? 'That email and password don’t match.' : err.message, true); }
+        sub.disabled = false;
+      });
+      const first = m.querySelector('input') || m.querySelector('button'); if (first) first.focus();
+    }
+    btn.addEventListener('click', () => openAcct());
+    document.addEventListener('click', e => { if (e.target.closest && e.target.closest('[data-acct]')) { closeSheet(); openAcct(); } });
+    // Links from confirmation / reset emails arrive with the session in the URL hash.
+    (async function(){
+      const h = new URLSearchParams((location.hash || '').replace(/^#/, ''));
+      if (h.get('access_token') && h.get('refresh_token')) {
+        try {
+          const u = await api('/auth/v1/user', { token: h.get('access_token') });
+          save(adopt({ access_token: h.get('access_token'), refresh_token: h.get('refresh_token'), expires_in: Number(h.get('expires_in')) || 3600, user: u }));
+          history.replaceState(null, '', location.pathname + location.search);
+          if (h.get('type') === 'recovery') openAcct('reset'); else runSync();
+          return;
+        } catch (e) { history.replaceState(null, '', location.pathname + location.search); }
+      }
+      paint(); if (S) { const t = await token(); if (t) runSync(); }
+    })();
+    window.__ddAuthReady = window.__ddAuthReady || null;
+    window.__ddHasAuth = true;
   })();
   $('#leagueForm').addEventListener('submit', e => {
     e.preventDefault();
