@@ -695,7 +695,7 @@ footer input{width:min(100%,260px)}
 .lab-empty{color:var(--muted);font-size:.85rem;margin:auto 6px}
 .lab-card{border:1px solid var(--line);border-radius:10px;padding:7px 9px;background:var(--surface);cursor:grab;touch-action:manipulation;min-width:0}
 .lab-card:focus-visible,.lab-card.sel{outline:2px solid var(--accent);outline-offset:1px}
-.lab-card.sel{background:var(--field)}
+.lab-card.sel{background:rgba(var(--heat),.16);border-color:var(--accent)}
 .lc-top{display:flex;gap:6px;align-items:baseline;flex-wrap:wrap}
 .lc-n{font-size:.95rem;color:var(--ink)}
 .lc-pos,.lc-tm{font-size:.72rem;color:var(--muted)}
@@ -728,6 +728,26 @@ footer input{width:min(100%,260px)}
 .lab-fx li.up{color:var(--teal-t)}.lab-fx li.dn{color:var(--red-t)}
 @media (max-width:760px){.lab-cols{grid-template-columns:minmax(0,1fr)}.lab-ctl{grid-template-columns:minmax(0,1fr)}}
 
+/* Simulator: phone tuning */
+.lab-cmp{display:flex;gap:8px}
+@media (max-width:620px){
+  .lab-ctl{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}
+  .lab-ctl .field:first-child{grid-column:1/-1}
+  .lab-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .lab-btns .btn{min-height:42px;font-size:.85rem;padding:0 10px;white-space:normal;line-height:1.15}
+  .lab-chk{min-height:36px}.lab-chk input{width:20px;height:20px;flex:0 0 auto}
+  .lab-fresh{font-size:.78rem}
+  .lab-srow{grid-template-columns:38px minmax(0,1fr);gap:6px}
+  .lab-card{padding:7px 8px}
+  .lc-mode{min-height:30px;padding:3px 10px}
+  .lab-move{flex-direction:column;align-items:stretch;gap:8px}
+  .lab-move .field,.lab-move select{width:100%;max-width:100%;box-sizing:border-box}
+  .lab-run{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:end}
+  .lab-run .lab-go{min-height:44px}
+  .lab-run progress{grid-column:1/-1;width:100%}
+  .lab-wp{margin-left:0;flex-basis:100%}
+  .sim-adj input[type=range]{height:32px}
+}
 /* ---------- Phone layout (html.is-phone, set by device detection in <head>) ---------- */
 .mnav,.msheet,.mtabname{display:none}
 .is-phone body{padding-bottom:calc(66px + env(safe-area-inset-bottom,0px))}
@@ -4401,7 +4421,7 @@ html[data-page=zone] #cd,html[data-page=zone] #cd.open{display:none!important}
       const m = ev.data;
       if (m.type === 'progress') { Lab.prog = m.done / m.runs; const el = document.getElementById('labProg'); if (el) { el.value = Lab.prog; const t = document.getElementById('labProgT'); if (t) t.textContent = Math.round(Lab.prog * 100) + '%'; } }
       else { w.terminate(); Lab.worker = null; Lab.running = false;
-        if (m.type === 'done') { Lab.res = m.res; Lab.stale = false; Lab.payloadWeeks = payload.weeks.map(x => x.week); Lab.userIdx = payload.userIdx; } else { Lab.msg = 'The simulation hit an error: ' + m.msg; Lab.msgBad = true; }
+        if (m.type === 'done') { Lab.res = m.res; Lab.stale = false; Lab.scrollRes = true; Lab.payloadWeeks = payload.weeks.map(x => x.week); Lab.userIdx = payload.userIdx; } else { Lab.msg = 'The simulation hit an error: ' + m.msg; Lab.msgBad = true; }
         if (labOn()) render(); }
     };
     w.onerror = ev => { w.terminate(); Lab.worker = null; Lab.running = false; Lab.msg = 'The simulation hit an error.'; Lab.msgBad = true; if (labOn()) render(); };
@@ -4431,7 +4451,7 @@ html[data-page=zone] #cd,html[data-page=zone] #cd.open{display:none!important}
     const d = (a, b) => { const v = Math.round((a - b) * 100); return v === 0 ? 'same' : (v > 0 ? '+' : '−') + Math.abs(v) + ' pts'; };
     const dec = (a, b) => { const v = Math.round((a - b) * 10) / 10; return v === 0 ? 'same' : (v > 0 ? '+' : '−') + Math.abs(v).toFixed(1); };
     const t = team(me);
-    let h = `<h3 class="sh3">Simulation results</h3>${Lab.stale ? '<p class="note lab-stale">You changed a lineup after this run. Run the simulation again to update.</p>' : ''}`;
+    let h = `<h3 class="sh3" id="labResTop">Simulation results</h3>${Lab.stale ? '<p class="note lab-stale">You changed a lineup after this run. Run the simulation again to update.</p>' : ''}`;
     const gain = A.make[U] - B.make[U];
     h += `<p class="pt-line">${Math.abs(gain) < 0.005 ? 'Your lineups are matching the auto-optimized ones.' : gain < 0 ? `Switching to auto-optimized lineups every week would add about <b>${Math.round(-gain * 100)} points</b> of playoff odds.` : `Your lineups beat the auto-optimized ones by about <b>${Math.round(gain * 100)} points</b> of playoff odds, mostly by using the best-case and worst-case toggles.`}</p>`;
     h += `<div class="tablewrap"><table class="lab-tbl"><thead><tr><th class="tl">${esc(t.name)}</th><th>Your lineups</th><th>Auto-optimized</th><th>Difference</th></tr></thead><tbody>
@@ -4480,6 +4500,9 @@ html[data-page=zone] #cd,html[data-page=zone] #cd.open{display:none!important}
       <div class="lab-btns"><button type="button" class="btn" data-lab="opt">Auto-optimize lineup</button><button type="button" class="btn" data-lab="reset">Reset to my Sleeper lineup</button><button type="button" class="btn" data-lab="fwd">Copy to later weeks</button><button type="button" class="btn" data-lab="save">Save scenario</button>${Lab.saved ? '<button type="button" class="btn" data-lab="clear">Clear saved</button>' : ''}</div>
       <label class="lab-chk"><input type="checkbox" data-lab="autosub" ${Lab.autoSub ? 'checked' : ''}> Auto-sub the best bench player when a starter doesn’t play</label>
       <p class="lab-msg${Lab.msgBad ? ' bad' : ''}" role="status" aria-live="polite">${esc(Lab.msg)}</p>
+      ${`<div class="lab-run"><label class="field">Simulations<select data-lab="runs">${[2000, 5000, 10000].map(n => `<option value="${n}" ${n === Lab.runs ? 'selected' : ''}>${n.toLocaleString()}</option>`).join('')}</select></label>
+      <button type="button" class="btn lab-go" data-lab="run" ${Lab.running ? 'disabled' : ''}>${Lab.running ? 'Running…' : 'Run simulation'}</button>
+      ${Lab.running ? `<progress id="labProg" max="1" value="${Lab.prog}"></progress><span id="labProgT" class="lc-dim">${Math.round(Lab.prog * 100)}%</span>` : ''}</div>`}
       <div class="lab-cols"><div><h3 class="sh3">Starters · ${esc(team(rid).name)}, week ${week}</h3><div class="lab-slots">${
         env.slots.map((s, i) => `<div class="lab-srow"><span class="lab-sl">${esc(labSlotName(s))}</span><div class="lab-drop lab-slot" data-k="slot" data-i="${i}">${L.s[i] ? labCard(L.s[i], env, week, Lab.sel === L.s[i]) : '<span class="lab-empty">Empty</span>'}</div></div>`).join('')}</div></div>
       <div><h3 class="sh3">Bench</h3><div class="lab-drop lab-zone" data-k="bn">${[...env.roster].filter(p => !L.s.includes(p) && !L.ir.includes(p) && !L.tx.includes(p)).sort((a, b) => labVal(week)(b) - labVal(week)(a)).map(p => labCard(p, env, week, Lab.sel === p)).join('')}</div>
@@ -4490,13 +4513,11 @@ html[data-page=zone] #cd,html[data-page=zone] #cd.open{display:none!important}
       const locs = [...env.slots.map((s, i) => ({ k: 'slot', i, t: `${labSlotName(s)}${L.s[i] ? ' (' + ((env.info[L.s[i]] || {}).n || '') + ')' : ' (empty)'}` })), { k: 'bn', t: 'Bench' }, ...(env.irSlots !== 0 ? [{ k: 'ir', t: 'IR' }] : []), ...(env.txSlots !== 0 ? [{ k: 'tx', t: 'Taxi' }] : [])];
       h += `<div class="lab-move"><label class="field">Move <b>${esc(nm)}</b> to<select data-lab="move"><option value="">Choose a slot…</option>${locs.map(l => { const why = labWhyNot(env, Lab.sel, l); return `<option value="${l.k}:${l.i != null ? l.i : ''}" ${why ? 'disabled' : ''}>${esc(l.t)}${why ? ' — not allowed' : ''}</option>`; }).join('')}</select></label><button type="button" class="btn" data-lab="desel">Done</button></div>`;
     }
-    h += `<div class="lab-run"><label class="field">Simulations<select data-lab="runs">${[2000, 5000, 10000].map(n => `<option value="${n}" ${n === Lab.runs ? 'selected' : ''}>${n.toLocaleString()}</option>`).join('')}</select></label>
-      <button type="button" class="btn lab-go" data-lab="run" ${Lab.running ? 'disabled' : ''}>${Lab.running ? 'Running…' : 'Run simulation'}</button>
-      ${Lab.running ? `<progress id="labProg" max="1" value="${Lab.prog}"></progress><span id="labProgT" class="lc-dim">${Math.round(Lab.prog * 100)}%</span>` : ''}</div>`;
     h += `</div>` + labResults();
     return h;
   }
   function labAfterRender(){
+    if (Lab.scrollRes && labOn()) { Lab.scrollRes = false; const t = document.getElementById('labResTop'); if (t) setTimeout(() => t.scrollIntoView({ behavior: 'smooth', block: 'start' }), 60); }
     Lab.sortables.forEach(s => { try { s.destroy(); } catch (e) {} }); Lab.sortables = [];
     if (opts.tab !== 'sim' || !window.Sortable) return;
     document.querySelectorAll('.lab-drop').forEach(el => {
