@@ -8325,7 +8325,11 @@ html[data-page=zone] #cd,html[data-page=zone] #cd.open{display:none!important}
       const tiles = pairs.map(([a, b]) => {
         const ta = team(a.roster_id), tb = team(b.roster_id), pa = a.points || 0, pb = b.points || 0;
         const wp = ctx && !allDone && (ctx.hasProj || anyPts) ? Math.round(winProb(a, b, ctx, false).pA * 100) : null;
-        const mg = Math.abs(pa - pb), st = !anyPts ? '' : allDone ? (mg >= 30 ? ' blow' : '') : (mg < 8 ? ' close' : mg >= 40 ? ' blow' : '');
+        const mg = Math.abs(pa - pb);
+        // Nail-biter means the game is actually in the balance: some points on the board and win probability near a toss-up (35-65%).
+        // Without a win probability, fall back to a small margin. A 99% favorite or a 0-0 game is not a nail-biter.
+        const tight = (pa + pb) > 0 && (wp != null ? wp >= 35 && wp <= 65 : mg < 8);
+        const st = !anyPts ? '' : allDone ? (mg >= 30 ? ' blow' : '') : (tight ? ' close' : mg >= 40 ? ' blow' : '');
         const prev = (BN.prevPts = BN.prevPts || {}), ka = a.roster_id + ':' + a.matchup_id, kb = b.roster_id + ':' + a.matchup_id;
         const bumpA = prev[ka] != null && prev[ka] !== pa, bumpB = prev[kb] != null && prev[kb] !== pb;
         prev[ka] = pa; prev[kb] = pb;
