@@ -1,0 +1,42 @@
+name: Simulator data
+
+# Refreshes data/lab-context.json (injuries, schedule, weather, lines, matchup strength, projections)
+# for the Simulator tab. Runs every 3 hours and has a "Run workflow" button.
+on:
+  schedule:
+    - cron: '23 */3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: lab-context
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - name: Build context
+        run: node scripts/lab-context.mjs
+        env:
+          LEAGUE_ID: '1389350335302078464'
+          # PROJECTION_PROVIDER: rolling   # see LAB.md to swap the projection source
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/lab-context.json
+          if git diff --cached --quiet; then
+            echo "No changes."
+          else
+            git commit -m "Update simulator data $(date -u +%Y-%m-%dT%H:%MZ)"
+            git pull --rebase -q
+            git push
+          fi
