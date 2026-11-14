@@ -1654,6 +1654,31 @@ html[data-page=zone] #cd,html[data-page=zone] #cd.open{display:none!important}
 @media (max-width:760px){.bm-axis,.bm-row,.bm-un{grid-template-columns:minmax(0,1fr)}.bm-axis>span:first-child,.bm-axis>span:last-child{display:none}}
 .is-phone .bm-axis,.is-phone .bm-row,.is-phone .bm-un{grid-template-columns:minmax(0,1fr)}.is-phone .bm-axis>span:first-child,.is-phone .bm-axis>span:last-child{display:none}
 .is-phone .bm-row{padding:8px 10px;gap:8px}.is-phone .bm-stats dd{font-size:.88rem}
+/* Game Simulator */
+.sim-ctl{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:start;margin:12px 0}
+.sim-side{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px;display:grid;gap:12px;min-width:0}
+.sim-side.a{border-top:3px solid var(--accent)}.sim-side.b{border-top:3px solid #5AA6FF}
+.sim-side select{width:100%;min-width:0}
+.sim-vs{align-self:center;color:var(--muted);font:600 1.1rem "Barlow Condensed","Arial Narrow",sans-serif;text-transform:uppercase}
+.sim-adj{display:grid;gap:6px}.sim-adj b{color:var(--ink);font-variant-numeric:tabular-nums;margin-left:4px}
+.sim-adj input[type=range]{width:100%;accent-color:var(--accent)}
+.sim-side.b .sim-adj input[type=range]{accent-color:#5AA6FF}
+.sim-basis{display:flex;flex-direction:row;flex-wrap:wrap;align-items:flex-end;gap:10px;margin:4px 0 14px}.sim-basis .flabel{width:100%;margin:0}
+.sim-basis .btn{min-height:38px;font-size:.82rem;padding:0 13px}
+.sim-chips{margin:12px 0 0}.sim-chiprow{display:flex;flex-wrap:wrap;gap:8px}
+.sim-chiprow .btn{min-height:38px;font-size:.82rem}.sim-chiprow .btn em{color:var(--muted);font-style:normal;margin:0 3px}
+.sim-chiprow .btn[aria-pressed="true"]{border-color:var(--accent);color:var(--accent)}
+.sim-wpb{cursor:default}.sim-wpb:hover .wpb-hint{color:var(--accent);text-decoration:none}
+.sim-wpb .wpb-bar{height:12px}
+.sim-take{margin:10px 0 4px;color:var(--t2)}
+.sim-svg{display:block;width:100%;height:auto;margin-top:8px;background:var(--surface);border:1px solid var(--line);border-radius:8px}
+.sim-a{fill:rgba(var(--heat),.38);stroke:var(--accent);stroke-width:2}
+.sim-b{fill:rgba(90,166,255,.28);stroke:#5AA6FF;stroke-width:2}
+.sim-grid{stroke:var(--line);stroke-width:1}.sim-axis{stroke:var(--muted);stroke-width:1}
+.sim-tick{fill:var(--muted);font-size:11px}
+.sim-med{stroke-width:2;stroke-dasharray:4 3}.sim-med.a{stroke:var(--accent)}.sim-med.b{stroke:#5AA6FF}
+.sim-sw{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px}.sim-sw.a{background:var(--accent)}.sim-sw.b{background:#5AA6FF}
+@media (max-width:620px){.sim-ctl{grid-template-columns:1fr}.sim-vs{justify-self:center}}
 </style>
 </head>
 <body>
@@ -2204,7 +2229,7 @@ html[data-page=zone] #cd,html[data-page=zone] #cd.open{display:none!important}
         ? `${season} season hasn’t started. ${D.ids.length} teams.`
         : `${season} season, ${playedWeeks} of ${totalWeeks} weeks played. ${D.ids.length} teams.`;
 
-    const tabs = [['stand', 'Standings'], ['match', 'Matchups'], ['wx', 'Game Weather'], ['odds', 'Playoff Odds'], ['bracket', 'Playoff Bracket'], ['order', 'Tankathon'], ['proj', 'Tankathon Projections'], ['drc', 'Draft Report Cards'], ['zone', 'Dudley Zone'], ['news', 'News Feed'], ['pay', 'Payouts'], ['rec', 'League Records'], ['laws', 'League Bylaws'], ['mgr', 'Manager Profiles'], ['cards', 'Trading Cards'], ['rivals', 'Rivalries'], ['build', 'Team Construction'], ['inj', 'Injury/Bye Week Dashboard'], ['cmap', 'Contender Map'], ['boom', 'Boom/Bust Meter'], ['own', 'Pick Ownership'], ['trades', 'Trade History'], ['tx', 'Transaction Wire'], ['tn', 'Trade Network'], ['journey', 'Journeymen'], ['finder', 'Trade Finder'], ['calc', 'Trade Calculator']];
+    const tabs = [['stand', 'Standings'], ['match', 'Matchups'], ['wx', 'Game Weather'], ['sim', 'Simulator'], ['odds', 'Playoff Odds'], ['bracket', 'Playoff Bracket'], ['order', 'Tankathon'], ['proj', 'Tankathon Projections'], ['drc', 'Draft Report Cards'], ['zone', 'Dudley Zone'], ['news', 'News Feed'], ['pay', 'Payouts'], ['rec', 'League Records'], ['laws', 'League Bylaws'], ['mgr', 'Manager Profiles'], ['cards', 'Trading Cards'], ['rivals', 'Rivalries'], ['build', 'Team Construction'], ['inj', 'Injury/Bye Week Dashboard'], ['cmap', 'Contender Map'], ['boom', 'Boom/Bust Meter'], ['own', 'Pick Ownership'], ['trades', 'Trade History'], ['tx', 'Transaction Wire'], ['tn', 'Trade Network'], ['journey', 'Journeymen'], ['finder', 'Trade Finder'], ['calc', 'Trade Calculator']];
     const GROUPS = [{ label: 'Playoffs', keys: ['odds', 'bracket'] }, { label: 'Tankathon', keys: ['order', 'proj', 'drc'] }, { label: 'League', keys: ['news', 'pay', 'rec', 'laws'] }, { label: 'Managers', keys: ['mgr', 'cards', 'rivals'] }, { label: 'Teams', keys: ['build', 'inj', 'cmap', 'boom', 'own'] }, { label: 'Trades', keys: ['trades', 'tx', 'tn', 'journey', 'finder', 'calc'] }];
     const tabBtn = ([k, l]) => `<button class="tab" role="tab" type="button" data-tab="${k}" aria-selected="${opts.tab === k}">${l}</button>`;
     const menuBtn = ([k, l]) => `<button class="tabopt" role="menuitem" type="button" data-tab="${k}" aria-current="${opts.tab === k}">${l}</button>`;
@@ -2216,7 +2241,7 @@ html[data-page=zone] #cd,html[data-page=zone] #cd.open{display:none!important}
     }).join('')}</nav>`;
     const label = (tabs.find(t => t[0] === opts.tab) || [, ''])[1];
     html += pageHeader(opts.tab, label) + '<div class="pbody" id="pbody">';
-    html += opts.tab === 'boom' ? renderBoom() : opts.tab === 'zone' ? renderZone() : opts.tab === 'wx' ? renderWx() : opts.tab === 'drc' ? renderDrc() : opts.tab === 'tn' ? renderTn() : opts.tab === 'tx' ? renderTx() : opts.tab === 'inj' ? renderInj() : opts.tab === 'cards' ? renderCards() : opts.tab === 'journey' ? renderJourney() : opts.tab === 'rivals' ? renderRivals() : opts.tab === 'cmap' ? renderCmap() : opts.tab === 'stand' ? renderStandings() : opts.tab === 'proj' ? renderProj() : opts.tab === 'odds' ? renderOdds() : opts.tab === 'match' ? renderMatchups() : opts.tab === 'news' ? renderNews() : opts.tab === 'bracket' ? renderBracket() : opts.tab === 'pay' ? renderPayouts() : opts.tab === 'rec' ? renderRecords() : opts.tab === 'mgr' ? renderProfiles() : opts.tab === 'build' ? renderBuild() : opts.tab === 'own' ? renderOwn() : opts.tab === 'trades' ? renderTrades() : opts.tab === 'laws' ? renderBylaws() : opts.tab === 'finder' ? renderFinder() : opts.tab === 'calc' ? renderCalc() : renderOrder();
+    html += opts.tab === 'boom' ? renderBoom() : opts.tab === 'zone' ? renderZone() : opts.tab === 'wx' ? renderWx() : opts.tab === 'sim' ? renderSim() : opts.tab === 'drc' ? renderDrc() : opts.tab === 'tn' ? renderTn() : opts.tab === 'tx' ? renderTx() : opts.tab === 'inj' ? renderInj() : opts.tab === 'cards' ? renderCards() : opts.tab === 'journey' ? renderJourney() : opts.tab === 'rivals' ? renderRivals() : opts.tab === 'cmap' ? renderCmap() : opts.tab === 'stand' ? renderStandings() : opts.tab === 'proj' ? renderProj() : opts.tab === 'odds' ? renderOdds() : opts.tab === 'match' ? renderMatchups() : opts.tab === 'news' ? renderNews() : opts.tab === 'bracket' ? renderBracket() : opts.tab === 'pay' ? renderPayouts() : opts.tab === 'rec' ? renderRecords() : opts.tab === 'mgr' ? renderProfiles() : opts.tab === 'build' ? renderBuild() : opts.tab === 'own' ? renderOwn() : opts.tab === 'trades' ? renderTrades() : opts.tab === 'laws' ? renderBylaws() : opts.tab === 'finder' ? renderFinder() : opts.tab === 'calc' ? renderCalc() : renderOrder();
     const prevScroll = document.getElementById('wkscroll'), keep = prevScroll ? prevScroll.scrollLeft : null;
     html += '</div>';
     $('#app').innerHTML = html;
@@ -2233,6 +2258,7 @@ html[data-page=zone] #cd,html[data-page=zone] #cd.open{display:none!important}
   const KEY = '<span class="key"></span>';
   const TAB_META = {
     zone: { sub: () => 'Every scoring play and big play, spoiler-delayed to match your TV', how: () => `<p>Dudley Zone lists every touchdown and 2-point conversion, plus any other play worth more than ${BIG_PLAY_PTS} fantasy points to one player, using this league’s scoring. Play-by-play comes from ESPN, matched to Sleeper players by name, team and position. A play that can’t be matched confidently is skipped.</p><p>Set the delay to how far behind your TV or stream is. Plays, the Top 5 banner and the counts only use plays older than the delay.</p>` },
+    sim: { sub: () => 'Play any two teams against each other 20,000 times', how: () => `<p>Pick two teams and the simulator plays ${SIMU_N.toLocaleString()} games between them. Each team’s score is drawn from a bell curve built from its own weekly scores this season, pulled toward the league average while there are few games. The win probability is the share of simulated games each team won.</p><p><b>Last ${SIMU_RECENT} weeks</b> centers a team on its recent scoring instead of the full season; the spread still comes from the whole season. <b>What if</b> sliders add or subtract points from a team’s average, for a hot streak, an injury or a trade. The chart shows how likely each score is, with dashed lines at each team’s median.</p><p>This is a scoring-history model. It doesn’t know this week’s injuries, matchups or weather, so use it with the Matchups tab’s projection-based odds.</p>` },
     wx: { sub: () => 'Forecasts for every NFL game this week', how: () => '<p>Pick a week to see the weather at each stadium for kickoff through about three hours later. Domes are marked indoors. <b>Weather Watch</b> lists games where wind, rain, snow or temperature could change how players score, such as deep passes, kickers and fumbles. Forecasts change, so check again closer to game time.</p>' },
     drc: { sub: () => 'How every draft pick has turned out', how: () => '<p>Each pick is compared with what its slot normally returns. Players in a class are ranked by <b>current value</b> and by <b>points scored</b> since the draft, and the two ranks are averaged. A pick’s grade comes from how far that rank is above or below where the pick slot says it should be: <b>A</b> well above, <b>B</b> a bit above, <b>C</b> about right, <b>D</b> a bit below, <b>F</b> well below. <b>Hit</b> is clearly above the slot, <b>Bust</b> is far below it.</p><p>Everything graded is an <b>estimate</b>. The slot benchmark comes from the draft itself, not from outside data. Values come from the latest nightly FantasyCalc snapshot, and a player missing from it shows “value unavailable” and is graded on points alone. Points are real totals, including bench weeks, for the team that made the pick. A pick is credited to the manager who actually made it, even if the pick was traded.</p>' },
     tn: { sub: () => 'Who trades with whom, and who should', how: () => '<p>Every completed trade from this season and past seasons counts. Managers are tracked by person, so a trade from an earlier year still counts for the same manager. A line joins two managers who traded, and thicker lines mean more trades. A three-team trade connects all three.</p><p><b>Most Likely Trade Partner</b> blends how often two managers have traded with how well their rosters fit. A fit means one team is thin at a position where the other is deep, using the same roster-need scoring as Trade Finder. If player values can’t load, it uses trade history alone.</p><p>On a phone the List view is easiest to read.</p>' },
@@ -2289,7 +2315,7 @@ html[data-page=zone] #cd,html[data-page=zone] #cd.open{display:none!important}
   const titleCase = s => String(s).split(' ').map((w, i) => w.split('-').map(p => (i > 0 && SMALL_WORDS.has(p.toLowerCase())) ? p.toLowerCase() : p.charAt(0).toUpperCase() + p.slice(1)).join('-')).join(' ');
 
   // ---------- Phone navigation: bottom bar, "More" sheet, current-section label ----------
-  const MORE_GROUPS = [['Overview', ['stand', 'match', 'wx']], ['Playoffs', ['odds', 'bracket']], ['Tankathon', ['order', 'proj', 'drc']], ['Dudley Zone', ['zone']], ['League', ['news', 'pay', 'rec', 'laws']], ['Managers', ['mgr', 'cards', 'rivals']],
+  const MORE_GROUPS = [['Overview', ['stand', 'match', 'wx', 'sim']], ['Playoffs', ['odds', 'bracket']], ['Tankathon', ['order', 'proj', 'drc']], ['Dudley Zone', ['zone']], ['League', ['news', 'pay', 'rec', 'laws']], ['Managers', ['mgr', 'cards', 'rivals']],
     ['Teams', ['build', 'inj', 'cmap', 'boom', 'own']], ['Trades', ['trades', 'tx', 'tn', 'journey', 'finder', 'calc']]];
   let TABS_ALL = [];
   function updatePhoneChrome(tabs){
@@ -3274,6 +3300,137 @@ html[data-page=zone] #cd,html[data-page=zone] #cd.open{display:none!important}
   }
 
   // ---------- Trade Calculator ----------
+  // ---------- Game Simulator ----------
+  // Head-to-head Monte Carlo: each team's score is drawn from a bell curve built from its own weekly scores
+  // (pulled toward the league average while samples are small), SIMU_N games are played, and the wins are counted.
+  const SIMU_N = 20000;
+  const SIMU_RECENT = 4;
+  function simuModel(basis){
+    const ids = D.ids, hist = D.hist;
+    const all = ids.flatMap(r => hist.get(r) || []);
+    const lgMean = all.length ? avg(all) : 100;
+    let ss = 0, cnt = 0;
+    ids.forEach(r => { const h = hist.get(r) || []; if (h.length > 1) { const m = avg(h); h.forEach(x => { ss += (x - m) ** 2; cnt++; }); } });
+    const lgSd = Math.max(10, cnt > 1 ? Math.sqrt(ss / cnt) : 22);
+    const K = 3, KS = 4, out = new Map();
+    ids.forEach(r => {
+      const full = hist.get(r) || [], h = basis === 'recent' ? full.slice(-SIMU_RECENT) : full, n = h.length;
+      const mu = (h.reduce((s, x) => s + x, 0) + K * lgMean) / (n + K);
+      // Spread always comes from the full season so a hot 4-week stretch doesn't shrink it.
+      const nf = full.length, mf = nf ? avg(full) : lgMean;
+      const dof = nf > 1 ? nf - 1 : 0, v = dof ? full.reduce((s, x) => s + (x - mf) ** 2, 0) / dof : 0;
+      const sd = Math.max(8, Math.sqrt((dof * v + KS * lgSd * lgSd) / (dof + KS)));
+      out.set(r, { rid: r, mu, sd, n: nf });
+    });
+    return { teams: out, lgMean, lgSd };
+  }
+  function simuRun(A, B, N){
+    const rnd = mulberry((0x51A7C0DE ^ Math.imul(A.rid + 7, 2654435761) ^ Math.imul(B.rid + 13, 40503)) >>> 0);
+    const sa = new Float32Array(N), sb = new Float32Array(N), mg = new Float32Array(N);
+    let wa = 0, wb = 0, big = 0, close = 0;
+    for (let i = 0; i < N; i++) {
+      const x = Math.max(0, A.mu + A.sd * gaussR(rnd)), y = Math.max(0, B.mu + B.sd * gaussR(rnd));
+      sa[i] = x; sb[i] = y; mg[i] = x - y;
+      if (x > y) wa++; else if (y > x) wb++;
+      const d = Math.abs(x - y);
+      if (d >= 30) big++;
+      if (d <= 5) close++;
+    }
+    const sorted = arr => Float32Array.from(arr).sort();
+    const q = (s, p) => s[Math.min(N - 1, Math.floor(p * N))];
+    const SA = sorted(sa), SB = sorted(sb), SM = sorted(mg);
+    return {
+      N, pA: wa / N, pB: wb / N, big: big / N, close: close / N,
+      medA: q(SA, 0.5), medB: q(SB, 0.5), loA: q(SA, 0.05), hiA: q(SA, 0.95), loB: q(SB, 0.05), hiB: q(SB, 0.95),
+      medMargin: q(SM, 0.5), sa, sb, lo: Math.min(q(SA, 0.002), q(SB, 0.002)), hi: Math.max(q(SA, 0.998), q(SB, 0.998))
+    };
+  }
+  function simuInit(){
+    const ids = D.ids, nx = (D.remaining || []).find(w => !w.random && w.pairs && w.pairs.length);
+    const p = nx && nx.pairs.find(([a, b]) => ids.includes(a) && ids.includes(b));
+    return { a: p ? p[0] : ids[0], b: p ? p[1] : ids[1], adjA: 0, adjB: 0, basis: 'season' };
+  }
+  function simuChart(R, A, B){
+    const W = 680, H = 230, L = 14, Rr = 14, T = 12, Bt = 30, bw = 4;
+    const lo = Math.floor(R.lo / 10) * 10, hi = Math.ceil(R.hi / 10) * 10, nb = Math.max(1, Math.round((hi - lo) / bw));
+    const bins = s => { const c = new Float64Array(nb); for (let i = 0; i < s.length; i++) { const k = Math.min(nb - 1, Math.max(0, Math.floor((s[i] - lo) / bw))); c[k]++; } return Array.from(c, (v, i) => ((c[i - 1] || 0) + v * 2 + (c[i + 1] || 0)) / 4 / R.N); };
+    const da = bins(R.sa), db = bins(R.sb), ym = Math.max(...da, ...db) * 1.1 || 1;
+    const px = v => L + (v - lo) / (hi - lo) * (W - L - Rr), py = v => H - Bt - v / ym * (H - T - Bt);
+    const path = d => { let p = `M${px(lo).toFixed(1)} ${py(0).toFixed(1)}`; d.forEach((v, i) => { p += ` L${px(lo + (i + 0.5) * bw).toFixed(1)} ${py(v).toFixed(1)}`; }); return p + ` L${px(hi).toFixed(1)} ${py(0).toFixed(1)} Z`; };
+    let ticks = ''; for (let v = lo; v <= hi; v += 20) ticks += `<line class="sim-grid" x1="${px(v)}" x2="${px(v)}" y1="${T}" y2="${H - Bt}"/><text class="sim-tick" x="${px(v)}" y="${H - 10}" text-anchor="middle">${v}</text>`;
+    const med = (v, cls) => `<line class="sim-med ${cls}" x1="${px(v)}" x2="${px(v)}" y1="${T}" y2="${H - Bt}"/>`;
+    return `<svg class="sim-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Score distributions: ${esc(A.name)} median ${R.medA.toFixed(1)}, ${esc(B.name)} median ${R.medB.toFixed(1)}">${ticks}<path class="sim-a" d="${path(da)}"/><path class="sim-b" d="${path(db)}"/>${med(R.medA, 'a')}${med(R.medB, 'b')}<line class="sim-axis" x1="${L}" x2="${W - Rr}" y1="${H - Bt}" y2="${H - Bt}"/></svg>`;
+  }
+  function simuResults(){
+    const S = D.simu, M = simuModel(S.basis);
+    const A = Object.assign({}, M.teams.get(S.a)), B = Object.assign({}, M.teams.get(S.b));
+    A.mu = Math.max(0, A.mu + S.adjA); B.mu = Math.max(0, B.mu + S.adjB);
+    A.name = team(S.a).name; B.name = team(S.b).name;
+    const R = simuRun(A, B, SIMU_N);
+    const pa = Math.round(R.pA * 100), pb = 100 - pa, f1 = v => v.toFixed(1), pc = v => (v < 0.005 && v > 0 ? '<1' : Math.round(v * 100)) + '%';
+    const fav = R.pA >= R.pB ? A : B, favP = Math.max(R.pA, R.pB);
+    const card = (h, v, sub) => `<div class="rcard"><h3>${h}</h3><div class="rval">${v}</div><div class="rsub">${sub}</div></div>`;
+    return `<div class="wpb sim-wpb"><div class="wpb-top"><span><b>${pa}%</b><em class="wpn"> ${esc(A.name)}</em></span><span class="wpb-lab">Win probability</span><span><em class="wpn">${esc(B.name)} </em><b>${pb}%</b></span></div>
+      <div class="wpb-bar"><i class="wpb-a" style="width:${pa}%"></i><i class="wpb-b" style="width:${pb}%"></i></div>
+      <div class="wpb-proj"><span>Avg ${f1(A.mu)} ± ${f1(A.sd)}</span><span class="wpb-hint">${R.N.toLocaleString()} simulated games</span><span>Avg ${f1(B.mu)} ± ${f1(B.sd)}</span></div></div>
+      <p class="sim-take"><b>${esc(fav.name)}</b> wins ${Math.round(favP * 100)} of every 100 games, usually by ${f1(Math.abs(R.medMargin))} points.</p>
+      ${simuChart(R, A, B)}
+      <p class="bm-key"><span class="bm-ln"><i class="sim-sw a"></i> ${esc(A.name)}</span><span class="bm-ln"><i class="sim-sw b"></i> ${esc(B.name)}</span><span class="bm-ln">Lines mark each team’s median score</span></p>
+      <div class="rgrid">
+        ${card('Typical Score', `${f1(R.medA)} – ${f1(R.medB)}`, `${esc(A.name)} vs ${esc(B.name)}`)}
+        ${card('Likely Range (90%)', `${Math.round(R.loA)}–${Math.round(R.hiA)}`, `${esc(A.name)}; ${esc(B.name)} ${Math.round(R.loB)}–${Math.round(R.hiB)}`)}
+        ${card('Nail-Biter', pc(R.close), 'Games decided by 5 points or less')}
+        ${card('Blowout', pc(R.big), 'Games decided by 30 points or more')}
+      </div>`;
+  }
+  function renderSim(){
+    if (D.ids.length < 2) return '<p class="note">Two teams are needed to run a simulation.</p>';
+    if (!D.simu || !D.ids.includes(D.simu.a) || !D.ids.includes(D.simu.b)) D.simu = simuInit();
+    const S = D.simu;
+    if (S.a === S.b) S.b = D.ids.find(r => r !== S.a);
+    const opt = cur => D.ids.map(r => `<option value="${r}" ${r === cur ? 'selected' : ''}>${esc(team(r).name)}</option>`).join('');
+    const adj = v => (v > 0 ? '+' : '') + v.toFixed(1);
+    const nx = (D.remaining || []).find(w => !w.random && w.pairs && w.pairs.length);
+    const chips = nx ? `<div class="sim-chips"><span class="flabel">Week ${nx.week} matchups</span><div class="sim-chiprow">${nx.pairs.filter(([a, b]) => D.ids.includes(a) && D.ids.includes(b)).map(([a, b]) => `<button type="button" class="btn ghost" data-sim-pair="${a},${b}" aria-pressed="${(S.a === a && S.b === b) || (S.a === b && S.b === a)}">${esc(team(a).name)} <em>vs</em> ${esc(team(b).name)}</button>`).join('')}</div></div>` : '';
+    const side = (k, rid, a) => `<div class="sim-side ${k}"><label class="field">Team ${k.toUpperCase()}<select data-sim-team="${k}">${opt(rid)}</select></label>
+      <label class="field sim-adj">What if: average points <b data-sim-adjv="${k}">${adj(a)}</b><input type="range" min="-30" max="30" step="0.5" value="${a}" data-sim-adj="${k}" aria-label="Adjust Team ${k.toUpperCase()}’s average score"></label></div>`;
+    const played = Math.min(D.firstOpen - D.startWeek, D.lastReg - D.startWeek + 1);
+    return `${played <= 0 ? '<p class="note">No games have been played yet, so every team starts at the league average. Use the sliders to give a team an edge.</p>' : ''}
+      ${chips}
+      <div class="sim-ctl">${side('a', S.a, S.adjA)}<div class="sim-vs">vs</div>${side('b', S.b, S.adjB)}</div>
+      <div class="field sim-basis"><span class="flabel">Scoring basis</span><div class="seg" role="group" aria-label="Scoring basis"><button type="button" data-sim-basis="season" aria-pressed="${S.basis === 'season'}">Full season</button><button type="button" data-sim-basis="recent" aria-pressed="${S.basis === 'recent'}">Last ${SIMU_RECENT} weeks</button></div> <button type="button" class="btn ghost" data-sim-swap>Swap teams</button> <button type="button" class="btn ghost" data-sim-reset>Reset sliders</button></div>
+      <div id="simres">${simuResults()}</div>`;
+  }
+  function simuRefresh(){
+    const el = document.getElementById('simres');
+    if (el && D.simu) el.innerHTML = simuResults();
+  }
+  $('#app').addEventListener('input', e => {
+    const s = e.target.closest && e.target.closest('[data-sim-adj]');
+    if (!s || !D || !D.simu) return;
+    const k = s.dataset.simAdj, v = Number(s.value) || 0;
+    D.simu[k === 'a' ? 'adjA' : 'adjB'] = v;
+    const lab = document.querySelector(`[data-sim-adjv="${k}"]`); if (lab) lab.textContent = (v > 0 ? '+' : '') + v.toFixed(1);
+    simuRefresh();
+  });
+  $('#app').addEventListener('change', e => {
+    const t = e.target.closest && e.target.closest('[data-sim-team]');
+    if (!t || !D || !D.simu) return;
+    const k = t.dataset.simTeam, S = D.simu, v = Number(t.value);
+    if (k === 'a') { if (v === S.b) S.b = S.a; S.a = v; S.adjA = 0; } else { if (v === S.a) S.a = S.b; S.b = v; S.adjB = 0; }
+    render();
+  });
+  $('#app').addEventListener('click', e => {
+    const c = e.target.closest && e.target.closest('[data-sim-pair],[data-sim-basis],[data-sim-swap],[data-sim-reset]');
+    if (!c || !D || !D.simu) return;
+    const S = D.simu;
+    if (c.dataset.simPair) { const [a, b] = c.dataset.simPair.split(',').map(Number); Object.assign(S, { a, b, adjA: 0, adjB: 0 }); }
+    else if (c.dataset.simBasis) S.basis = c.dataset.simBasis;
+    else if (c.hasAttribute('data-sim-swap')) Object.assign(S, { a: S.b, b: S.a, adjA: S.adjB, adjB: S.adjA });
+    else S.adjA = S.adjB = 0;
+    render();
+  });
+
   function renderCalc(){
     if (!D.tf) { loadFinder(); return '<p class="status">Loading dynasty values from FantasyCalc…</p>'; }
     if (D.tf.error) return `<div class="error"><strong>${esc(D.tf.error)}</strong></div>`;
