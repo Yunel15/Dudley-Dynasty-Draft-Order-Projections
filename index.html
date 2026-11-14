@@ -1584,6 +1584,36 @@ html[data-page=zone] #cd,html[data-page=zone] #cd.open{display:none!important}
 .afield:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 .amsg{min-height:1.2em;margin:6px 0 0;font-size:.85rem;color:var(--muted)}.amsg.bad{color:var(--pylon-ink)}
 .alink{all:unset;cursor:pointer;color:var(--teal-t);font-size:.85rem;text-decoration:underline;margin-top:4px;min-height:32px;display:inline-flex;align-items:center}.alink:focus-visible{outline:2px solid var(--accent)}
+
+/* ---- Boom/Bust Meter ---- */
+.rgrid .rsub{margin-top:4px;overflow-wrap:anywhere}
+.bm-sort{margin:16px 0 8px}
+.bm-key{display:flex;flex-wrap:wrap;gap:6px 16px;margin:8px 0;font-size:.78rem;color:var(--muted)}
+.bm-ln{display:inline-flex;align-items:center;gap:6px}
+.bm-key .k{position:relative;display:inline-block;flex:none}
+.bm-key .bm-band.k{width:22px;height:10px;border-radius:3px}.bm-key .bm-med.k{width:2px;height:14px;top:0}.bm-key .bm-dot.k{top:0;margin:0}
+.bm-axis,.bm-row{display:grid;grid-template-columns:minmax(150px,210px) minmax(0,1fr) 270px;gap:6px 16px;align-items:center}
+.bm-ax{position:relative;height:16px;font-size:.72rem;color:var(--muted);font-variant-numeric:tabular-nums}.bm-ax b{position:absolute;top:0;font-weight:600;transform:translateX(-50%);white-space:nowrap}.bm-ax b:nth-child(1){left:2%}.bm-ax b:nth-child(2){left:50%}.bm-ax b:nth-child(3){left:98%}
+.bm-sort .seg{display:flex;flex-wrap:wrap}
+.bm-list{display:flex;flex-direction:column;gap:6px;margin-top:4px}
+.bm-row{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+.bm-row.mine{background:linear-gradient(rgba(var(--heat),.11),rgba(var(--heat),.11)),var(--surface);border-color:var(--accent)}
+.bm-id{min-width:0}.bm-id .tmeta{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.bm-tag{display:inline-block;padding:1px 8px;border-radius:999px;font-size:.68rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;border:1px solid var(--line);color:var(--muted)}
+.bm-tag.vol{color:var(--red-t);border-color:var(--red-t)}.bm-tag.std{color:var(--teal-t);border-color:var(--teal-t)}
+.bm-strip{position:relative;height:30px;border-radius:6px;background:rgba(var(--ovc),.04)}
+.bm-band{position:absolute;top:3px;bottom:3px;background:rgba(var(--heat),.2);border-radius:4px}
+.bm-med{position:absolute;top:2px;bottom:2px;width:2px;margin-left:-1px;background:var(--ink);opacity:.75;border-radius:1px}
+.bm-dot{position:absolute;top:50%;box-sizing:border-box;width:10px;height:10px;margin:-5px 0 0 -5px;border-radius:50%;background:var(--muted);opacity:.85}
+.bm-dot.boom{width:14px;height:14px;margin:-7px 0 0 -7px;background:var(--accent);opacity:1;z-index:2}
+.bm-dot.bust{width:12px;height:12px;margin:-6px 0 0 -6px;background:var(--surface);border:2px solid var(--pylon);opacity:1;z-index:1}
+.bm-key .bm-dot.k{width:11px;height:11px}.bm-key .bm-dot.boom.k{width:13px;height:13px}
+.bm-stats{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin:0;text-align:center}
+.bm-stats div{min-width:0}.bm-stats dt{font-size:.62rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}.bm-stats dd{margin:0;font-weight:700;font-size:.95rem;font-variant-numeric:tabular-nums}
+.bm-un{grid-template-columns:minmax(150px,210px) minmax(0,1fr)}.bm-wait{margin:0;color:var(--muted);font-size:.85rem}
+@media (max-width:760px){.bm-axis,.bm-row,.bm-un{grid-template-columns:minmax(0,1fr)}.bm-axis>span:first-child,.bm-axis>span:last-child{display:none}}
+.is-phone .bm-axis,.is-phone .bm-row,.is-phone .bm-un{grid-template-columns:minmax(0,1fr)}.is-phone .bm-axis>span:first-child,.is-phone .bm-axis>span:last-child{display:none}
+.is-phone .bm-row{padding:8px 10px;gap:8px}.is-phone .bm-stats dd{font-size:.88rem}
 </style>
 </head>
 <body>
@@ -1777,8 +1807,8 @@ html[data-page=zone] #cd,html[data-page=zone] #cd.open{display:none!important}
     opts = Object.assign({ tab:'stand', basis:'standings', type:'linear', tiebreak:'pf-low', rounds:null, season:null }, saved);
   }
   function saveOpts(){
-    const { tab, basis, type, tiebreak, rounds, week, buildTeam, tradeTeam, tfTeam, tfTol, tfStrat, tfPos, tfPicks, mview, mteam, cmSort, cmDir, jmPos, jmType } = opts;
-    store.set('opts:' + leagueId, JSON.stringify({ tab, basis, type, tiebreak, rounds, week, buildTeam, tradeTeam, tfTeam, tfTol, tfStrat, tfPos, tfPicks, mview, mteam, cmSort, cmDir, jmPos, jmType }));
+    const { tab, basis, type, tiebreak, rounds, week, buildTeam, tradeTeam, tfTeam, tfTol, tfStrat, tfPos, tfPicks, mview, mteam, cmSort, cmDir, boomSort, jmPos, jmType } = opts;
+    store.set('opts:' + leagueId, JSON.stringify({ tab, basis, type, tiebreak, rounds, week, buildTeam, tradeTeam, tfTeam, tfTol, tfStrat, tfPos, tfPicks, mview, mteam, cmSort, cmDir, boomSort, jmPos, jmType }));
   }
 
   let D = null;
@@ -2131,8 +2161,8 @@ html[data-page=zone] #cd,html[data-page=zone] #cd.open{display:none!important}
         ? `${season} season hasn’t started. ${D.ids.length} teams.`
         : `${season} season, ${playedWeeks} of ${totalWeeks} weeks played. ${D.ids.length} teams.`;
 
-    const tabs = [['stand', 'Standings'], ['match', 'Matchups'], ['wx', 'Game Weather'], ['odds', 'Playoff Odds'], ['bracket', 'Playoff Bracket'], ['order', 'Tankathon'], ['proj', 'Tankathon Projections'], ['drc', 'Draft Report Cards'], ['zone', 'Dudley Zone'], ['news', 'News Feed'], ['pay', 'Payouts'], ['rec', 'League Records'], ['laws', 'League Bylaws'], ['mgr', 'Manager Profiles'], ['cards', 'Trading Cards'], ['rivals', 'Rivalries'], ['build', 'Team Construction'], ['inj', 'Injury/Bye Week Dashboard'], ['cmap', 'Contender Map'], ['own', 'Pick Ownership'], ['trades', 'Trade History'], ['tx', 'Transaction Wire'], ['tn', 'Trade Network'], ['journey', 'Journeymen'], ['finder', 'Trade Finder'], ['calc', 'Trade Calculator']];
-    const GROUPS = [{ label: 'Playoffs', keys: ['odds', 'bracket'] }, { label: 'Tankathon', keys: ['order', 'proj', 'drc'] }, { label: 'League', keys: ['news', 'pay', 'rec', 'laws'] }, { label: 'Managers', keys: ['mgr', 'cards', 'rivals'] }, { label: 'Teams', keys: ['build', 'inj', 'cmap', 'own'] }, { label: 'Trades', keys: ['trades', 'tx', 'tn', 'journey', 'finder', 'calc'] }];
+    const tabs = [['stand', 'Standings'], ['match', 'Matchups'], ['wx', 'Game Weather'], ['odds', 'Playoff Odds'], ['bracket', 'Playoff Bracket'], ['order', 'Tankathon'], ['proj', 'Tankathon Projections'], ['drc', 'Draft Report Cards'], ['zone', 'Dudley Zone'], ['news', 'News Feed'], ['pay', 'Payouts'], ['rec', 'League Records'], ['laws', 'League Bylaws'], ['mgr', 'Manager Profiles'], ['cards', 'Trading Cards'], ['rivals', 'Rivalries'], ['build', 'Team Construction'], ['inj', 'Injury/Bye Week Dashboard'], ['cmap', 'Contender Map'], ['boom', 'Boom/Bust Meter'], ['own', 'Pick Ownership'], ['trades', 'Trade History'], ['tx', 'Transaction Wire'], ['tn', 'Trade Network'], ['journey', 'Journeymen'], ['finder', 'Trade Finder'], ['calc', 'Trade Calculator']];
+    const GROUPS = [{ label: 'Playoffs', keys: ['odds', 'bracket'] }, { label: 'Tankathon', keys: ['order', 'proj', 'drc'] }, { label: 'League', keys: ['news', 'pay', 'rec', 'laws'] }, { label: 'Managers', keys: ['mgr', 'cards', 'rivals'] }, { label: 'Teams', keys: ['build', 'inj', 'cmap', 'boom', 'own'] }, { label: 'Trades', keys: ['trades', 'tx', 'tn', 'journey', 'finder', 'calc'] }];
     const tabBtn = ([k, l]) => `<button class="tab" role="tab" type="button" data-tab="${k}" aria-selected="${opts.tab === k}">${l}</button>`;
     const menuBtn = ([k, l]) => `<button class="tabopt" role="menuitem" type="button" data-tab="${k}" aria-current="${opts.tab === k}">${l}</button>`;
     let html = `<nav class="tabs" role="tablist">${tabs.map(t => {
@@ -2143,7 +2173,7 @@ html[data-page=zone] #cd,html[data-page=zone] #cd.open{display:none!important}
     }).join('')}</nav>`;
     const label = (tabs.find(t => t[0] === opts.tab) || [, ''])[1];
     html += pageHeader(opts.tab, label) + '<div class="pbody" id="pbody">';
-    html += opts.tab === 'zone' ? renderZone() : opts.tab === 'wx' ? renderWx() : opts.tab === 'drc' ? renderDrc() : opts.tab === 'tn' ? renderTn() : opts.tab === 'tx' ? renderTx() : opts.tab === 'inj' ? renderInj() : opts.tab === 'cards' ? renderCards() : opts.tab === 'journey' ? renderJourney() : opts.tab === 'rivals' ? renderRivals() : opts.tab === 'cmap' ? renderCmap() : opts.tab === 'stand' ? renderStandings() : opts.tab === 'proj' ? renderProj() : opts.tab === 'odds' ? renderOdds() : opts.tab === 'match' ? renderMatchups() : opts.tab === 'news' ? renderNews() : opts.tab === 'bracket' ? renderBracket() : opts.tab === 'pay' ? renderPayouts() : opts.tab === 'rec' ? renderRecords() : opts.tab === 'mgr' ? renderProfiles() : opts.tab === 'build' ? renderBuild() : opts.tab === 'own' ? renderOwn() : opts.tab === 'trades' ? renderTrades() : opts.tab === 'laws' ? renderBylaws() : opts.tab === 'finder' ? renderFinder() : opts.tab === 'calc' ? renderCalc() : renderOrder();
+    html += opts.tab === 'boom' ? renderBoom() : opts.tab === 'zone' ? renderZone() : opts.tab === 'wx' ? renderWx() : opts.tab === 'drc' ? renderDrc() : opts.tab === 'tn' ? renderTn() : opts.tab === 'tx' ? renderTx() : opts.tab === 'inj' ? renderInj() : opts.tab === 'cards' ? renderCards() : opts.tab === 'journey' ? renderJourney() : opts.tab === 'rivals' ? renderRivals() : opts.tab === 'cmap' ? renderCmap() : opts.tab === 'stand' ? renderStandings() : opts.tab === 'proj' ? renderProj() : opts.tab === 'odds' ? renderOdds() : opts.tab === 'match' ? renderMatchups() : opts.tab === 'news' ? renderNews() : opts.tab === 'bracket' ? renderBracket() : opts.tab === 'pay' ? renderPayouts() : opts.tab === 'rec' ? renderRecords() : opts.tab === 'mgr' ? renderProfiles() : opts.tab === 'build' ? renderBuild() : opts.tab === 'own' ? renderOwn() : opts.tab === 'trades' ? renderTrades() : opts.tab === 'laws' ? renderBylaws() : opts.tab === 'finder' ? renderFinder() : opts.tab === 'calc' ? renderCalc() : renderOrder();
     const prevScroll = document.getElementById('wkscroll'), keep = prevScroll ? prevScroll.scrollLeft : null;
     html += '</div>';
     $('#app').innerHTML = html;
@@ -2178,6 +2208,7 @@ html[data-page=zone] #cd,html[data-page=zone] #cd.open{display:none!important}
     rivals: { sub: () => 'All-time head-to-head records', how: () => '<p>Records follow each manager across seasons, not the roster slot. Each cell is the row manager’s record against the column manager: teal is winning, red is losing. 🏆 marks pairs that met in the playoffs. Playoff games count the winners bracket only; placement and consolation games are skipped.</p>' },
     build: { sub: () => 'Roster ages, depth and how players arrived', how: () => '<p>Ages come from Sleeper’s player database. Age rank compares a team’s average age at a position with the rest of the league: #1 is the youngest, and the three youngest and oldest teams are colored. The time beside each player is how long he has been on the roster, from draft and transaction history. Tap a player for his profile.</p>' },
     inj: { sub: () => 'Who’s banged up and who’s on bye', how: () => '<p>Injury status comes from Sleeper’s player list, so it updates as Sleeper does. A player on a roster’s IR slot is shown as IR even if his status field is blank.</p><p>Sleeper doesn’t publish bye weeks directly, so each NFL team’s bye is the one week it has no game on the schedule.</p><p><b>High Priority</b> marks an injured player whose bye is this week or in the next 2 weeks. The summary always covers the whole league; the filters only change the lists below it.</p>' },
+    boom: { sub: () => 'Who swings and who stays steady, week to week', how: () => '<p>Every dot is one week’s score, placed on a single league-wide scale so teams line up. The shaded band is where the middle half of all team scores fall; the tick is that team’s median. <b>Boom</b> weeks are in the league’s top 25% of scores and <b>bust</b> weeks in the bottom 25%.</p><p><b>Std Dev</b> is how far a team’s weeks typically sit from its average. <b>Swing</b> is Std Dev divided by average, so high scorers aren’t unfairly called volatile. The most swingy third of teams are tagged Volatile and the least swingy third Steady. Teams need 3 played weeks to be rated, and weeks with a 0 score are ignored.</p>' },
     cmap: { sub: () => 'Win-now value vs future value', how: () => '<p><b>Win-Now</b> is the FantasyCalc value of each team’s best legal starting lineup (players on IR are left out). <b>Future</b> is the value of players 25 and under plus every draft pick the team owns. The dashed lines are the league medians. Trails show where each team was in earlier nightly snapshots.</p>' },
     own: { sub: () => `Who owns every pick through ${D.seasons[D.seasons.length - 1] || ''}`, how: () => `<p>${D.draftSeason} picks show their ${seasonDone() ? 'final' : 'current'} slot; later years show the round.</p><p>${KEY}Highlighted picks were acquired in a trade.</p>` },
     trades: { sub: () => 'Every trade in league history', how: null },
@@ -2216,7 +2247,7 @@ html[data-page=zone] #cd,html[data-page=zone] #cd.open{display:none!important}
 
   // ---------- Phone navigation: bottom bar, "More" sheet, current-section label ----------
   const MORE_GROUPS = [['Overview', ['stand', 'match', 'wx']], ['Playoffs', ['odds', 'bracket']], ['Tankathon', ['order', 'proj', 'drc']], ['Dudley Zone', ['zone']], ['League', ['news', 'pay', 'rec', 'laws']], ['Managers', ['mgr', 'cards', 'rivals']],
-    ['Teams', ['build', 'inj', 'cmap', 'own']], ['Trades', ['trades', 'tx', 'tn', 'journey', 'finder', 'calc']]];
+    ['Teams', ['build', 'inj', 'cmap', 'boom', 'own']], ['Trades', ['trades', 'tx', 'tn', 'journey', 'finder', 'calc']]];
   let TABS_ALL = [];
   function updatePhoneChrome(tabs){
     TABS_ALL = tabs;
@@ -2897,6 +2928,70 @@ html[data-page=zone] #cd,html[data-page=zone] #cd.open{display:none!important}
       myD.cmLoading = false;
       if (D === myD && opts.tab === 'cmap') render();
     }
+  }
+
+  // ---------- Boom/Bust Meter: how swingy each team's weekly scores are ----------
+  const BOOM_MIN_TEAM = 3, BOOM_MIN_LEAGUE = 8;     // played weeks needed to rate a team / total scores needed to read the league
+  const BOOM_SORTS = [['vol', 'Most Volatile'], ['steady', 'Steadiest'], ['ceil', 'Highest Ceiling'], ['floor', 'Highest Floor'], ['avg', 'Highest Average']];
+  const boomQ = (sorted, q) => { if (!sorted.length) return 0; const i = (sorted.length - 1) * q, lo = Math.floor(i), hi = Math.ceil(i); return sorted[lo] + (sorted[hi] - sorted[lo]) * (i - lo); };
+  // weeks: [{ week, list: [{ roster_id, points }] }] (D.completedWeeks). Weeks where a team scored 0 are ignored.
+  function boomCompute(weeks, ids){
+    const by = new Map(ids.map(id => [id, []])), all = [];
+    weeks.forEach(w => (w.list || []).forEach(m => {
+      if (by.has(m.roster_id) && typeof m.points === 'number' && m.points > 0) { by.get(m.roster_id).push({ week: w.week, pts: m.points }); all.push(m.points); }
+    }));
+    const sorted = all.slice().sort((a, b) => a - b);
+    const out = { total: sorted.length, ready: sorted.length >= BOOM_MIN_LEAGUE, rows: [], spot: null, min: 0, max: 0, q1: 0, q3: 0 };
+    if (!sorted.length) { by.forEach((g, id) => out.rows.push({ id, n: 0, rated: false, games: [] })); return out; }
+    out.min = sorted[0]; out.max = sorted[sorted.length - 1]; out.q1 = boomQ(sorted, 0.25); out.q3 = boomQ(sorted, 0.75);
+    by.forEach((g, id) => {
+      g.sort((a, b) => a.week - b.week);
+      const n = g.length, r = { id, n, rated: n >= BOOM_MIN_TEAM, games: g.map(x => ({ week: x.week, pts: x.pts, kind: x.pts > out.q3 ? 'boom' : x.pts < out.q1 ? 'bust' : 'mid' })), tag: 'bal' };
+      if (n) {
+        const pts = g.map(x => x.pts), s = pts.slice().sort((a, b) => a - b);
+        r.avg = pts.reduce((a, b) => a + b, 0) / n; r.med = boomQ(s, 0.5);
+        r.sd = n > 1 ? Math.sqrt(pts.reduce((a, b) => a + (b - r.avg) * (b - r.avg), 0) / (n - 1)) : 0;
+        r.swing = r.avg ? r.sd / r.avg : 0;
+        r.boomPct = r.games.filter(x => x.kind === 'boom').length / n; r.bustPct = r.games.filter(x => x.kind === 'bust').length / n;
+        r.best = g.reduce((a, b) => b.pts > a.pts ? b : a); r.worst = g.reduce((a, b) => b.pts < a.pts ? b : a);
+      }
+      out.rows.push(r);
+    });
+    const rated = out.rows.filter(r => r.rated).sort((a, b) => b.swing - a.swing), k = Math.floor(rated.length / 3);
+    rated.forEach((r, i) => { r.tag = i < k ? 'vol' : i >= rated.length - k ? 'std' : 'bal'; });
+    if (rated.length) {
+      const top = (f, dir) => rated.reduce((a, b) => dir * (f(b) - f(a)) > 0 ? b : a);
+      out.spot = { vol: top(r => r.swing, 1), steady: top(r => r.swing, -1), ceil: top(r => r.best.pts, 1), floor: top(r => r.worst.pts, 1) };
+    }
+    return out;
+  }
+  function boomSorted(rows, key){
+    const f = { vol: [r => r.swing, -1], steady: [r => r.swing, 1], ceil: [r => r.best.pts, -1], floor: [r => r.worst.pts, -1], avg: [r => r.avg, -1] }[key] || [r => r.swing, -1];
+    const rated = rows.filter(r => r.rated).sort((a, b) => f[1] * (f[0](a) - f[0](b))), rest = rows.filter(r => !r.rated);
+    return rated.concat(rest);
+  }
+  function renderBoom(){
+    const bm = boomCompute(D.completedWeeks, D.ids);
+    if (!bm.ready) return `<p class="note">Check back after week 3. We need about ${BOOM_MIN_LEAGUE} scores across the league (${bm.total} so far) before the meter can say who is boom or bust.</p>`;
+    const sk = BOOM_SORTS.some(s => s[0] === opts.boomSort) ? opts.boomSort : 'vol';
+    const f1 = v => v.toFixed(1), pct = v => Math.round(v * 100) + '%';
+    const pos = p => bm.max === bm.min ? 50 : 2 + (p - bm.min) / (bm.max - bm.min) * 96;
+    const sp = bm.spot;
+    const card = (h, r, val, sub) => r ? `<div class="rcard"><h3>${h}</h3><div class="rval">${val}</div><div class="rsub">${esc(team(r.id).name)}${sub ? ' · ' + sub : ''}</div></div>` : '';
+    let html = sp ? `<div class="rgrid">${card('Most Volatile', sp.vol, pct(sp.vol.swing), `swing, ±${f1(sp.vol.sd)} pts`)}${card('Steadiest', sp.steady, pct(sp.steady.swing), `swing, ±${f1(sp.steady.sd)} pts`)}${card('Highest Ceiling', sp.ceil, f1(sp.ceil.best.pts), `Week ${sp.ceil.best.week}`)}${card('Highest Floor', sp.floor, f1(sp.floor.worst.pts), `Week ${sp.floor.worst.week}`)}</div>` : '<p class="note">No team has played 3 weeks yet, so nobody is rated.</p>';
+    html += `<div class="field bm-sort"><span class="flabel">Sort by</span><div class="seg" role="group" aria-label="Sort teams">${BOOM_SORTS.map(([k, l]) => `<button type="button" data-boom-sort="${k}" aria-pressed="${sk === k}">${l}</button>`).join('')}</div></div>`;
+    html += `<p class="bm-key"><span class="bm-ln"><i class="bm-band k"></i> middle 50% of league scores</span><span class="bm-ln"><i class="bm-med k"></i> team median</span><span class="bm-ln"><i class="bm-dot boom k"></i> boom (top 25%)</span><span class="bm-ln"><i class="bm-dot bust k"></i> bust (bottom 25%)</span><span class="bm-ln"><i class="bm-dot k"></i> normal</span></p>`;
+    html += `<div class="bm-axis" aria-hidden="true"><span></span><span class="bm-ax"><b>${f1(bm.min)}</b><b>${f1((bm.min + bm.max) / 2)}</b><b>${f1(bm.max)}</b></span><span></span></div>`;
+    const TAGS = { vol: 'Volatile', bal: 'Balanced', std: 'Steady' };
+    html += '<div class="bm-list">' + boomSorted(bm.rows, sk).map(r => {
+      const t = team(r.id);
+      if (!r.rated) return `<article class="bm-row bm-un${mineCls(r.id)}"><div class="bm-id">${teamBlock(t, `<span class="bm-tag bal">Not rated yet</span>${youTag(r.id)}`)}</div><p class="bm-wait">Rated after ${BOOM_MIN_TEAM} played weeks (${r.n} so far).</p></article>`;
+      const dots = r.games.map(g => `<span class="bm-dot ${g.kind}" style="left:${pos(g.pts).toFixed(2)}%" title="Week ${g.week}: ${f1(g.pts)}"></span>`).join('');
+      return `<article class="bm-row${mineCls(r.id)}"><div class="bm-id">${teamBlock(t, `<span class="bm-tag ${r.tag}">${TAGS[r.tag]}</span>${youTag(r.id)}`)}</div>
+        <div class="bm-strip" role="img" aria-label="${esc(t.name)}: ${r.n} weekly scores from ${f1(r.worst.pts)} to ${f1(r.best.pts)}, median ${f1(r.med)}"><span class="bm-band" style="left:${pos(bm.q1).toFixed(2)}%;width:${(pos(bm.q3) - pos(bm.q1)).toFixed(2)}%"></span><span class="bm-med" style="left:${pos(r.med).toFixed(2)}%" title="Median ${f1(r.med)}"></span>${dots}</div>
+        <dl class="bm-stats"><div><dt>Avg</dt><dd>${f1(r.avg)}</dd></div><div><dt>Std Dev</dt><dd>${f1(r.sd)}</dd></div><div><dt>Swing</dt><dd>${pct(r.swing)}</dd></div><div><dt>Boom</dt><dd>${pct(r.boomPct)}</dd></div><div><dt>Bust</dt><dd>${pct(r.bustPct)}</dd></div></dl></article>`;
+    }).join('') + '</div>';
+    return html;
   }
 
   function renderCmap(){
@@ -6963,6 +7058,8 @@ html[data-page=zone] #cd,html[data-page=zone] #cd.open{display:none!important}
     if (cmt) { const rid = Number(cmt.dataset.cmTeam); const fromList = !!cmt.closest('.cm-tbl, .cm-key'); D.cmSel = D.cmSel === rid && !fromList ? null : rid; render();
       const pnl = document.getElementById('cmpanel'); if (pnl && (fromList || isPhoneUI())) pnl.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
     if (e.target.closest('[data-cm-close]')) { D.cmSel = null; render(); return; }
+    const bms = e.target.closest('[data-boom-sort]');
+    if (bms) { opts.boomSort = bms.dataset.boomSort; saveOpts(); render(); return; }
     const cms = e.target.closest('[data-cm-sort]');
     if (cms) { const k = cms.dataset.cmSort, cur = opts.cmSort || 'x', curDir = opts.cmDir || (cur === 'name' ? 'asc' : 'desc');
       opts.cmDir = k === cur ? (curDir === 'asc' ? 'desc' : 'asc') : (k === 'name' ? 'asc' : 'desc'); opts.cmSort = k; saveOpts(); render(); return; }
