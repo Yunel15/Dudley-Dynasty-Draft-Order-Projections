@@ -637,6 +637,44 @@ footer input{width:min(100%,260px)}
 }
 .brand{display:flex;align-items:center;gap:14px;min-width:0}.logo{width:88px;height:auto;flex:none;filter:drop-shadow(0 4px 10px rgba(0,0,0,.35))}
 @media (max-width:520px){.logo{width:68px}.brand{gap:10px}}
+/* ---------- Path to the Playoffs ---------- */
+.pt{margin-top:22px;padding-top:6px;border-top:1px solid var(--line)}
+.pt .pt-pick{max-width:320px;margin:6px 0 10px}
+.pt-status{display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap;margin:4px 0 6px}
+.pt-line{margin:6px 0;max-width:70ch;line-height:1.45}
+.pt-tag{display:inline-block;padding:3px 10px;border-radius:999px;font-weight:700;font-size:.85rem;border:1px solid var(--line);background:var(--surface);color:var(--ink);white-space:nowrap}
+.pt-tag.pt-good{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.pt-tag.pt-bad{color:var(--red-t)}
+.pt-tag.pt-mid{color:var(--teal-t)}
+.pt-cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:10px 0}
+.pt-card{display:flex;flex-direction:column;gap:4px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surface);min-width:0}
+.pt-card b{font-size:1.5rem;line-height:1.1;color:var(--ink)}
+.pt-k{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.pt-s{font-size:.82rem;color:var(--muted);line-height:1.35}
+.pt-h{font-size:1rem;font-weight:600;margin:18px 0 6px;color:var(--ink)}
+.pt-table{width:100%;border-collapse:collapse;font-size:.92rem}
+.pt-table th{text-align:left;font-weight:600;color:var(--muted);font-size:.78rem;padding:6px 8px;border-bottom:1px solid var(--line)}
+.pt-table td{text-align:left;padding:8px;border-bottom:1px solid var(--line);vertical-align:top;white-space:normal}
+.pt-table td.odds{text-align:center!important;font-weight:600;width:110px}
+.pt-table tr.pt-r50 td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
+.pt-tb{font-size:.82rem;color:var(--muted);line-height:1.35;display:block;max-width:46ch}
+.pt-dim{color:var(--muted)}
+.pt-roots{margin:6px 0 0;padding-left:1.3em;line-height:1.6}
+.pt-up{color:var(--teal-t);font-weight:600}
+.pt-how{margin-top:14px;max-width:70ch}
+.pt-how summary{cursor:pointer;font-weight:600}
+@media (max-width:760px){.pt-cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.is-phone .pt-cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+.is-phone .pt-table thead{display:none}
+.is-phone .pt-table,.is-phone .pt-table tbody{display:block}
+.is-phone .pt-table tr{display:block;border:1px solid var(--line);border-radius:12px;padding:6px 10px;margin:0 0 8px;background:var(--surface)}
+.is-phone .pt-table td{display:flex;justify-content:space-between;gap:12px;border-bottom:0;padding:4px 0;width:auto!important}
+.is-phone .pt-table td::before{content:attr(data-l);color:var(--muted);font-size:.78rem;flex:0 0 auto}
+.is-phone .pt-table td.odds{border-radius:8px;padding:4px 10px;text-align:right}
+.is-phone .pt-table tr.pt-r50{border-color:var(--accent)}
+.is-phone .pt-table tr.pt-r50 td:first-child{box-shadow:none}
+.is-phone .pt-tb{text-align:right}
+
 /* ---------- Phone layout (html.is-phone, set by device detection in <head>) ---------- */
 .mnav,.msheet,.mtabname{display:none}
 .is-phone body{padding-bottom:calc(66px + env(safe-area-inset-bottom,0px))}
@@ -1666,7 +1704,7 @@ html[data-page=zone] #cd,html[data-page=zone] #cd.open{display:none!important}
 <nav class="mnav" id="mnav" aria-label="Sections">
   <button type="button" data-go="stand"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Standings</button>
   <button type="button" data-go="match"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/><circle cx="12" cy="12" r="3"/></svg>Matchups</button>
-  <button type="button" data-go="zone"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2.5L5 13.5h6l-1 8 8-11h-6z"/></svg>Zone</button>
+  <button type="button" data-go="zone"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M1.5 19.7 L22.4 19.7 L21.6 17.4 L20.4 15.9 L15.1 13.9 L14.2 13.8 L14.2 12.9 L14.8 11.8 L15.0 10.9 L15.5 10.4 L15.8 9.4 L15.6 8.6 L15.1 8.4 L15.0 6.5 L14.3 5.3 L13.5 4.7 L12.5 4.3 L11.2 4.3 L10.3 4.6 L9.2 5.6 L8.7 6.8 L8.7 8.4 L8.1 8.8 L8.4 10.7 L9.0 11.1 L9.5 12.5 L9.5 13.7 L9.1 14.1 L8.2 14.2 L3.1 16.9 L2.1 18.2Z" stroke-width="1.6"/></svg>Zone</button>
   <button type="button" data-go="build"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 19c0-3 3-5 6-5s6 2 6 5M16 5a3 3 0 010 6M18 14c2 .6 3 2.4 3 5"/></svg>Teams</button>
   <button type="button" data-more><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>More</button>
 </nav>
@@ -1734,7 +1772,7 @@ html[data-page=zone] #cd,html[data-page=zone] #cd.open{display:none!important}
     pinId = rid || null;
     store.set(pinKey(), pinId ? String(pinId) : '');
     store.set(askKey(), '1');
-    if (pinId && D) { opts.tfTeam = pinId; opts.tfWith = 0; saveOpts(); }
+    if (pinId && D) { opts.tfTeam = pinId; opts.tfWith = 0; opts.pathTeam = 0; saveOpts(); }
     syncTeamBtn(); if (D) render();
     if (window.__ddPush) window.__ddPush();
   }
@@ -1809,8 +1847,8 @@ html[data-page=zone] #cd,html[data-page=zone] #cd.open{display:none!important}
     opts = Object.assign({ tab:'stand', basis:'standings', type:'linear', tiebreak:'pf-low', rounds:null, season:null }, saved);
   }
   function saveOpts(){
-    const { tab, basis, type, tiebreak, rounds, week, buildTeam, tradeTeam, tfTeam, tfTol, tfStrat, tfPos, tfPicks, mview, mteam, cmSort, cmDir, boomSort, jmPos, jmType } = opts;
-    store.set('opts:' + leagueId, JSON.stringify({ tab, basis, type, tiebreak, rounds, week, buildTeam, tradeTeam, tfTeam, tfTol, tfStrat, tfPos, tfPicks, mview, mteam, cmSort, cmDir, boomSort, jmPos, jmType }));
+    const { tab, basis, type, tiebreak, rounds, week, buildTeam, tradeTeam, tfTeam, tfTol, tfStrat, tfPos, tfPicks, mview, mteam, cmSort, cmDir, boomSort, pathTeam, jmPos, jmType } = opts;
+    store.set('opts:' + leagueId, JSON.stringify({ tab, basis, type, tiebreak, rounds, week, buildTeam, tradeTeam, tfTeam, tfTol, tfStrat, tfPos, tfPicks, mview, mteam, cmSort, cmDir, boomSort, pathTeam, jmPos, jmType }));
   }
 
   let D = null;
@@ -2030,7 +2068,7 @@ html[data-page=zone] #cd,html[data-page=zone] #cd.open{display:none!important}
     for (let i = 0; i + 1 < n; i += 2) pairs.push([a[i], a[i + 1]]);
     return pairs;
   }
-  function runSim(){
+  function simModel(){
     const { ids, hist, remaining } = D;
     const n = ids.length;
     const idx = new Map(ids.map((r, i) => [r, i]));
@@ -2049,12 +2087,15 @@ html[data-page=zone] #cd,html[data-page=zone] #cd.open{display:none!important}
       random: w.random,
       pairs: w.pairs.map(([a, b]) => [idx.get(a), idx.get(b)]).filter(p => p[0] != null && p[1] != null)
     }));
+    return { ids, n, idx, baseW, baseP, means, sd, weeks, pTeams: Math.min(D.playoff.teams, n) };
+  }
+  function runSim(){
+    const { ids, n, baseW, baseP, means, sd, weeks, pTeams } = simModel();
     const dir = opts.tiebreak === 'pf-low' ? 1 : -1;
     const sims = SIMS;
     const counts = ids.map(() => new Array(n).fill(0));
     const order = [...Array(n).keys()];
     const seedOrd = [...Array(n).keys()];
-    const pTeams = Math.min(D.playoff.teams, n);
     const seedCounts = ids.map(() => new Array(n).fill(0));
     const champ = new Array(n).fill(0), finals = new Array(n).fill(0), runner = new Array(n).fill(0), third = new Array(n).fill(0), ptsLead = new Array(n).fill(0);
     const bracketOK = !!projectedBracket([...Array(pTeams).keys()], pTeams);
@@ -2198,7 +2239,7 @@ html[data-page=zone] #cd,html[data-page=zone] #cd.open{display:none!important}
     tx: { sub: () => 'Every trade, waiver claim and free-agent move', how: () => '<p>This is Sleeper’s own transaction log for the season, newest first. Failed and cancelled moves are hidden unless you switch them on. All the leaderboards count completed moves only.</p><p><b>Waiver Wire Hero</b> adds up the points an added player scored for the team that added him, from the week of the add until he was dropped or the add was repeated. Only finished weeks count, and bench points count too. <b>Waiver Wire Flop</b> takes the ten biggest FAAB bids and lists them from fewest points up.</p><p>The page checks for new moves about once a minute while it is open.</p>' },
     stand: { sub: () => 'Records, streaks and strength of schedule', how: () => `<p>Teams are ranked by record, then points for. Streaks and Last 5 count regular-season games${D.median ? ', including the weekly median game' : ''}. Tap a streak for the week-by-week games, or a result for that matchup.</p><p><b>SOS</b> ranks each schedule by the average points per game of the opponents faced, 1st being the hardest. <span class="sos hard">Red</span> is the toughest third and <span class="sos easy">teal</span> the easiest. <b>Rem. SOS</b> does the same for the rest of the regular season. The small number under each rating is how far above or below the league average those opponents score.</p>` },
     match: { sub: () => 'Weekly scores, lineups and win odds', how: () => '<p>Tap a matchup to open it full screen. Tap a player’s name for his profile, or his points to see how they were scored.</p><p>Win probability starts from each starter’s projection in this league’s scoring. Finished games count what was scored, live games count current points plus half of what is left of the projection, and the more players still to play, the less certain the odds. It is an estimate, not Sleeper’s own number.</p>' },
-    odds: { sub: () => 'Each team’s chances from simulated seasons', how: () => `<p>Odds come from ${D.sim ? D.sim.sims.toLocaleString() : 'thousands of'} simulations of the rest of the regular season and the playoffs. Each team’s weekly score is modeled from its scoring so far, pulled slightly toward the league average. Seeds go by record, then points for.</p><p>Teams above the line are in the playoff field by odds. 100% means every simulated season, not a mathematical clinch.</p>` },
+    odds: { sub: () => 'Each team’s chances from simulated seasons', how: () => `<p>Odds come from ${D.sim ? D.sim.sims.toLocaleString() : 'thousands of'} simulations of the rest of the regular season and the playoffs. Each team’s weekly score is modeled from its scoring so far, pulled slightly toward the league average. Seeds go by record, then points for.</p><p>Teams above the line are in the playoff field by odds. 100% means every simulated season, not a mathematical clinch.</p><p>Below the table, <b>Path to the Playoffs</b> shows one team’s best and worst case, magic number, and how its odds change with its own results.</p>` },
     bracket: { sub: () => 'Who plays whom on the way to the title', how: () => '<p>Before the playoffs start, this is the bracket if the season ended today: the top teams by record, with points for as the tiebreaker. Seeds lock when the regular season ends.</p>' },
     order: { sub: () => `The ${D.draftSeason} rookie draft order`, how: () => `<p>Rookie draft order follows record, lowest first, with points for breaking ties. <b>Standings today</b> uses the current standings; <b>Projected finish</b> uses the average finish from the season simulations.</p><p>${KEY}Highlighted picks are owned by another team.</p>` },
     proj: { sub: () => `Odds of landing each ${D.draftSeason} pick`, how: () => '<p>Each row shows how often a team lands each pick across the season simulations. Weeks without a set schedule use random pairings.</p>' },
@@ -3485,6 +3526,319 @@ html[data-page=zone] #cd,html[data-page=zone] #cd.open{display:none!important}
     return html + '</div>';
   }
 
+  // ---------- Path to the Playoffs ----------
+  // Same model as runSim (see simModel) so these numbers agree with the odds table. Playoff seeding is record, then points for.
+  const PATH_MAX_GAMES = 6, PATH_RUNS = 8000, PATH_FLIP_RUNS = 20000;
+  const pathFmt = p => p >= 0.995 ? '>99%' : p < 0.005 ? '<1%' : Math.round(p * 100) + '%';
+  function mulberry(seed){ let a = seed >>> 0; return () => { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+  function gaussR(r){ let u = 0, v = 0; while (!u) u = r(); while (!v) v = r(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+  function randPairsR(n, r){
+    const a = [...Array(n).keys()];
+    for (let i = n - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+    const pairs = [];
+    for (let i = 0; i + 1 < n; i += 2) pairs.push([a[i], a[i + 1]]);
+    return pairs;
+  }
+  const popc = x => { let c = 0; while (x) { x &= x - 1; c++; } return c; };
+
+  // The team's own remaining games, in order: head-to-head, then the median game when the league has one.
+  function ownGames(M, ti){
+    const g = [];
+    M.weeks.forEach((wk, wi) => {
+      let plays = true, opp = -1;
+      if (!wk.random) { const p = wk.pairs.find(p => p[0] === ti || p[1] === ti); if (p) opp = p[0] === ti ? p[1] : p[0]; else plays = false; }
+      if (plays) g.push({ wi, type: 'h', opp });
+      if (D.median) g.push({ wi, type: 'm' });
+    });
+    return g;
+  }
+
+  // ----- Clinch / elimination math (no simulation) -----
+  // Rival results are a set of "resources": a game hands one win to one of its two teams; a median or unknown week hands out a fixed number
+  // of wins, at most one per team. Whatever the team loses becomes extra wins for its opponents, placed wherever it hurts most. This is a
+  // slightly looser set of outcomes than real life, so "Clinched" and "Eliminated" are never wrong; a magic number can read a hair high.
+  function pathAdv(M, ti){
+    const n = M.n, m = n - 1, pos = new Int32Array(n).fill(-1);
+    let k = 0; for (let i = 0; i < n; i++) if (i !== ti) pos[i] = k++;
+    const res = [], tper = new Int8Array(m), halves = Math.max(0, (n >> 1) - 1);
+    let unk = 0;
+    M.weeks.forEach(wk => {
+      if (wk.random) { unk++; res.push({ cap: halves, per: new Int8Array(m).fill(1) }); }
+      else wk.pairs.forEach(([a, b]) => {
+        if (a === ti || b === ti) tper[pos[a === ti ? b : a]]++;
+        else { const per = new Int8Array(m); per[pos[a]] = 1; per[pos[b]] = 1; res.push({ cap: 1, per }); }
+      });
+      if (D.median) res.push({ cap: halves, per: new Int8Array(m).fill(1) });
+    });
+    const extra = unk + (D.median ? M.weeks.length : 0);
+    for (let j = 0; j < m; j++) tper[j] += extra;
+    const Wr = []; for (let i = 0; i < n; i++) if (i !== ti) Wr.push(M.baseW[i]);
+    return { m, res, tper, Wr, f: {} };
+  }
+  function advTable(adv, L){
+    const m = adv.m, N = 1 << m, f = new Int32Array(N), s = new Int32Array(N);
+    const nodes = L > 0 ? adv.res.concat([{ cap: L, per: adv.tper }]) : adv.res;
+    for (const r of nodes) { for (let T = 1; T < N; T++) { const low = T & -T; s[T] = s[T ^ low] + r.per[31 - Math.clz32(low)]; f[T] += Math.min(r.cap, s[T]); } }
+    return f;
+  }
+  // Most rivals that can all pick up their needed extra wins d[j] at once (Hall's condition on the resource network).
+  function maxReach(adv, f, d){
+    const m = adv.m, N = 1 << m, sd = new Int32Array(N), ok = new Uint8Array(N);
+    ok[0] = 1; let best = 0;
+    for (let T = 1; T < N; T++) {
+      const low = T & -T; sd[T] = sd[T ^ low] + d[31 - Math.clz32(low)];
+      if (sd[T] > f[T]) continue;
+      let good = 1;
+      for (let x = T; x; x &= x - 1) { if (!ok[T ^ (x & -x)]) { good = 0; break; } }
+      if (good) { ok[T] = 1; const c = popc(T); if (c > best) best = c; }
+    }
+    return best;
+  }
+  function flowAll(adv, L, cap){
+    const nodes = L > 0 ? adv.res.concat([{ cap: L, per: adv.tper }]) : adv.res;
+    const R = nodes.length, m = adv.m, V = R + m + 2, S = V - 2, T = V - 1;
+    const g = Array.from({ length: V }, () => []), E = [];
+    const add = (u, v, c) => { g[u].push(E.length); E.push({ v, c }); g[v].push(E.length); E.push({ v: u, c: 0 }); };
+    let supply = 0;
+    nodes.forEach((r, i) => { add(S, i, r.cap); supply += r.cap; for (let j = 0; j < m; j++) if (r.per[j] > 0) add(i, R + j, r.per[j]); });
+    for (let j = 0; j < m; j++) add(R + j, T, cap[j]);
+    let flow = 0;
+    for (;;) {
+      const prev = new Int32Array(V).fill(-1); prev[S] = -2; const q = [S];
+      for (let h = 0; h < q.length && prev[T] === -1; h++) for (const ei of g[q[h]]) { const e = E[ei]; if (e.c > 0 && prev[e.v] === -1) { prev[e.v] = ei; q.push(e.v); } }
+      if (prev[T] === -1) break;
+      let f = Infinity; for (let v = T; v !== S; v = E[prev[v] ^ 1].v) f = Math.min(f, E[prev[v]].c);
+      for (let v = T; v !== S; v = E[prev[v] ^ 1].v) { E[prev[v]].c -= f; E[prev[v] ^ 1].c += f; }
+      flow += f;
+    }
+    return flow === supply;
+  }
+  function pathMath(M, ti, G){
+    const adv = pathAdv(M, ti), m = adv.m, pT = M.pTeams, W0 = M.baseW[ti];
+    const fOf = L => adv.f[L] || (adv.f[L] = advTable(adv, L));
+    const need = (w, strict) => adv.Wr.map(x => Math.max(0, strict ? Math.floor(w - x + 1e-9) + 1 : Math.ceil(w - x - 1e-9)));
+    const tied = L => maxReach(adv, fOf(L), need(W0 + G - L, false));
+    const ahead = L => maxReach(adv, fOf(L), need(W0 + G - L, true));
+    let magic = null, magicPF = null;
+    for (let k = 0; k <= G; k++) { if (magicPF == null && ahead(G - k) <= pT - 1) magicPF = k; if (tied(G - k) <= pT - 1) { magic = k; break; } }
+    // Eliminated when too few rivals can be held at or below the team's total: it needs (m - pT + 1) of them to stay at or below it.
+    const elim = L => {
+      const w = W0 + G - L, u0 = m - pT + 1;
+      if (u0 <= 0) return false;
+      const cand = []; adv.Wr.forEach((x, j) => { if (x <= w + 1e-9) cand.push(j); });
+      if (cand.length < u0) return true;
+      let combos = 1; for (let i = 0; i < u0; i++) combos = combos * (cand.length - i) / (i + 1);
+      if (combos > 4000) return false; // too many to prove: never claim an elimination we can't show
+      const cap = new Array(m);
+      const pick = (start, chosen) => {
+        if (chosen.length === u0) { cap.fill(Infinity); chosen.forEach(j => { cap[j] = Math.floor(w - adv.Wr[j] + 1e-9); }); return flowAll(adv, L, cap); }
+        for (let i = start; i <= cand.length - (u0 - chosen.length); i++) { chosen.push(cand[i]); const ok = pick(i + 1, chosen); chosen.pop(); if (ok) return true; }
+        return false;
+      };
+      return !pick(0, []);
+    };
+    const eliminated = G === 0 ? null : elim(0);
+    let tragic = null;
+    if (elim(G)) { let lo = 0, hi = G; while (lo < hi) { const mid = (lo + hi) >> 1; if (elim(mid)) hi = mid; else lo = mid + 1; } tragic = lo; }
+    return { G, W0, best: W0 + G, worst: W0, magic, magicPF, tragic, eliminated, clinched: magic === 0,
+      worstIn: tied(G) <= pT - 1, worstOut: elim(G) };
+  }
+
+  // ----- Simulation with the team's own results fixed -----
+  function pathWeek(M, wk, W, P, ti, force, rnd, rec, off){
+    const n = M.n, sc = M.sc, tmp = M.tmp;
+    let pairs, med = 0, tries = 0;
+    for (;;) {
+      for (let i = 0; i < n; i++) sc[i] = Math.max(0, M.means[i] + M.sd * gaussR(rnd));
+      pairs = wk.random ? randPairsR(n, rnd) : wk.pairs;
+      if (D.median) { tmp.set(sc); tmp.sort(); med = (tmp[(n - 1) >> 1] + tmp[n >> 1]) / 2; }
+      if (!force || ++tries > 400) break;
+      let ok = true;
+      if (force.h != null) for (const p of pairs) if (p[0] === ti || p[1] === ti) { const o = p[0] === ti ? p[1] : p[0]; if ((sc[ti] > sc[o] ? 1 : 0) !== force.h) ok = false; break; }
+      if (ok && force.m != null && (sc[ti] > med ? 1 : 0) !== force.m) ok = false;
+      if (ok) break;
+    }
+    let gi = off;
+    for (const [a, b] of pairs) {
+      if (sc[a] > sc[b]) W[a]++; else W[b]++;
+      if (rec && !wk.random && a !== ti && b !== ti) rec[gi++] = sc[a] > sc[b] ? 1 : 0;
+    }
+    for (let i = 0; i < n; i++) P[i] += sc[i];
+    if (D.median) for (let i = 0; i < n; i++) if (sc[i] > med) W[i]++;
+  }
+  // One simulated finish. mask: bit i set = the team wins its i-th own game (first Gc games); mask === null = nothing fixed.
+  function pathSeason(M, ti, own, Gc, mask, rnd, rec){
+    const W = M.baseW.slice(), P = M.baseP.slice();
+    const forces = new Array(M.weeks.length).fill(null);
+    if (mask != null) for (let i = 0; i < Gc; i++) { const g = own[i], f = forces[g.wi] || (forces[g.wi] = {}); f[g.type] = (mask >> i) & 1; }
+    M.weeks.forEach((wk, wi) => pathWeek(M, wk, W, P, ti, forces[wi], rnd, rec, M.gOff[wi]));
+    return { W, P };
+  }
+  function pathJudge(M, ti, W, P){
+    let A = 0, T = 0, hi = 0; const tiedP = [];
+    for (let j = 0; j < M.n; j++) {
+      if (j === ti) continue;
+      if (W[j] > W[ti] + 1e-9) A++;
+      else if (Math.abs(W[j] - W[ti]) < 1e-9) { T++; tiedP.push(j); if (P[j] > P[ti]) hi++; }
+    }
+    const made = A + hi < M.pTeams, hinge = A < M.pTeams && A + T >= M.pTeams;
+    let key = -1;
+    if (hinge) { tiedP.sort((x, y) => P[y] - P[x]); key = tiedP[M.pTeams - A - 1]; }
+    return { made, hinge, key };
+  }
+  function pathModel(){
+    const M = simModel();
+    M.sc = new Float64Array(M.n); M.tmp = new Float64Array(M.n);
+    M.gOff = []; let c = 0;
+    M.weeks.forEach(wk => { M.gOff.push(c); if (!wk.random) c += wk.pairs.length; });
+    M.gTotal = c;
+    return M;
+  }
+  function pathScenarios(M, ti, own, Gc, rnd){
+    const rows = [];
+    for (let w = 0; w <= Gc; w++) {
+      const combos = []; for (let b = 0; b < (1 << Gc); b++) if (popc(b) === w) combos.push(b);
+      let made = 0, hinge = 0; const keys = new Map();
+      for (let s = 0; s < PATH_RUNS; s++) {
+        const { W, P } = pathSeason(M, ti, own, Gc, combos[s % combos.length], rnd, null);
+        const j = pathJudge(M, ti, W, P);
+        if (j.made) made++;
+        if (j.hinge) { hinge++; keys.set(j.key, (keys.get(j.key) || 0) + 1); }
+      }
+      let key = -1, kc = 0; keys.forEach((v, k) => { if (v > kc) { kc = v; key = k; } });
+      rows.push({ wins: w, p: made / PATH_RUNS, hinge: hinge / PATH_RUNS, key, combos: combos.length });
+    }
+    // More wins can't lower the odds, so smooth sampling noise with a running maximum.
+    let run = 0; rows.forEach(r => { r.pAdj = Math.max(run, r.p); run = r.pAdj; });
+    return rows;
+  }
+  function pathFlips(M, ti, own, Gc, wStar, rnd){
+    const combos = []; for (let b = 0; b < (1 << Gc); b++) if (popc(b) === wStar) combos.push(b);
+    const Gn = M.gTotal, N = PATH_FLIP_RUNS, bits = new Uint8Array(N * Gn), made = new Uint8Array(N);
+    for (let s = 0; s < N; s++) {
+      const rec = bits.subarray(s * Gn, (s + 1) * Gn);
+      const { W, P } = pathSeason(M, ti, own, Gc, combos[s % combos.length], rnd, rec);
+      made[s] = pathJudge(M, ti, W, P).made ? 1 : 0;
+    }
+    const out = [];
+    M.weeks.forEach((wk, wi) => {
+      if (wk.random) return;
+      let gi = M.gOff[wi];
+      wk.pairs.forEach(([a, b]) => {
+        if (a === ti || b === ti) return;
+        let nA = 0, mA = 0, nB = 0, mB = 0;
+        for (let s = 0; s < N; s++) { if (bits[s * Gn + gi]) { nA++; mA += made[s]; } else { nB++; mB += made[s]; } }
+        gi++;
+        if (Math.min(nA, nB) < 300) return;
+        const pA = mA / nA, pB = mB / nB, d = Math.abs(pA - pB);
+        if (Math.round(d * 100) < 1) return;
+        out.push({ wi, win: pA > pB ? a : b, lose: pA > pB ? b : a, d });
+      });
+    });
+    out.sort((x, y) => y.d - x.d);
+    return out.slice(0, 5);
+  }
+  function pathCompute(pid){
+    const M = pathModel(), ti = M.idx.get(pid);
+    const own = ownGames(M, ti), G = own.length, Gc = Math.min(G, PATH_MAX_GAMES);
+    const R = { pid, ti, G, Gc, own, M: null };
+    R.math = pathMath(M, ti, G);
+    if (!G) return R;
+    const rnd = mulberry((0x9E3779B1 ^ Math.imul(pid + 1, 2654435761)) >>> 0);
+    R.rows = pathScenarios(M, ti, own, Gc, rnd);
+    const pick = p => { const r = R.rows.find(r => r.pAdj >= p); return r ? r.wins : null; };
+    R.q50 = pick(0.5); R.q90 = pick(0.9);
+    R.wStar = R.q50 != null ? R.q50 : Gc;
+    const pStar = R.rows[R.wStar].pAdj;
+    R.flips = (pStar >= 0.995 || pStar < 0.005) ? [] : pathFlips(M, ti, own, Gc, R.wStar, rnd);
+    R.weeks = M.weeks.length;
+    return R;
+  }
+  function pathDefaultTeam(){
+    const S = D.sim, idx = new Map(D.ids.map((r, i) => [r, i]));
+    const sorted = D.ids.slice().sort((a, b) => S.make[idx.get(b)] - S.make[idx.get(a)]);
+    return sorted[Math.min(S.pTeams, sorted.length) - 1];
+  }
+  function renderPath(){
+    const S = D.sim; if (!S) return '';
+    const pid = (opts.pathTeam && D.ids.includes(opts.pathTeam)) ? opts.pathTeam : (pinned() || pathDefaultTeam());
+    const t = team(pid), i = D.ids.indexOf(pid), pT = S.pTeams;
+    const sel = `<label class="field pt-pick">Team<select data-opt="pathTeam">${D.ids.slice().sort((a, b) => team(a).name.localeCompare(team(b).name)).map(r => `<option value="${r}" ${r === pid ? 'selected' : ''}>${esc(team(r).name)}</option>`).join('')}</select></label>`;
+    S.pathCache = S.pathCache || new Map();
+    let R = S.pathCache.get(pid);
+    const head = `<div class="pt"><h3 class="sh3">Path to the Playoffs</h3>${sel}`;
+    if (!R) {
+      const myS = S;
+      setTimeout(() => { if (D && D.sim === myS && !myS.pathCache.has(pid)) { try { myS.pathCache.set(pid, pathCompute(pid)); } catch (e) { myS.pathCache.set(pid, { pid, failed: true }); } if (opts.tab === 'odds') render(); } }, 30);
+      return head + `<p class="note">Running the scenarios for ${esc(t.name)}…</p></div>`;
+    }
+    if (R.failed) return head + `<p class="note">Couldn’t work out the scenarios for this team.</p></div>`;
+    const odds = S.make[i], m = R.math, G = R.G;
+    const seedNow = seedOrder().indexOf(pid) + 1;
+    const plural = (n, w) => n + ' ' + (w === 'loss' ? (n === 1 ? 'loss' : 'losses') : w + (n === 1 ? '' : 's'));
+    let label, cls;
+    if (!G) { const inn = seedNow <= pT; label = inn ? 'Clinched' : 'Eliminated'; cls = inn ? 'pt-good' : 'pt-bad'; }
+    else if (m.clinched) { label = 'Clinched'; cls = 'pt-good'; }
+    else if (m.eliminated) { label = 'Eliminated'; cls = 'pt-bad'; }
+    else if (odds >= 0.8) { label = 'In control'; cls = 'pt-good'; }
+    else if (odds >= 0.2) { label = 'On the bubble'; cls = 'pt-mid'; }
+    else { label = 'Long shot'; cls = 'pt-bad'; }
+    const gamesTxt = G ? `${plural(G, 'game')} left${D.median ? ' (including median games)' : ''}` : 'regular season over';
+    let h = head + `<div class="pt-status"><span class="pt-tag ${cls}">${label}</span>
+      <p class="pt-line"><b>${esc(t.name)}</b> are ${record(t)}, currently the ${ordinal(seedNow)} seed. The top ${pT} make the playoffs. ${gamesTxt}. Playoff odds: <b>${pathFmt(odds)}</b>.</p></div>`;
+    if (D.schedUnknown) h += `<p class="note">Matchups for later weeks aren’t set yet. Those weeks use average team strength with random pairings, not invented opponents.</p>`;
+    if (D.median) h += `<p class="note">This league has a weekly median game, so every week counts as two games for ${esc(t.name)}: the head-to-head and the median. All the math below includes both.</p>`;
+    if (!G) return h + `<p class="note">Nothing left to play, so there are no scenarios to run.</p></div>`;
+
+    const bestTxt = m.eliminated ? 'Even winning out isn’t enough, no matter how the rest goes.' : `Win out and have every rival lose: ${plural(m.best, 'win')}. That puts ${esc(t.name)} in.`;
+    const worstTxt = m.worstIn ? `Lose out and finish with ${plural(m.worst, 'win')}: still in.` : m.worstOut ? `Lose out and finish with ${plural(m.worst, 'win')}: out.` : `Lose out and finish with ${plural(m.worst, 'win')}: depends on the rest of the league.`;
+    const magicTxt = m.magic === 0 ? 'Clinched, no help needed.' : m.eliminated ? 'Out of reach.' : m.magic == null ? 'Can’t clinch on its own; it needs rivals to lose.' : `${plural(m.magic, 'win')} puts ${esc(t.name)} in no matter what anyone else does.`;
+    const tragicTxt = m.eliminated ? 'Already eliminated.' : m.clinched ? 'Can’t be eliminated.' : m.tragic == null ? 'No number of losses eliminates it yet.' : `${m.tragic === 1 ? '1 loss' : m.tragic + ' losses'} and it’s over, whatever the rest do.`;
+    h += `<div class="pt-cards">
+      <div class="pt-card"><span class="pt-k">Best case</span><b>${plural(m.best, 'win')}</b><span class="pt-s">${bestTxt}</span></div>
+      <div class="pt-card"><span class="pt-k">Worst case</span><b>${plural(m.worst, 'win')}</b><span class="pt-s">${worstTxt}</span></div>
+      <div class="pt-card"><span class="pt-k">Magic number</span><b>${m.magic == null ? '—' : m.magic}</b><span class="pt-s">${magicTxt}</span></div>
+      <div class="pt-card"><span class="pt-k">Tragic number</span><b>${m.tragic == null ? '—' : m.tragic}</b><span class="pt-s">${tragicTxt}</span></div></div>`;
+    if (m.magicPF != null && m.magic != null && m.magicPF < m.magic) h += `<p class="note">With ${plural(m.magicPF, 'win')} ${esc(t.name)} are in unless they lose a points-for tiebreaker; ${m.magic} wins removes that risk.</p>`;
+
+    const cap = R.Gc < G;
+    const rows = R.rows.slice().reverse();
+    const l0 = t.losses, w0 = t.wins, ti0 = t.ties;
+    const rec = w => `${w0 + w}-${l0 + (R.Gc - w)}${ti0 ? '-' + ti0 : ''}`;
+    const wk = x => D.remaining[x].week;
+    h += `<h4 class="pt-h">${cap ? `Scenarios for the next ${R.Gc} games` : 'Every way the rest of the season can go'}</h4>`;
+    if (cap) h += `<p class="note">${esc(t.name)} have ${G} games left. These rows cover the next ${R.Gc}; the later games are simulated normally.</p>`;
+    h += `<table class="pt-table"><thead><tr><th scope="col">Results</th><th scope="col">${cap ? 'Record after' : 'Final record'}</th><th scope="col">Playoff odds</th><th scope="col">Tiebreaker</th></tr></thead><tbody>`;
+    rows.forEach(r => {
+      const tb = r.hinge >= 0.02 && r.key >= 0;
+      let tbTxt = '';
+      if (tb) {
+        const kr = D.ids[r.key], gap = team(kr).pf - t.pf;
+        tbTxt = `<span class="pt-tb">Points for decides it in ~${Math.round(r.hinge * 100)}% of runs. Key rival: ${esc(team(kr).name)}, ${gap > 0 ? `${gap.toFixed(1)} PF ahead now` : `${Math.abs(gap).toFixed(1)} PF behind now`}${gap > 0 ? `, so ${esc(t.name)} must outscore them by that much from here` : `, so ${esc(t.name)} win that tiebreak today`}.</span>`;
+      }
+      const mark = r.wins === R.q50 && R.q50 != null ? ' pt-r50' : '';
+      h += `<tr class="${mark}"><td data-l="Results">${plural(r.wins, 'win')}, ${plural(R.Gc - r.wins, 'loss')}${r.wins === R.Gc ? ' (win out)' : r.wins === 0 ? ' (lose out)' : ''}</td><td data-l="${cap ? 'Record after' : 'Final record'}">${rec(r.wins)}</td>
+        <td data-l="Playoff odds" class="odds" style="background:rgba(var(--heat),${Math.min(1, r.pAdj * 1.15).toFixed(3)});${r.pAdj * 1.15 > .55 ? 'color:var(--accent-ink);font-weight:600' : ''}">${pathFmt(r.pAdj)}</td><td data-l="Tiebreaker">${tbTxt || '<span class="pt-dim">—</span>'}</td></tr>`;
+    });
+    h += `</tbody></table>`;
+    const nTxt = cap ? `of the next ${R.Gc}` : `of the ${G} left`;
+    h += `<p class="pt-line">${R.q50 == null ? `Even winning all ${R.Gc} leaves ${esc(t.name)} under 50%.` : `For at least a coin-flip shot, win <b>${R.q50}</b> ${nTxt}.`} ${R.q90 == null ? `No result gets to 90%.` : `For 90% or better, win <b>${R.q90}</b>.`}</p>`;
+
+    h += `<h4 class="pt-h">What needs to happen</h4>`;
+    const star = R.rows[R.wStar].pAdj;
+    h += `<p class="pt-line">${R.q50 == null ? `Best realistic outcome: win all ${R.Gc}` : `Best realistic outcome: win ${R.wStar} ${nTxt}`} (${pathFmt(star)} odds). The games below move that the most.</p>`;
+    if (star >= 0.995) h += `<p class="note">${esc(t.name)} are in control. Nothing else matters much.</p>`;
+    else if (star < 0.005) h += `<p class="note">Even the best realistic outcome leaves the odds under 1%.</p>`;
+    else if (!R.flips.length) h += `<p class="note">No single game elsewhere moves ${esc(t.name)}’s odds by a full point.${D.schedUnknown ? ' Games in weeks without a schedule can’t be listed.' : ''}</p>`;
+    else h += `<ol class="pt-roots">${R.flips.map(f => `<li>Root for <b>${esc(team(D.ids[f.win]).name)}</b> over <b>${esc(team(D.ids[f.lose]).name)}</b> <span class="pt-up">(+${Math.round(f.d * 100)}% odds)</span> <span class="pt-dim">Week ${wk(f.wi)}</span></li>`).join('')}</ol>`;
+
+    h += `<details class="pt-how"><summary>How this works</summary>
+      <p><b>Magic number:</b> the fewest wins that put ${esc(t.name)} in no matter what anyone else does. It plans for the worst: rivals win every game they can, and any tie on wins is assumed lost on points for. At 0, the spot is clinched. The <b>tragic number</b> is the losses after which not even the best help can save it. Median games count as games here.</p>
+      <p><b>Scenarios and odds:</b> they come from the same season simulation as the table above. Each week’s score is modeled from the team’s scoring so far, pulled toward the league average. For each row, ${esc(t.name)}’s own results are fixed and the rest of the league is simulated ${PATH_RUNS.toLocaleString()} times. Seeds go by record, then points for. When two ways to get the same win total exist, they’re weighted equally.</p>
+      <p><b>Root for:</b> in the best realistic outcome, how much the odds change depending on who wins each other game.${D.schedUnknown ? ' Weeks with no schedule use average team strength, not made-up matchups.' : ''}</p></details></div>`;
+    return h;
+  }
+
   // ---------- Playoff odds ----------
   function renderOdds(){
     const S = D.sim, n = D.ids.length, k = S.pTeams;
@@ -3518,7 +3872,7 @@ html[data-page=zone] #cd,html[data-page=zone] #cd.open{display:none!important}
         ${S.seedProbs[i].slice(0, k).map(p => `<td class="heat" style="${heat(p)}">${p > 0 ? fmt(p) : ''}</td>`).join('')}</tr>`;
     });
     html += '</tbody></table></div>';
-    html += ``;
+    html += renderPath();
     return html;
   }
 
@@ -7090,7 +7444,7 @@ html[data-page=zone] #cd,html[data-page=zone] #cd.open{display:none!important}
     if (!el) return;
     const k = el.dataset.opt;
     const openDetails = !!e.target.closest('details[open]');
-    opts[k] = (k === 'rounds' || k === 'season' || k === 'tradeTeam' || k === 'week' || k === 'buildTeam' || k === 'tfTeam' || k === 'tfTol' || k === 'mteam' || k === 'tfWith' || k === 'tnSel' || k === 'wxWeek' || k === 'wxTeam') ? Number(el.value) : el.value;
+    opts[k] = (k === 'rounds' || k === 'season' || k === 'tradeTeam' || k === 'week' || k === 'buildTeam' || k === 'tfTeam' || k === 'tfTol' || k === 'mteam' || k === 'tfWith' || k === 'tnSel' || k === 'wxWeek' || k === 'wxTeam' || k === 'pathTeam') ? Number(el.value) : el.value;
     if (k.indexOf('tx') === 0 && D && D.tx) D.tx.shown = TX_PAGE;
     if (k.indexOf('dr') === 0 && D && D.dr) D.dr.shown = DR_PAGE;
     saveOpts();
