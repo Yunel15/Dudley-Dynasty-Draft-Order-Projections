@@ -262,7 +262,7 @@ async function build() {
   const proj = await getProjections(curWeek, { players, history, season, week: curWeek });
   for (const [pid, p] of Object.entries(players)) {
     const pr = proj[pid] || {};
-    Object.assign(p, { mean: pr.mean, sd: pr.sd, floor: pr.floor, ceil: pr.ceil, n: pr.n, src: pr.src, rec: (history[pid] || []).slice(0, 5).map(r2) });
+    Object.assign(p, { mean: pr.mean, sd: pr.sd, floor: pr.floor, ceil: pr.ceil, gp: pr.n, src: pr.src, rec: (history[pid] || []).slice(0, 5).map(r2) });
     p.play = {};
     for (let w = curWeek; w <= lastReg; w++) p.play[w] = playProb(p.inj.status, p.inj.injury, p.inj.practice, w - curWeek);
   }

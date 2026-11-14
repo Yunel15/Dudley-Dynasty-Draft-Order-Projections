@@ -218,3 +218,8 @@ test('league scoring is applied to raw stats; pts_ppr is the fallback', () => {
 test('projection provider adapter can be swapped', async () => {
   const out = await getProjections(5, { players: { a: { pos: 'WR' } }, history: { a: [10, 12] } }, 'rolling'); assert.ok(out.a.mean > 0 && out.a.src);
 });
+
+test('context builder keeps the player name separate from the games count', () => {
+  const src = readFileSync(new URL('../scripts/lab-context.mjs', import.meta.url), 'utf8');
+  assert.ok(!/Object\.assign\(p, \{[^}]*\bn: pr\.n/.test(src), 'pr.n (games) must not overwrite p.n (name)');
+});
