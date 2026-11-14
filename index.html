@@ -1680,6 +1680,7 @@ html[data-page=zone] #cd,html[data-page=zone] #cd.open{display:none!important}
 .zp .hs{width:44px;height:44px}
 .zph{display:flex;flex-wrap:wrap;gap:2px 8px;align-items:baseline}.zn{font-size:.98rem}.zt{font-size:.74rem;color:var(--muted)}
 .zown{all:unset;cursor:pointer;font-size:.68rem;font-weight:700;padding:1px 7px;border-radius:999px;background:rgba(var(--heat),.18);color:var(--teal-t)}.zown:focus-visible{outline:2px solid var(--accent)}
+.zslot{font-size:.6rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase;padding:1px 6px;border-radius:999px;margin-left:5px;border:1px solid var(--line,rgba(128,128,128,.35));color:var(--muted,#888)}.zslot.start{background:rgba(46,160,67,.16);border-color:rgba(46,160,67,.5);color:#2ea043}.zslot.ir{color:#d9534f;border-color:rgba(217,83,79,.5)}
 .zmg{display:none}.zown.open .zmg,.zown:hover .zmg{display:inline}
 .zd{margin:3px 0 0;font-size:.85rem;color:var(--t2);overflow-wrap:anywhere}.zm{font-size:.72rem;color:var(--muted);margin-top:3px}
 .zpts{font-weight:800;font-size:1.15rem;color:var(--teal-t);text-align:right;font-variant-numeric:tabular-nums}.zpts small{display:block;font-size:.6rem;letter-spacing:.08em;color:var(--muted);font-weight:600}
@@ -2776,13 +2777,19 @@ html[data-page=zone] #cd,html[data-page=zone] #cd.open{display:none!important}
     return null;
   }
 
+  // Where the player sits on the owner's roster right now: Starting, Bench, IR or Taxi.
+  function zoneSlot(pid){
+    const r = (D && D.rosters || []).find(x => (x.players || []).map(String).includes(String(pid))); if (!r) return null;
+    const has = a => (a || []).map(String).includes(String(pid));
+    return has(r.starters) ? ['start', 'Starting'] : has(r.reserve) ? ['ir', 'IR'] : has(r.taxi) ? ['taxi', 'Taxi'] : ['bench', 'Bench'];
+  }
   function zoneItem(p, mineRid){
     const cs = p.credits.slice().sort((a, b) => b.pts - a.pts), top = cs[0], rest = cs.slice(1);
     const rid = zoneOwner(top.id), t = rid != null && D.ids.includes(rid) ? team(rid) : null;
     const ro = cs.map(c => zoneOwner(c.id)).some(r => r != null && r === mineRid);
     const anim = Z.animated.has(p.key) ? '' : ' zin';
     return `<article class="zp${t ? ' ros' : ''}${ro ? ' mine' : ''}${anim}" data-k="${esc(p.key)}">${shot(top.id, top.pos, top.tm, top.name)}
-      <div class="zpx"><div class="zph"><b class="zn">${esc(top.name)}</b><span class="zt">${esc(top.pos)} · ${esc(top.tm)}</span>${t ? `<button type="button" class="zown" data-z-own title="${esc(t.manager || '')}">${esc(t.name)}<span class="zmg"> · ${esc(t.manager || '')}</span></button>` : ''}</div>
+      <div class="zpx"><div class="zph"><b class="zn">${esc(top.name)}</b><span class="zt">${esc(top.pos)} · ${esc(top.tm)}</span>${t ? `<button type="button" class="zown" data-z-own title="${esc(t.manager || '')}">${esc(t.name)}<span class="zmg"> · ${esc(t.manager || '')}</span></button>${(() => { const sl = zoneSlot(top.id); return sl ? `<span class="zslot ${sl[0]}">${sl[1]}</span>` : ''; })()}` : ''}</div>
       <p class="zd">${esc(p.text)}</p><div class="zm">${p.q ? 'Q' + esc(p.q) : ''}${p.clock ? ' · ' + esc(p.clock) : ''}${rest.length ? ` · ${rest.map(c => `${esc(c.name)} ${c.pts >= 0 ? '+' : ''}${zFmt(c.pts)}`).join(', ')}` : ''}</div></div>
       <span class="zpts" aria-label="${zFmt(top.pts)} PPR points">+${zFmt(top.pts)}<small>PPR</small></span></article>`;
   }
@@ -2807,7 +2814,7 @@ html[data-page=zone] #cd,html[data-page=zone] #cd.open{display:none!important}
     let list = info.vis.filter(p => p.big).sort((a, b) => b.ts - a.ts || b.seq - a.seq).slice(0, ZONE_FEED_MAX);
     if (Z.pos !== 'ALL') list = list.filter(p => p.credits.some(c => (c.pts > BIG_PLAY_PTS || p.two) && c.pos === Z.pos));
     if (Z.mine && mineRid != null) list = list.filter(p => p.credits.some(c => zoneOwner(c.id) === mineRid));
-    const sig = list.map(p => p.key).join('|') + '#' + Z.pos + Z.mine + mineRid + '#' + (D && D.rosters ? D.rosters.length : 0);
+    const sig = list.map(p => p.key).join('|') + '#' + Z.pos + Z.mine + mineRid + '#' + (D && D.rosters ? D.rosters.length + ':' + D.rosters.map(r => (r.starters || []).length + (r.starters || []).join('').length).join(',') : 0);
     if (sig !== zoneLast) {
       zoneLast = sig;
       root.querySelector('#zfeed').innerHTML = list.length ? list.map(p => zoneItem(p, mineRid)).join('') : `<p class="note zempty">${st === 'Waiting for kickoff' && !info.vis.length ? 'No big plays yet. They show up here once games kick off.' : 'No big plays yet.'}</p>`;
