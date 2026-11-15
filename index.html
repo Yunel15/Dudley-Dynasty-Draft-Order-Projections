@@ -1681,6 +1681,7 @@ html[data-page=zone] #cd,html[data-page=zone] #cd.open{display:none!important}
 .zph{display:flex;flex-wrap:wrap;gap:2px 8px;align-items:baseline}.zn{font-size:.98rem}.zt{font-size:.74rem;color:var(--muted)}
 .zown{all:unset;cursor:pointer;font-size:.68rem;font-weight:700;padding:1px 7px;border-radius:999px;background:rgba(var(--heat),.18);color:var(--teal-t)}.zown:focus-visible{outline:2px solid var(--accent)}
 .zslot{font-size:.6rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase;padding:1px 6px;border-radius:999px;margin-left:5px;border:1px solid var(--line,rgba(128,128,128,.35));color:var(--muted,#888)}.zslot.start{background:rgba(46,160,67,.16);border-color:rgba(46,160,67,.5);color:#2ea043}.zslot.ir{color:#d9534f;border-color:rgba(217,83,79,.5)}
+.zsel{font:inherit;font-size:.75rem;font-weight:700;padding:5px 8px;border-radius:999px;border:1px solid var(--line,rgba(128,128,128,.35));background:var(--card,transparent);color:inherit;max-width:100%}.zmu{display:inline-flex;max-width:100%}
 .zmg{display:none}.zown.open .zmg,.zown:hover .zmg{display:inline}
 .zd{margin:3px 0 0;font-size:.85rem;color:var(--t2);overflow-wrap:anywhere}.zm{font-size:.72rem;color:var(--muted);margin-top:3px}
 .zpts{font-weight:800;font-size:1.15rem;color:var(--teal-t);text-align:right;font-variant-numeric:tabular-nums}.zpts small{display:block;font-size:.6rem;letter-spacing:.08em;color:var(--muted);font-weight:600}
@@ -2553,7 +2554,7 @@ html[data-page=zone] #cd,html[data-page=zone] #cd.open{display:none!important}
   const ZONE_TEAM_FIX = { WSH: 'WAS', JAC: 'JAX', LA: 'LAR' };       // ESPN abbreviation -> Sleeper abbreviation
   const ZONE_FALLBACK_SCORING = { pass_yd: 0.04, pass_td: 4, pass_int: -2, pass_2pt: 2, rush_yd: 0.1, rush_td: 6, rush_2pt: 2, rec: 1, rec_yd: 0.1, rec_td: 6, rec_2pt: 2, fum_lost: -2 };
   const ZONE_LIVE_MS = 15000, ZONE_IDLE_MS = 300000, ZONE_ROTATE_MS = 8000, ZONE_FEED_MAX = 100;
-  const Z = { delay: 0, shown: new Set(), games: new Map(), pos: 'ALL', mine: false, fails: 0, loaded: false, ban: null, banKey: '', banIdx: 0, animated: new Set(), firstSeen: new Map(), stats: new Map(), scoring: null, state: null, timers: {} };
+  const Z = { delay: 0, shown: new Set(), games: new Map(), pos: 'ALL', mine: false, mu: '', fails: 0, loaded: false, ban: null, banKey: '', banIdx: 0, animated: new Set(), firstSeen: new Map(), stats: new Map(), scoring: null, state: null, timers: {} };
   try { const v = Number(store.get('dd:zoneDelay')); if (Number.isFinite(v)) Z.delay = Math.max(0, Math.min(300, Math.round(v))); } catch (e) {}
   const zNorm = s => String(s || '').toLowerCase().replace(/[^a-z]/g, '');
   const zTm = a => { a = String(a || '').toUpperCase(); return ZONE_TEAM_FIX[a] || a; };
@@ -2783,6 +2784,21 @@ html[data-page=zone] #cd,html[data-page=zone] #cd.open{display:none!important}
     const has = a => (a || []).map(String).includes(String(pid));
     return has(r.starters) ? ['start', 'Starting'] : has(r.reserve) ? ['ir', 'IR'] : has(r.taxi) ? ['taxi', 'Taxi'] : ['bench', 'Bench'];
   }
+  // Fantasy matchups for the current NFL week (reuses the week data the Matchups tab loads).
+  function zoneMatchups(){
+    if (!D || !D.weekData || !Z.week) return [];
+    const list = D.weekData.get(Z.week);
+    if (!list) { if (D.weekLoading && !D.weekLoading.has(Z.week)) fetchWeek(Z.week).then(() => { zoneLast = ''; zoneUpdate(); }).catch(() => {}); return []; }
+    return bnPairs(list).filter(g => g.every(m => D.ids.includes(m.roster_id)));
+  }
+  function zoneMuFill(root){
+    const box = root.querySelector('#zmu'); if (!box) return;
+    const prs = zoneMatchups(), key = Z.week + '|' + Z.mu + '|' + prs.map(g => g.mid).join(',');
+    if (box.dataset.k === key) return; box.dataset.k = key;
+    if (!prs.length) { box.innerHTML = ''; return; }
+    if (Z.mu && !prs.some(g => String(g.mid) === Z.mu)) Z.mu = '';
+    box.innerHTML = `<select class="zsel" data-z-mu aria-label="Filter by fantasy matchup"><option value="">All matchups</option>${prs.map(g => `<option value="${g.mid}"${String(g.mid) === Z.mu ? ' selected' : ''}>${g.map(m => esc(team(m.roster_id).name)).join(' vs ')}</option>`).join('')}</select>`;
+  }
   function zoneItem(p, mineRid){
     const cs = p.credits.slice().sort((a, b) => b.pts - a.pts), top = cs[0], rest = cs.slice(1);
     const rid = zoneOwner(top.id), t = rid != null && D.ids.includes(rid) ? team(rid) : null;
@@ -2814,7 +2830,9 @@ html[data-page=zone] #cd,html[data-page=zone] #cd.open{display:none!important}
     let list = info.vis.filter(p => p.big).sort((a, b) => b.ts - a.ts || b.seq - a.seq).slice(0, ZONE_FEED_MAX);
     if (Z.pos !== 'ALL') list = list.filter(p => p.credits.some(c => (c.pts > BIG_PLAY_PTS || p.two) && c.pos === Z.pos));
     if (Z.mine && mineRid != null) list = list.filter(p => p.credits.some(c => zoneOwner(c.id) === mineRid));
-    const sig = list.map(p => p.key).join('|') + '#' + Z.pos + Z.mine + mineRid + '#' + (D && D.rosters ? D.rosters.length + ':' + D.rosters.map(r => (r.starters || []).length + (r.starters || []).join('').length).join(',') : 0);
+    zoneMuFill(root);
+    if (Z.mu) { const g = zoneMatchups().find(x => String(x.mid) === Z.mu); if (g) { const ids = new Set(g.map(m => m.roster_id)); list = list.filter(p => p.credits.some(c => ids.has(zoneOwner(c.id)))); } }
+    const sig = list.map(p => p.key).join('|') + '#' + Z.pos + Z.mine + Z.mu + mineRid + '#' + (D && D.rosters ? D.rosters.length + ':' + D.rosters.map(r => (r.starters || []).length + (r.starters || []).join('').length).join(',') : 0);
     if (sig !== zoneLast) {
       zoneLast = sig;
       root.querySelector('#zfeed').innerHTML = list.length ? list.map(p => zoneItem(p, mineRid)).join('') : `<p class="note zempty">${st === 'Waiting for kickoff' && !info.vis.length ? 'No big plays yet. They show up here once games kick off.' : 'No big plays yet.'}</p>`;
@@ -2869,7 +2887,7 @@ html[data-page=zone] #cd,html[data-page=zone] #cd.open{display:none!important}
           <p class="zhelp">Match this to how far behind your TV or stream is. Lowering the delay reveals held plays right away; raising it never hides plays you’ve already seen.</p></div></details>
       <div class="zbar"><span class="zst wait" id="zst" role="status">Waiting for kickoff</span><span class="zupd" id="zupd"></span><span class="zhid" id="zhid" hidden></span></div>
       <p class="zerr" id="zerr" role="status" hidden></p>
-      <div class="zfil" role="group" aria-label="Filter big plays">${['ALL', 'QB', 'RB', 'WR', 'TE'].map(p => `<button type="button" class="zf" data-z-pos="${p}" aria-pressed="${Z.pos === p}">${p === 'ALL' ? 'All' : p}</button>`).join('')}${mine ? `<button type="button" class="zf zmine" data-z-mine aria-pressed="${Z.mine}">Only my team</button>` : ''}</div>
+      <div class="zfil" role="group" aria-label="Filter big plays">${['ALL', 'QB', 'RB', 'WR', 'TE'].map(p => `<button type="button" class="zf" data-z-pos="${p}" aria-pressed="${Z.pos === p}">${p === 'ALL' ? 'All' : p}</button>`).join('')}${mine ? `<button type="button" class="zf zmine" data-z-mine aria-pressed="${Z.mine}">Only my team</button>` : ''}<span id="zmu" class="zmu"></span></div>
       <div class="zfeed" id="zfeed" aria-live="polite"></div>
     </div>`;
   }
@@ -2897,6 +2915,8 @@ html[data-page=zone] #cd,html[data-page=zone] #cd.open{display:none!important}
     const mn = e.target.closest('[data-z-mine]'); if (mn) { Z.mine = !Z.mine; mn.setAttribute('aria-pressed', String(Z.mine)); zoneUpdate(); return; }
     const ow = e.target.closest('[data-z-own]'); if (ow) { ow.classList.toggle('open'); return; }
   });
+
+  $('#app').addEventListener('change', e => { const s = e.target.closest('[data-z-mu]'); if (s && e.target.closest('#zone')) { Z.mu = s.value; zoneUpdate(); } });
 
   // ---------- League Bylaws ----------
   const BYLAWS = [
