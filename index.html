@@ -2,6 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<!-- Security: this site is static (GitHub Pages), so the policy is set here instead of in HTTP headers. Inline script/style are required by the single-file design; everything else is locked to the hosts the site actually calls. If you add a new data source, add its host to connect-src. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://api.sleeper.app https://api.sleeper.com https://site.api.espn.com https://sports.core.api.espn.com https://api.open-meteo.com https://api.fantasycalc.com https://*.supabase.co; worker-src blob:; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<script>/* Clickjacking guard: a meta CSP can't set frame-ancestors, so refuse to run inside someone else's frame. */try{if(window.top!==window.self){window.top.location=window.self.location;}}catch(e){document.documentElement.style.display='none';}</script>
 <meta name="theme-color" content="#0A0A0A">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Dudley Dynasty</title>
@@ -7384,7 +7388,8 @@ html[data-page=zone] #cd,html[data-page=zone] #cd.open{display:none!important}
   // Download: render the card front onto a 1080×1350 (Instagram portrait) canvas with the logo and site address.
   function loadH2C(){
     if (window.html2canvas) return Promise.resolve(window.html2canvas);
-    if (!loadH2C.p) loadH2C.p = new Promise((res, rej) => { const s = document.createElement('script'); s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js'; s.crossOrigin = 'anonymous'; s.referrerPolicy = 'no-referrer';
+    if (!loadH2C.p) loadH2C.p = new Promise((res, rej) => { const s = document.createElement('script'); s.src = 'vendor/html2canvas.min.js'; s.referrerPolicy = 'no-referrer'; // self-hosted copy of html2canvas 1.4.1 (no third-party script)
+     
       s.onload = () => res(window.html2canvas); s.onerror = () => { loadH2C.p = null; rej(new Error('Couldn’t load the image tool. Check your connection and try again.')); }; document.head.appendChild(s); });
     return loadH2C.p;
   }
